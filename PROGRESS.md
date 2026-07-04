@@ -29,6 +29,10 @@ what to build next. Do not rely on Claude-side memory for lesson state.
 - **Kana yes, kanji no.** Henry chose to learn hiragana + katakana properly
   (hangul glosses distort the sounds). Katakana is priority — golf/food vocab
   is katakana loanwords. (2026-07-04)
+- **English + Japanese ONLY.** No Korean in the app UI, lesson materials, or
+  teaching chat. App fully converted to English 2026-07-04. `lessons/lesson-01`
+  predates this rule (Korean-heavy) — treat as legacy; future lessons in
+  English/Japanese only. (2026-07-04)
 - App progress lives in browser localStorage → use the app's **내보내기** button,
   paste the export here each session, commit.
 

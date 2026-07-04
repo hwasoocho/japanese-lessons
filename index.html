@@ -1,16 +1,16 @@
 <!doctype html>
-<html lang="ko">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>골프 일본어</title>
+<title>ゴルフ日本語</title>
 <style>
   :root{
     --washi:#F6F5EF; --paper:#FFFFFF; --ink:#22271F; --ink-soft:#5A6053;
     --pine:#2F5D3A; --pine-deep:#24462D; --pine-tint:#EBF0E6;
     --vermilion:#BF4832; --vermilion-tint:#F7E9E5; --sage:#DCE0D2;
     --jp:"Hiragino Mincho ProN","Yu Mincho","Noto Serif JP",serif;
-    --ui:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Hiragino Sans","Noto Sans KR",sans-serif;
+    --ui:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Noto Sans JP",sans-serif;
     --mono:ui-monospace,"SF Mono",Menlo,monospace;
   }
   *{box-sizing:border-box;margin:0;padding:0}
@@ -43,10 +43,11 @@
     text-align:left;display:flex;flex-direction:column;gap:6px;transition:border-color .15s}
   .scene-card:hover{border-color:var(--pine)}
   .scene-card .jp{font-family:var(--jp);font-size:20px;color:var(--pine-deep)}
-  .scene-card .ko{font-size:14px;font-weight:600}
+  .scene-card .en{font-size:14px;font-weight:600}
   .scene-card .meta{font-size:12px;color:var(--ink-soft)}
   .scene-card .done-mark{color:var(--pine);font-weight:700}
-  .section-note{font-size:13px;color:var(--ink-soft);margin-bottom:16px;max-width:60ch}
+  .section-note{font-size:13px;color:var(--ink-soft);margin-bottom:16px;max-width:62ch}
+  .section-note b{color:var(--ink)}
 
   /* ---------- conversation player ---------- */
   .player-top{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:18px}
@@ -68,7 +69,7 @@
   .icon-btn:hover{background:rgba(47,93,58,.16)}
 
   .turn-card{background:var(--paper);border:1.5px solid var(--vermilion);border-radius:14px;padding:18px;align-self:flex-end;max-width:88%;width:420px}
-  .turn-card .who{font-size:11px;font-weight:700;letter-spacing:.06em;color:var(--vermilion);margin-bottom:8px}
+  .turn-card .who{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--vermilion);margin-bottom:8px}
   .turn-card .intent{font-size:16.5px;font-weight:700;margin-bottom:4px}
   .turn-card .hint{font-size:13px;color:var(--ink-soft);margin-bottom:12px}
   .turn-card .answer{border-top:1px solid var(--sage);padding-top:12px;margin-top:4px}
@@ -90,6 +91,11 @@
   .recap .ok{color:var(--pine-deep)} .recap .miss{color:var(--vermilion)}
 
   /* ---------- kana ---------- */
+  .kana-explainer{background:var(--paper);border:1px solid var(--sage);border-radius:12px;padding:16px 18px;margin-bottom:18px;font-size:13.5px;max-width:62ch}
+  .kana-explainer b{color:var(--pine-deep)}
+  .kana-explainer .row{display:flex;gap:22px;align-items:flex-end;margin-top:12px;flex-wrap:wrap}
+  .kana-explainer .glyph{font-family:var(--jp);font-size:30px;line-height:1.2;display:block}
+  .kana-explainer .lbl{font-size:11.5px;color:var(--ink-soft)}
   .kana-controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:18px}
   .pill{padding:7px 14px;border-radius:999px;border:1px solid var(--sage);background:var(--paper);font-size:13.5px;font-weight:600;color:var(--ink-soft)}
   .pill.on{background:var(--pine);border-color:var(--pine);color:#fff}
@@ -117,7 +123,7 @@
   .phrase .txt{flex:1;min-width:0}
   .phrase .jp{font-family:var(--jp);font-size:19px}
   .phrase .romaji{font-family:var(--mono);font-size:12px;color:var(--ink-soft)}
-  .phrase .ko{font-size:13.5px;color:var(--ink-soft);margin-top:2px}
+  .phrase .en{font-size:13.5px;color:var(--ink-soft);margin-top:2px}
   .phrase .play{flex:none;width:38px;height:38px;border-radius:50%;background:var(--pine-tint);color:var(--pine-deep);font-size:15px;display:flex;align-items:center;justify-content:center}
   .phrase .play:hover{background:var(--pine);color:#fff}
   .phrase.hiding .jp,.phrase.hiding .romaji{filter:blur(7px);cursor:pointer}
@@ -140,71 +146,82 @@
     <div class="brand">
       <div class="seal" aria-hidden="true">語</div>
       <div>
-        <h1>골프 일본어</h1>
-        <div class="sub">회화 우선 트레이너 — 소리 내서 말하고, 확인은 나중에</div>
+        <h1>ゴルフ日本語 — Golf Japanese</h1>
+        <div class="sub">Conversation-first trainer. Say it out loud, then check.</div>
       </div>
     </div>
     <nav>
-      <button id="tab-talk" class="on" onclick="showTab('talk')">회화<span class="jp-label">会話</span></button>
-      <button id="tab-kana" onclick="showTab('kana')">가나<span class="jp-label">かな</span></button>
-      <button id="tab-phrase" onclick="showTab('phrase')">표현<span class="jp-label">表現</span></button>
+      <button id="tab-talk" class="on" onclick="showTab('talk')">Talk<span class="jp-label">会話</span></button>
+      <button id="tab-kana" onclick="showTab('kana')">Kana<span class="jp-label">かな</span></button>
+      <button id="tab-phrase" onclick="showTab('phrase')">Phrases<span class="jp-label">表現</span></button>
     </nav>
   </header>
 
   <main>
-    <!-- 회화 -->
+    <!-- Talk -->
     <section id="view-talk">
       <div id="scene-picker">
-        <p class="section-note">장면을 고르면 상대가 일본어로 말을 겁니다 (🔊 자동 재생). 빨간 카드가 나오면 당신 차례 — <b>먼저 소리 내서 말하고</b>, 그다음 정답을 확인하세요.</p>
+        <p class="section-note">Pick a scene. The other person talks to you in Japanese (🔊 plays automatically). When the red card appears it's your turn — <b>say it out loud first</b>, then reveal the answer and grade yourself.</p>
         <div class="scene-grid" id="scene-grid"></div>
       </div>
       <div id="scene-player" class="hidden">
         <div class="player-top">
           <h2 id="scene-title"></h2>
-          <button class="linklike" onclick="exitScene()">← 장면 목록</button>
+          <button class="linklike" onclick="exitScene()">← All scenes</button>
         </div>
         <div class="chat" id="chat"></div>
         <div id="recap"></div>
       </div>
     </section>
 
-    <!-- 가나 -->
+    <!-- Kana -->
     <section id="view-kana" class="hidden">
-      <p class="section-note">셀을 누르면 발음이 나옵니다. 드릴은 production-first — 가나를 보고 로마자를 <b>먼저 소리 내서 읽고</b> 타이핑. 틀린 글자는 빨갛게 표시되고 드릴에 더 자주 나옵니다.</p>
+      <div class="kana-explainer">
+        <b>Hiragana vs katakana:</b> two alphabets for the exact same ~46 sounds — think lowercase vs UPPERCASE.
+        <b>Hiragana</b> (the curvy set) writes native Japanese words and all the grammar glue.
+        <b>Katakana</b> (the angular set) writes foreign loanwords — which is most golf, food, and hotel vocabulary, plus your name.
+        <div class="row">
+          <span><span class="glyph">あ</span><span class="lbl">hiragana “a”</span></span>
+          <span><span class="glyph">ア</span><span class="lbl">katakana “a”</span></span>
+          <span><span class="glyph">ください</span><span class="lbl">kudasai — please (native → hiragana)</span></span>
+          <span><span class="glyph">ビール</span><span class="lbl">biiru — beer (loanword → katakana)</span></span>
+        </div>
+      </div>
+      <p class="section-note">Tap a cell to hear it. The drill is production-first — see the kana, <b>say the reading out loud</b>, then type the romaji. Missed characters turn red and come back more often.</p>
       <div class="kana-controls">
-        <button class="pill on" id="pill-kata" onclick="setKanaSet('kata')">가타카나 (골프 우선)</button>
-        <button class="pill" id="pill-hira" onclick="setKanaSet('hira')">히라가나</button>
-        <button class="pill" id="pill-drill" onclick="toggleDrill()">▶ 드릴 시작</button>
+        <button class="pill on" id="pill-kata" onclick="setKanaSet('kata')">Katakana (golf first)</button>
+        <button class="pill" id="pill-hira" onclick="setKanaSet('hira')">Hiragana</button>
+        <button class="pill" id="pill-drill" onclick="toggleDrill()">▶ Start drill</button>
       </div>
       <div id="kana-chart" class="kana-grid"></div>
       <div id="kana-drill" class="hidden">
         <div class="drill-card">
           <div class="big" id="drill-kana"></div>
-          <div><input id="drill-input" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="romaji" aria-label="romaji 입력"></div>
+          <div><input id="drill-input" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="romaji" aria-label="type the romaji"></div>
           <div class="verdict" id="drill-verdict"></div>
           <div class="btn-row" style="justify-content:center">
-            <button class="btn ghost" onclick="drillHear()">🔊 듣기</button>
-            <button class="btn primary" id="drill-next-btn" onclick="drillCheck()">확인</button>
+            <button class="btn ghost" onclick="drillHear()">🔊 Hear it</button>
+            <button class="btn primary" id="drill-next-btn" onclick="drillCheck()">Check</button>
           </div>
           <div class="drill-stats" id="drill-stats"></div>
         </div>
       </div>
     </section>
 
-    <!-- 표현 -->
+    <!-- Phrases -->
     <section id="view-phrase" class="hidden">
-      <p class="section-note">생존 표현 키트. 🔊로 듣고 따라 말하기 (섀도잉). <b>가리기 모드</b>를 켜면 한국어만 보고 일본어를 떠올리는 테스트가 됩니다 — 흐린 부분을 누르면 공개.</p>
+      <p class="section-note">The survival phrase kit. 🔊 to listen, then shadow it (repeat over the voice at full speed). Turn on <b>Hide mode</b> to test yourself from English only — tap the blur to reveal.</p>
       <div class="kana-controls">
-        <button class="pill" id="pill-hide" onclick="toggleHide()">가리기 모드</button>
+        <button class="pill" id="pill-hide" onclick="toggleHide()">Hide mode</button>
       </div>
       <div class="phrase-list" id="phrase-list"></div>
     </section>
   </main>
 
   <footer>
-    발음: macOS 내장 일본어 음성 (설정에서 Kyoko 설치 시 최상). 진행 상황은 이 브라우저에 저장됩니다.
+    Audio: your device's built-in Japanese voice (on macOS, installing the Kyoko voice sounds best). Progress is saved in this browser.
     <div class="btn-row">
-      <button class="btn ghost" id="export-btn" onclick="exportProgress()">📋 진행 상황 내보내기 (레포에 붙여넣기)</button>
+      <button class="btn ghost" id="export-btn" onclick="exportProgress()">📋 Export progress (paste into PROGRESS.md)</button>
     </div>
   </footer>
 </div>
@@ -213,47 +230,47 @@
 "use strict";
 /* ---------------- data ---------------- */
 const SCENES=[
- {id:"clubhouse",jp:"クラブハウス",ko:"클럽하우스에서 말 걸어온 골퍼",desc:"인사, 어디서 왔는지, 자기소개",
+ {id:"clubhouse",jp:"クラブハウス",en:"A golfer chats you up",desc:"Greetings, where you're from, introducing yourself",
   steps:[
-   {who:"npc",jp:"こんにちは！いい天気ですね。",romaji:"konnichiwa! ii tenki desu ne",ko:"안녕하세요! 날씨 좋네요."},
-   {who:"npc",jp:"どちらからですか？",romaji:"dochira kara desu ka?",ko:"어디서 오셨어요?"},
-   {who:"you",intent:"한국에서 왔어요",hint:"한국(kankoku) + 부터(kara) + 왔습니다(kimashita)",jp:"韓国から来ました。",kana:"かんこくから きました",romaji:"kankoku kara kimashita"},
-   {who:"npc",jp:"そうですか！私は田中です。",romaji:"sou desu ka! watashi wa tanaka desu",ko:"그렇군요! 저는 다나카입니다."},
-   {who:"you",intent:"헨리입니다. 잘 부탁합니다",hint:"이름+desu, 그리고 만능 인사",jp:"ヘンリーです。よろしくお願いします。",kana:"へんりーです。よろしくおねがいします",romaji:"henrii desu. yoroshiku onegaishimasu"},
-   {who:"npc",jp:"ゴルフはよくしますか？",romaji:"gorufu wa yoku shimasu ka?",ko:"골프 자주 치세요?"},
-   {who:"you",intent:"네, 골프 좋아해요",hint:"골프(gorufu) + 가(ga) + 좋아합니다(suki desu)",jp:"はい、ゴルフが好きです。",kana:"はい、ごるふが すきです",romaji:"hai, gorufu ga suki desu"},
-   {who:"npc",jp:"今日は頑張ってください！",romaji:"kyou wa ganbatte kudasai!",ko:"오늘 화이팅하세요!"},
-   {who:"you",intent:"감사합니다",hint:"제일 긴 그 인사",jp:"ありがとうございます。",kana:"ありがとうございます",romaji:"arigatou gozaimasu"}
+   {who:"npc",jp:"こんにちは！いい天気ですね。",romaji:"konnichiwa! ii tenki desu ne",en:"Hello! Nice weather, isn't it?"},
+   {who:"npc",jp:"どちらからですか？",romaji:"dochira kara desu ka?",en:"Where are you from?"},
+   {who:"you",intent:"Tell him: I'm from Korea",hint:"kankoku (Korea) + kara (from) + kimashita (came)",jp:"韓国から来ました。",kana:"かんこくから きました",romaji:"kankoku kara kimashita"},
+   {who:"npc",jp:"そうですか！私は田中です。",romaji:"sou desu ka! watashi wa tanaka desu",en:"Oh really! I'm Tanaka."},
+   {who:"you",intent:"I'm Henry. Nice to meet you",hint:"your name + desu, then the all-purpose greeting",jp:"ヘンリーです。よろしくお願いします。",kana:"へんりーです。よろしくおねがいします",romaji:"henrii desu. yoroshiku onegaishimasu"},
+   {who:"npc",jp:"ゴルフはよくしますか？",romaji:"gorufu wa yoku shimasu ka?",en:"Do you play golf often?"},
+   {who:"you",intent:"Yes, I love golf",hint:"gorufu (golf) + ga + suki desu (like)",jp:"はい、ゴルフが好きです。",kana:"はい、ごるふが すきです",romaji:"hai, gorufu ga suki desu"},
+   {who:"npc",jp:"今日は頑張ってください！",romaji:"kyou wa ganbatte kudasai!",en:"Good luck out there today!"},
+   {who:"you",intent:"Thank you",hint:"the long one",jp:"ありがとうございます。",kana:"ありがとうございます",romaji:"arigatou gozaimasu"}
   ]},
- {id:"konbini",jp:"コンビニ",ko:"편의점에서 맥주 사기",desc:"주세요, 봉투 거절, 카드 결제",
+ {id:"konbini",jp:"コンビニ",en:"Buying beer at a konbini",desc:"Asking for items, refusing a bag, paying by card",
   steps:[
-   {who:"npc",jp:"いらっしゃいませ！",romaji:"irasshaimase!",ko:"어서 오세요!"},
-   {who:"you",intent:"저기요, 맥주 두 개 주세요",hint:"sumimasen + biiru + futatsu(2개) + kudasai",jp:"すみません、ビールふたつください。",kana:"すみません、びーる ふたつ ください",romaji:"sumimasen, biiru futatsu kudasai"},
-   {who:"npc",jp:"はい。袋はいりますか？",romaji:"hai. fukuro wa irimasu ka?",ko:"네. 봉투 필요하세요?"},
-   {who:"you",intent:"괜찮아요 (거절)",hint:"만능 거절 표현",jp:"だいじょうぶです。",kana:"だいじょうぶです",romaji:"daijoubu desu"},
-   {who:"npc",jp:"620円です。",romaji:"roppyaku nijuu en desu",ko:"620엔입니다."},
-   {who:"you",intent:"카드로 부탁해요",hint:"kaado + 로(de) + 부탁합니다",jp:"カードでお願いします。",kana:"かーどで おねがいします",romaji:"kaado de onegaishimasu"},
-   {who:"npc",jp:"ありがとうございました！",romaji:"arigatou gozaimashita!",ko:"감사합니다! (계산 끝)"}
+   {who:"npc",jp:"いらっしゃいませ！",romaji:"irasshaimase!",en:"Welcome! (standard shop greeting — no reply needed)"},
+   {who:"you",intent:"Excuse me, two beers please",hint:"sumimasen + biiru + futatsu (two) + kudasai",jp:"すみません、ビールふたつください。",kana:"すみません、びーる ふたつ ください",romaji:"sumimasen, biiru futatsu kudasai"},
+   {who:"npc",jp:"はい。袋はいりますか？",romaji:"hai. fukuro wa irimasu ka?",en:"Sure. Do you need a bag?"},
+   {who:"you",intent:"No thanks, I'm fine",hint:"the all-purpose polite no",jp:"だいじょうぶです。",kana:"だいじょうぶです",romaji:"daijoubu desu"},
+   {who:"npc",jp:"620円です。",romaji:"roppyaku nijuu en desu",en:"That'll be 620 yen."},
+   {who:"you",intent:"By card, please",hint:"kaado + de (by/with) + onegaishimasu",jp:"カードでお願いします。",kana:"かーどで おねがいします",romaji:"kaado de onegaishimasu"},
+   {who:"npc",jp:"ありがとうございました！",romaji:"arigatou gozaimashita!",en:"Thank you! (past tense — the transaction is done)"}
   ]},
- {id:"checkin",jp:"チェックイン",ko:"골프장 체크인",desc:"예약 확인, 렌탈, 로커",
+ {id:"checkin",jp:"チェックイン",en:"Golf course check-in",desc:"Reservation, rental clubs, locker",
   steps:[
-   {who:"npc",jp:"おはようございます。",romaji:"ohayou gozaimasu",ko:"좋은 아침입니다. (프런트)"},
-   {who:"you",intent:"예약했어요. 헨리입니다",hint:"yoyaku(예약) shite imasu + 이름 desu",jp:"予約しています。ヘンリーです。",kana:"よやくしています。へんりーです",romaji:"yoyaku shite imasu. henrii desu"},
-   {who:"npc",jp:"ヘンリー様ですね。9時スタートです。",romaji:"henrii-sama desu ne. kuji sutaato desu",ko:"헨리 님이시군요. 9시 스타트입니다."},
-   {who:"you",intent:"렌탈 클럽 있어요?",hint:"rentaru kurabu + 는(wa) + 있습니까(arimasu ka)",jp:"レンタルクラブはありますか？",kana:"れんたるくらぶは ありますか",romaji:"rentaru kurabu wa arimasu ka?"},
-   {who:"npc",jp:"はい、あります。ロッカーはこちらです。",romaji:"hai, arimasu. rokkaa wa kochira desu",ko:"네, 있습니다. 로커는 이쪽입니다."},
-   {who:"you",intent:"감사합니다",hint:"",jp:"ありがとうございます。",kana:"ありがとうございます",romaji:"arigatou gozaimasu"}
+   {who:"npc",jp:"おはようございます。",romaji:"ohayou gozaimasu",en:"Good morning. (front desk)"},
+   {who:"you",intent:"I have a reservation. I'm Henry",hint:"yoyaku (reservation) + shite imasu, then name + desu",jp:"予約しています。ヘンリーです。",kana:"よやくしています。へんりーです",romaji:"yoyaku shite imasu. henrii desu"},
+   {who:"npc",jp:"ヘンリー様ですね。9時スタートです。",romaji:"henrii-sama desu ne. kuji sutaato desu",en:"Mr. Henry, correct? You start at 9."},
+   {who:"you",intent:"Do you have rental clubs?",hint:"rentaru kurabu + wa + arimasu ka (do you have?)",jp:"レンタルクラブはありますか？",kana:"れんたるくらぶは ありますか",romaji:"rentaru kurabu wa arimasu ka?"},
+   {who:"npc",jp:"はい、あります。ロッカーはこちらです。",romaji:"hai, arimasu. rokkaa wa kochira desu",en:"Yes, we do. The lockers are this way."},
+   {who:"you",intent:"Thank you",hint:"",jp:"ありがとうございます。",kana:"ありがとうございます",romaji:"arigatou gozaimasu"}
   ]},
- {id:"resto",jp:"レストラン",ko:"레스토랑에서 주문",desc:"인원, 추천 묻기, 주문, 계산",
+ {id:"resto",jp:"レストラン",en:"Ordering at a restaurant",desc:"Party size, recommendations, ordering, the bill",
   steps:[
-   {who:"npc",jp:"いらっしゃいませ！何名様ですか？",romaji:"irasshaimase! nanmei-sama desu ka?",ko:"어서 오세요! 몇 분이세요?"},
-   {who:"you",intent:"두 명이요",hint:"futari(2명) + desu",jp:"ふたりです。",kana:"ふたりです",romaji:"futari desu"},
-   {who:"npc",jp:"こちらへどうぞ。ご注文は？",romaji:"kochira e douzo. go-chuumon wa?",ko:"이쪽으로 오세요. 주문은요?"},
-   {who:"you",intent:"추천이 뭐예요?",hint:"osusume(추천) + 는(wa) + 뭐예요(nan desu ka)",jp:"おすすめは何ですか？",kana:"おすすめは なんですか",romaji:"osusume wa nan desu ka?"},
-   {who:"npc",jp:"ラーメンが人気です。",romaji:"raamen ga ninki desu",ko:"라멘이 인기예요."},
-   {who:"you",intent:"그럼 라멘 하나랑 맥주 하나 주세요",hint:"ja(그럼), hitotsu(1개), 랑(to)",jp:"じゃ、ラーメンひとつとビールひとつください。",kana:"じゃ、らーめんひとつと びーるひとつ ください",romaji:"ja, raamen hitotsu to biiru hitotsu kudasai"},
-   {who:"npc",jp:"かしこまりました！",romaji:"kashikomarimashita!",ko:"알겠습니다! (정중)"},
-   {who:"you",intent:"(식사 후) 계산 부탁해요",hint:"o-kaikei(계산) + 부탁합니다",jp:"お会計お願いします。",kana:"おかいけい おねがいします",romaji:"o-kaikei onegaishimasu"}
+   {who:"npc",jp:"いらっしゃいませ！何名様ですか？",romaji:"irasshaimase! nanmei-sama desu ka?",en:"Welcome! How many people?"},
+   {who:"you",intent:"Two people",hint:"futari (two people) + desu",jp:"ふたりです。",kana:"ふたりです",romaji:"futari desu"},
+   {who:"npc",jp:"こちらへどうぞ。ご注文は？",romaji:"kochira e douzo. go-chuumon wa?",en:"This way, please. What'll you have?"},
+   {who:"you",intent:"What do you recommend?",hint:"osusume (recommendation) + wa + nan desu ka (what is)",jp:"おすすめは何ですか？",kana:"おすすめは なんですか",romaji:"osusume wa nan desu ka?"},
+   {who:"npc",jp:"ラーメンが人気です。",romaji:"raamen ga ninki desu",en:"The ramen is popular."},
+   {who:"you",intent:"Then one ramen and one beer, please",hint:"ja (well then) + hitotsu (one) + to (and)",jp:"じゃ、ラーメンひとつとビールひとつください。",kana:"じゃ、らーめんひとつと びーるひとつ ください",romaji:"ja, raamen hitotsu to biiru hitotsu kudasai"},
+   {who:"npc",jp:"かしこまりました！",romaji:"kashikomarimashita!",en:"Certainly! (very polite)"},
+   {who:"you",intent:"(after eating) The check, please",hint:"o-kaikei (the bill) + onegaishimasu",jp:"お会計お願いします。",kana:"おかいけい おねがいします",romaji:"o-kaikei onegaishimasu"}
   ]}
 ];
 
@@ -261,21 +278,21 @@ const HIRA=[["あ","a"],["い","i"],["う","u"],["え","e"],["お","o"],["か","
 const KATA=[["ア","a"],["イ","i"],["ウ","u"],["エ","e"],["オ","o"],["カ","ka"],["キ","ki"],["ク","ku"],["ケ","ke"],["コ","ko"],["サ","sa"],["シ","shi"],["ス","su"],["セ","se"],["ソ","so"],["タ","ta"],["チ","chi"],["ツ","tsu"],["テ","te"],["ト","to"],["ナ","na"],["ニ","ni"],["ヌ","nu"],["ネ","ne"],["ノ","no"],["ハ","ha"],["ヒ","hi"],["フ","fu"],["ヘ","he"],["ホ","ho"],["マ","ma"],["ミ","mi"],["ム","mu"],["メ","me"],["モ","mo"],["ヤ","ya"],[null,null],["ユ","yu"],[null,null],["ヨ","yo"],["ラ","ra"],["リ","ri"],["ル","ru"],["レ","re"],["ロ","ro"],["ワ","wa"],[null,null],["ヲ","wo"],[null,null],["ン","n"]];
 
 const PHRASES=[
- {jp:"すみません",romaji:"sumimasen",ko:"저기요 / 실례합니다 / 죄송합니다 (만능)"},
- {jp:"ありがとうございます",romaji:"arigatou gozaimasu",ko:"감사합니다"},
- {jp:"お願いします",romaji:"onegaishimasu",ko:"부탁합니다 (주문이나 요청 끝에)"},
- {jp:"〜ください",romaji:"~ kudasai",ko:"~주세요"},
- {jp:"だいじょうぶです",romaji:"daijoubu desu",ko:"괜찮아요 (거절할 때도)"},
- {jp:"〜はありますか？",romaji:"~ wa arimasu ka?",ko:"~있어요?"},
- {jp:"〜はどこですか？",romaji:"~ wa doko desu ka?",ko:"~어디예요?"},
- {jp:"いくらですか？",romaji:"ikura desu ka?",ko:"얼마예요?"},
- {jp:"わかりません",romaji:"wakarimasen",ko:"모르겠어요"},
- {jp:"もう一度お願いします",romaji:"mou ichido onegaishimasu",ko:"다시 한번 부탁해요"},
- {jp:"ゆっくりお願いします",romaji:"yukkuri onegaishimasu",ko:"천천히 부탁해요"},
- {jp:"韓国から来ました",romaji:"kankoku kara kimashita",ko:"한국에서 왔어요"},
- {jp:"ナイスショット！",romaji:"naisu shotto!",ko:"나이스 샷! (필수)"},
- {jp:"お先にどうぞ",romaji:"osaki ni douzo",ko:"먼저 하세요 (치세요)"},
- {jp:"お会計お願いします",romaji:"o-kaikei onegaishimasu",ko:"계산 부탁해요"}
+ {jp:"すみません",romaji:"sumimasen",en:"Excuse me / sorry — the all-purpose opener"},
+ {jp:"ありがとうございます",romaji:"arigatou gozaimasu",en:"Thank you"},
+ {jp:"お願いします",romaji:"onegaishimasu",en:"Please — ends any order or request"},
+ {jp:"〜ください",romaji:"~ kudasai",en:"Please give me ~"},
+ {jp:"だいじょうぶです",romaji:"daijoubu desu",en:"I'm fine / no thanks — the polite refusal"},
+ {jp:"〜はありますか？",romaji:"~ wa arimasu ka?",en:"Do you have ~?"},
+ {jp:"〜はどこですか？",romaji:"~ wa doko desu ka?",en:"Where is ~?"},
+ {jp:"いくらですか？",romaji:"ikura desu ka?",en:"How much is it?"},
+ {jp:"わかりません",romaji:"wakarimasen",en:"I don't understand"},
+ {jp:"もう一度お願いします",romaji:"mou ichido onegaishimasu",en:"One more time, please"},
+ {jp:"ゆっくりお願いします",romaji:"yukkuri onegaishimasu",en:"Slowly, please"},
+ {jp:"韓国から来ました",romaji:"kankoku kara kimashita",en:"I'm from Korea"},
+ {jp:"ナイスショット！",romaji:"naisu shotto!",en:"Nice shot! (mandatory on course)"},
+ {jp:"お先にどうぞ",romaji:"osaki ni douzo",en:"After you / go ahead"},
+ {jp:"お会計お願いします",romaji:"o-kaikei onegaishimasu",en:"The check, please"}
 ];
 
 /* ---------------- storage ---------------- */
@@ -318,7 +335,7 @@ function renderScenePicker(){
     const d=sceneDone[s.id];
     const b=document.createElement("button");
     b.className="scene-card";
-    b.innerHTML=`<span class="jp">${s.jp}</span><span class="ko">${s.ko}</span>
+    b.innerHTML=`<span class="jp">${s.jp}</span><span class="en">${s.en}</span>
       <span class="meta">${s.desc}${d?` <span class="done-mark">✓ ${d.ok}/${d.ok+d.miss}</span>`:""}</span>`;
     b.onclick=()=>startScene(s);
     sceneGrid.appendChild(b);
@@ -329,7 +346,7 @@ function startScene(s){
   cur=s;curStep=0;curResults=[];
   document.getElementById("scene-picker").classList.add("hidden");
   document.getElementById("scene-player").classList.remove("hidden");
-  document.getElementById("scene-title").innerHTML=`${s.ko}<span class="jp">${s.jp}</span>`;
+  document.getElementById("scene-title").innerHTML=`${s.en}<span class="jp">${s.jp}</span>`;
   document.getElementById("chat").innerHTML="";
   document.getElementById("recap").innerHTML="";
   nextStep();
@@ -349,18 +366,18 @@ function nextStep(){
 function renderNpc(step){
   const el=document.createElement("div");
   el.className="bubble npc";
-  el.innerHTML=`<div class="who">상대</div>
+  el.innerHTML=`<div class="who">Them</div>
     <div class="jp-line">${step.jp}</div>
     <div class="romaji">${step.romaji}</div>
-    <div class="gloss hidden">${step.ko}</div>
+    <div class="gloss hidden">${step.en}</div>
     <div class="tools">
-      <button class="icon-btn" data-say>🔊 다시 듣기</button>
-      <button class="icon-btn" data-gloss>뜻 보기</button>
+      <button class="icon-btn" data-say>🔊 Replay</button>
+      <button class="icon-btn" data-gloss>Show meaning</button>
     </div>`;
   el.querySelector("[data-say]").onclick=()=>say(step.jp);
   el.querySelector("[data-gloss]").onclick=e=>{
     el.querySelector(".gloss").classList.toggle("hidden");
-    e.target.textContent=el.querySelector(".gloss").classList.contains("hidden")?"뜻 보기":"뜻 숨기기";
+    e.target.textContent=el.querySelector(".gloss").classList.contains("hidden")?"Show meaning":"Hide meaning";
   };
   document.getElementById("chat").appendChild(el);
   el.scrollIntoView({block:"nearest",behavior:"smooth"});
@@ -371,21 +388,21 @@ function renderNpc(step){
 function renderTurn(step){
   const el=document.createElement("div");
   el.className="turn-card";
-  el.innerHTML=`<div class="who">당신 차례 — 소리 내서 말하기</div>
+  el.innerHTML=`<div class="who">Your turn — say it out loud</div>
     <div class="intent">“${step.intent}”</div>
-    ${step.hint?`<div class="hint">힌트: ${step.hint}</div>`:""}
+    ${step.hint?`<div class="hint">Hint: ${step.hint}</div>`:""}
     <div class="btn-row">
-      ${SR?'<button class="btn ghost" data-mic>🎤 말해보기</button>':""}
-      <button class="btn primary" data-reveal>정답 보기</button>
+      ${SR?'<button class="btn ghost" data-mic>🎤 Try saying it</button>':""}
+      <button class="btn primary" data-reveal>Reveal answer</button>
     </div>
     <div class="mic-out hidden" data-micout></div>
     <div class="answer hidden">
       <div class="jp-line" style="font-family:var(--jp);font-size:20px">${step.jp}</div>
       <div class="romaji">${step.romaji}</div>
-      <div class="tools" style="margin-top:8px"><button class="icon-btn" data-say>🔊 듣고 따라하기</button></div>
+      <div class="tools" style="margin-top:8px"><button class="icon-btn" data-say>🔊 Listen and repeat</button></div>
       <div class="btn-row">
-        <button class="btn good" data-grade="1">맞았음 ○</button>
-        <button class="btn bad" data-grade="0">틀렸음 ✗</button>
+        <button class="btn good" data-grade="1">Got it ○</button>
+        <button class="btn bad" data-grade="0">Missed ✗</button>
       </div>
     </div>`;
   const answer=el.querySelector(".answer");
@@ -397,12 +414,12 @@ function renderTurn(step){
     const micBtn=el.querySelector("[data-mic]"),out=el.querySelector("[data-micout]");
     micBtn.onclick=()=>{
       const rec=new SR();rec.lang="ja-JP";rec.interimResults=false;
-      out.classList.remove("hidden");out.classList.add("listening");out.textContent="듣는 중… 일본어로 말하세요";
+      out.classList.remove("hidden");out.classList.add("listening");out.textContent="Listening… speak Japanese";
       rec.onresult=ev=>{
         out.classList.remove("listening");
-        out.textContent="들린 말: "+ev.results[0][0].transcript;
+        out.textContent="Heard: "+ev.results[0][0].transcript;
       };
-      rec.onerror=()=>{out.classList.remove("listening");out.textContent="음성 인식 실패 — 다시 눌러보세요 (Chrome 권장)"};
+      rec.onerror=()=>{out.classList.remove("listening");out.textContent="Recognition failed — try again (Chrome works best)"};
       rec.start();
     };
   }
@@ -423,13 +440,13 @@ function finishScene(){
   const rec=document.getElementById("recap");
   const missed=curResults.filter(r=>!r.ok);
   rec.innerHTML=`<div class="recap">
-    <h3>장면 완료 — ${ok}/${curResults.length} ${miss===0?"🎌 완벽":""}</h3>
+    <h3>Scene complete — ${ok}/${curResults.length} ${miss===0?"🎌 perfect":""}</h3>
     ${missed.length?`<ul>${missed.map(r=>`<li class="miss">✗ “${r.step.intent}” → <span class="jp">${r.step.jp}</span> <span style="font-family:var(--mono);font-size:12px">${r.step.romaji}</span></li>`).join("")}</ul>
-    <p style="font-size:13px;color:var(--ink-soft);margin-top:10px">틀린 문장만 다시: 장면을 재시작하면 복습됩니다.</p>`
-    :`<p style="font-size:14px">전부 맞음. 다음 장면으로.</p>`}
+    <p style="font-size:13px;color:var(--ink-soft);margin-top:10px">Restart the scene to review the lines you missed.</p>`
+    :`<p style="font-size:14px">All correct. On to the next scene.</p>`}
     <div class="btn-row">
-      <button class="btn ghost" onclick="startScene(cur||SCENES.find(s=>s.id==='${cur.id}'))">다시 하기</button>
-      <button class="btn primary" onclick="exitScene()">장면 목록</button>
+      <button class="btn ghost" onclick="startScene(cur||SCENES.find(s=>s.id==='${cur.id}'))">Retry scene</button>
+      <button class="btn primary" onclick="exitScene()">All scenes</button>
     </div></div>`;
   rec.scrollIntoView({block:"nearest",behavior:"smooth"});
 }
@@ -464,7 +481,7 @@ let drilling=false,drillCur=null,drillRight=0,drillTotal=0,answered=false;
 function toggleDrill(){
   drilling=!drilling;
   document.getElementById("pill-drill").classList.toggle("on",drilling);
-  document.getElementById("pill-drill").textContent=drilling?"■ 드릴 종료":"▶ 드릴 시작";
+  document.getElementById("pill-drill").textContent=drilling?"■ Stop drill":"▶ Start drill";
   document.getElementById("kana-chart").classList.toggle("hidden",drilling);
   document.getElementById("kana-drill").classList.toggle("hidden",!drilling);
   if(drilling){drillRight=0;drillTotal=0;drillNext();}
@@ -489,8 +506,8 @@ function drillNext(){
   const inp=document.getElementById("drill-input");
   inp.value="";inp.className="";inp.focus();
   document.getElementById("drill-verdict").innerHTML="";
-  document.getElementById("drill-next-btn").textContent="확인";
-  document.getElementById("drill-stats").textContent=drillTotal?`이번 세션 ${drillRight}/${drillTotal}`:"";
+  document.getElementById("drill-next-btn").textContent="Check";
+  document.getElementById("drill-stats").textContent=drillTotal?`This session ${drillRight}/${drillTotal}`:"";
 }
 function drillHear(){if(drillCur)say(drillCur[0],0.8)}
 function drillCheck(){
@@ -506,12 +523,12 @@ function drillCheck(){
   drillTotal++;store.set("kanaStats",kanaStats);
   inp.className=ok?"right":"wrong";
   document.getElementById("drill-verdict").innerHTML=ok
-    ?`<span style="color:var(--pine-deep)">정답 ○</span>`
-    :`<span style="color:var(--vermilion)">✗ 정답은 <span class="correct-r">${target}</span></span>`;
+    ?`<span style="color:var(--pine-deep)">Correct ○</span>`
+    :`<span style="color:var(--vermilion)">✗ It's <span class="correct-r">${target}</span></span>`;
   say(drillCur[0],0.8);
   answered=true;
-  document.getElementById("drill-next-btn").textContent="다음 →";
-  document.getElementById("drill-stats").textContent=`이번 세션 ${drillRight}/${drillTotal}`;
+  document.getElementById("drill-next-btn").textContent="Next →";
+  document.getElementById("drill-stats").textContent=`This session ${drillRight}/${drillTotal}`;
 }
 document.getElementById("drill-input").addEventListener("keydown",e=>{
   if(e.key==="Enter")drillCheck();
@@ -532,9 +549,9 @@ function renderPhrases(){
     el.innerHTML=`<div class="txt">
         <div class="jp">${p.jp}</div>
         <div class="romaji">${p.romaji}</div>
-        <div class="ko">${p.ko}</div>
+        <div class="en">${p.en}</div>
       </div>
-      <button class="play" aria-label="발음 듣기">🔊</button>`;
+      <button class="play" aria-label="Play audio">🔊</button>`;
     el.querySelector(".play").onclick=()=>say(p.jp);
     if(hiding){
       const txt=el.querySelector(".txt");
@@ -547,25 +564,25 @@ function renderPhrases(){
 
 /* ---------------- export ---------------- */
 function exportProgress(){
-  const lines=["### 앱 진행 상황 export — "+new Date().toISOString().slice(0,10)];
+  const lines=["### App progress export — "+new Date().toISOString().slice(0,10)];
   const doneIds=Object.keys(sceneDone);
-  lines.push("","**장면:**");
-  if(doneIds.length===0)lines.push("- 완료한 장면 없음");
+  lines.push("","**Scenes:**");
+  if(doneIds.length===0)lines.push("- none completed yet");
   for(const id of doneIds){
     const s=SCENES.find(x=>x.id===id),d=sceneDone[id];
-    if(s)lines.push(`- ${s.ko} (${s.jp}): ${d.ok}/${d.ok+d.miss}`);
+    if(s)lines.push(`- ${s.en} (${s.jp}): ${d.ok}/${d.ok+d.miss}`);
   }
   const chars=Object.keys(kanaStats);
   const weak=chars.filter(c=>kanaStats[c].w>kanaStats[c].r);
   const strong=chars.filter(c=>kanaStats[c].r>=3&&kanaStats[c].r>kanaStats[c].w);
-  lines.push("","**가나 드릴:** "+(chars.length===0?"기록 없음":
-    `${chars.length}자 시도, 안정 ${strong.length}자${strong.length?` (${strong.join(" ")})`:""}, 약한 글자 ${weak.length}자${weak.length?` (${weak.join(" ")})`:""}`));
+  lines.push("","**Kana drill:** "+(chars.length===0?"no attempts yet":
+    `${chars.length} chars attempted, solid ${strong.length}${strong.length?` (${strong.join(" ")})`:""}, weak ${weak.length}${weak.length?` (${weak.join(" ")})`:""}`));
   const text=lines.join("\n");
   const btn=document.getElementById("export-btn");
-  const done=()=>{btn.textContent="✓ 복사됨 — PROGRESS.md에 붙여넣으세요";setTimeout(()=>{btn.textContent="📋 진행 상황 내보내기 (레포에 붙여넣기)"},3000)};
+  const done=()=>{btn.textContent="✓ Copied — paste into PROGRESS.md";setTimeout(()=>{btn.textContent="📋 Export progress (paste into PROGRESS.md)"},3000)};
   if(navigator.clipboard&&navigator.clipboard.writeText){
-    navigator.clipboard.writeText(text).then(done).catch(()=>prompt("복사해서 PROGRESS.md에 붙여넣기:",text));
-  }else prompt("복사해서 PROGRESS.md에 붙여넣기:",text);
+    navigator.clipboard.writeText(text).then(done).catch(()=>prompt("Copy this into PROGRESS.md:",text));
+  }else prompt("Copy this into PROGRESS.md:",text);
 }
 
 /* ---------------- init ---------------- */
