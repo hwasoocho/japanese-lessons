@@ -17,7 +17,7 @@
   html{-webkit-text-size-adjust:100%}
   body{background:var(--washi);color:var(--ink);font-family:var(--ui);line-height:1.55;min-height:100vh}
   button{font-family:var(--ui);cursor:pointer;border:none;background:none;color:inherit}
-  button:focus-visible,input:focus-visible,[tabindex]:focus-visible{outline:2px solid var(--pine);outline-offset:2px}
+  button:focus-visible,input:focus-visible,summary:focus-visible{outline:2px solid var(--pine);outline-offset:2px}
   .wrap{max-width:760px;margin:0 auto;padding:0 20px 96px}
 
   header{padding:28px 0 0}
@@ -28,7 +28,7 @@
   .brand h1{font-size:20px;font-weight:700;letter-spacing:-.01em}
   .brand .sub{font-size:13px;color:var(--ink-soft)}
   nav{display:flex;gap:4px;margin-top:22px;border-bottom:1px solid var(--sage)}
-  nav button{padding:10px 16px 12px;font-size:15px;font-weight:600;color:var(--ink-soft);
+  nav button{padding:10px 14px 12px;font-size:15px;font-weight:600;color:var(--ink-soft);
     border-bottom:2px solid transparent;margin-bottom:-1px;border-radius:6px 6px 0 0}
   nav button:hover{color:var(--ink);background:rgba(47,93,58,.05)}
   nav button.on{color:var(--pine-deep);border-bottom-color:var(--pine)}
@@ -36,6 +36,27 @@
 
   main{padding-top:26px}
   .hidden{display:none !important}
+  .section-note{font-size:13px;color:var(--ink-soft);margin-bottom:16px;max-width:62ch}
+  .section-note b{color:var(--ink)}
+
+  /* ---------- path ---------- */
+  .path-list{display:flex;flex-direction:column;gap:10px}
+  .level{background:var(--paper);border:1px solid var(--sage);border-radius:12px;padding:14px 16px;display:flex;gap:14px;align-items:flex-start}
+  .level.locked{opacity:.55}
+  .level .num{font-family:var(--mono);font-weight:700;color:var(--pine-deep);font-size:13px;background:var(--pine-tint);border-radius:8px;padding:4px 9px;flex:none;margin-top:1px}
+  .level .body{flex:1;min-width:0}
+  .level .t{font-weight:700;font-size:14.5px}
+  .level .d{font-size:13px;color:var(--ink-soft);margin-top:2px}
+  .level .go{font-size:13px;color:var(--pine-deep);font-weight:600;text-decoration:underline;text-underline-offset:3px;margin-top:6px;display:inline-block}
+  .chip{flex:none;font-size:12px;font-weight:700;padding:3px 10px;border-radius:999px;margin-top:2px;
+    background:var(--washi);border:1px solid var(--sage);color:var(--ink-soft)}
+  .chip.done{background:var(--pine-tint);border-color:#CBD8C2;color:var(--pine-deep)}
+  .chip.prog{background:#FBF7EA;border-color:#E8DFC0;color:#8A7433}
+  .crash{margin-top:10px}
+  .crash details{background:var(--washi);border:1px solid var(--sage);border-radius:10px;padding:10px 14px}
+  .crash summary{cursor:pointer;font-size:13.5px;font-weight:600}
+  .crash ul{margin:10px 0 4px 18px;font-size:13.5px;display:flex;flex-direction:column;gap:7px}
+  .crash .jp-ex{font-family:var(--jp)}
 
   /* ---------- scene picker ---------- */
   .scene-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px}
@@ -46,8 +67,6 @@
   .scene-card .en{font-size:14px;font-weight:600}
   .scene-card .meta{font-size:12px;color:var(--ink-soft)}
   .scene-card .done-mark{color:var(--pine);font-weight:700}
-  .section-note{font-size:13px;color:var(--ink-soft);margin-bottom:16px;max-width:62ch}
-  .section-note b{color:var(--ink)}
 
   /* ---------- conversation player ---------- */
   .player-top{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:18px}
@@ -56,19 +75,23 @@
   .linklike{font-size:13px;color:var(--ink-soft);text-decoration:underline;text-underline-offset:3px}
   .linklike:hover{color:var(--ink)}
   .chat{display:flex;flex-direction:column;gap:14px}
-  .bubble{max-width:88%;border-radius:14px;padding:14px 16px;position:relative}
+  .bubble{max-width:92%;border-radius:14px;padding:14px 16px;position:relative}
   .bubble.npc{background:var(--paper);border:1px solid var(--sage);align-self:flex-start;border-bottom-left-radius:4px}
-  .bubble.you{background:var(--pine-tint);border:1px solid #CBD8C2;align-self:flex-end;border-bottom-right-radius:4px}
   .bubble .who{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:6px}
-  .bubble.you .who{color:var(--pine-deep)}
   .bubble .jp-line{font-family:var(--jp);font-size:21px;line-height:1.5}
-  .bubble .romaji{font-family:var(--mono);font-size:12.5px;color:var(--ink-soft);margin-top:4px}
   .bubble .gloss{font-size:13.5px;color:var(--ink-soft);margin-top:6px;border-top:1px dashed var(--sage);padding-top:6px}
-  .bubble .tools{display:flex;gap:10px;margin-top:8px}
+  .bubble .tools{display:flex;gap:10px;margin-top:10px}
   .icon-btn{font-size:13px;color:var(--pine-deep);font-weight:600;padding:3px 8px;border-radius:6px;background:rgba(47,93,58,.08)}
   .icon-btn:hover{background:rgba(47,93,58,.16)}
 
-  .turn-card{background:var(--paper);border:1.5px solid var(--vermilion);border-radius:14px;padding:18px;align-self:flex-end;max-width:88%;width:420px}
+  /* character breakdown */
+  .kb{display:flex;flex-wrap:wrap;gap:6px 7px;margin-top:10px;align-items:flex-end}
+  .kb .tkn{text-align:center;min-width:20px}
+  .kb .tk{font-family:var(--jp);font-size:17px;display:block;line-height:1.3}
+  .kb .tr{font-family:var(--mono);font-size:10px;color:var(--ink-soft);display:block}
+  .kb .gap{width:10px}
+
+  .turn-card{background:var(--paper);border:1.5px solid var(--vermilion);border-radius:14px;padding:18px;align-self:flex-end;max-width:92%;width:460px}
   .turn-card .who{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--vermilion);margin-bottom:8px}
   .turn-card .intent{font-size:16.5px;font-weight:700;margin-bottom:4px}
   .turn-card .hint{font-size:13px;color:var(--ink-soft);margin-bottom:12px}
@@ -88,7 +111,7 @@
   .recap ul{list-style:none;display:flex;flex-direction:column;gap:8px}
   .recap li{font-size:14px}
   .recap .jp{font-family:var(--jp);font-size:16px}
-  .recap .ok{color:var(--pine-deep)} .recap .miss{color:var(--vermilion)}
+  .recap .miss{color:var(--vermilion)}
 
   /* ---------- kana ---------- */
   .kana-explainer{background:var(--paper);border:1px solid var(--sage);border-radius:12px;padding:16px 18px;margin-bottom:18px;font-size:13.5px;max-width:62ch}
@@ -151,17 +174,24 @@
       </div>
     </div>
     <nav>
-      <button id="tab-talk" class="on" onclick="showTab('talk')">Talk<span class="jp-label">会話</span></button>
+      <button id="tab-path" class="on" onclick="showTab('path')">Path<span class="jp-label">道</span></button>
+      <button id="tab-talk" onclick="showTab('talk')">Talk<span class="jp-label">会話</span></button>
       <button id="tab-kana" onclick="showTab('kana')">Kana<span class="jp-label">かな</span></button>
       <button id="tab-phrase" onclick="showTab('phrase')">Phrases<span class="jp-label">表現</span></button>
     </nav>
   </header>
 
   <main>
+    <!-- Path -->
+    <section id="view-path">
+      <p class="section-note">The whole journey, in order. Do the levels top to bottom — 15-20 minutes a day. Progress updates automatically from your drills and scenes.</p>
+      <div class="path-list" id="path-list"></div>
+    </section>
+
     <!-- Talk -->
-    <section id="view-talk">
+    <section id="view-talk" class="hidden">
       <div id="scene-picker">
-        <p class="section-note">Pick a scene. The other person talks to you in Japanese (🔊 plays automatically). When the red card appears it's your turn — <b>say it out loud first</b>, then reveal the answer and grade yourself.</p>
+        <p class="section-note">Pick a scene. The other person talks to you in Japanese (🔊 plays automatically), with every character's reading shown underneath — this is where you learn kana in context. When the red card appears it's your turn: <b>say it out loud first</b>, then reveal and grade yourself.</p>
         <div class="scene-grid" id="scene-grid"></div>
       </div>
       <div id="scene-player" class="hidden">
@@ -228,49 +258,140 @@
 
 <script>
 "use strict";
-/* ---------------- data ---------------- */
+/* ---------------- kana reading map ---------------- */
+const ROMA={
+ "あ":"a","い":"i","う":"u","え":"e","お":"o","か":"ka","き":"ki","く":"ku","け":"ke","こ":"ko",
+ "さ":"sa","し":"shi","す":"su","せ":"se","そ":"so","た":"ta","ち":"chi","つ":"tsu","て":"te","と":"to",
+ "な":"na","に":"ni","ぬ":"nu","ね":"ne","の":"no","は":"wa*","ひ":"hi","ふ":"fu","へ":"he","ほ":"ho",
+ "ま":"ma","み":"mi","む":"mu","め":"me","も":"mo","や":"ya","ゆ":"yu","よ":"yo",
+ "ら":"ra","り":"ri","る":"ru","れ":"re","ろ":"ro","わ":"wa","を":"o","ん":"n",
+ "が":"ga","ぎ":"gi","ぐ":"gu","げ":"ge","ご":"go","ざ":"za","じ":"ji","ず":"zu","ぜ":"ze","ぞ":"zo",
+ "だ":"da","ぢ":"ji","づ":"zu","で":"de","ど":"do","ば":"ba","び":"bi","ぶ":"bu","べ":"be","ぼ":"bo",
+ "ぱ":"pa","ぴ":"pi","ぷ":"pu","ぺ":"pe","ぽ":"po",
+ "ア":"a","イ":"i","ウ":"u","エ":"e","オ":"o","カ":"ka","キ":"ki","ク":"ku","ケ":"ke","コ":"ko",
+ "サ":"sa","シ":"shi","ス":"su","セ":"se","ソ":"so","タ":"ta","チ":"chi","ツ":"tsu","テ":"te","ト":"to",
+ "ナ":"na","ニ":"ni","ヌ":"nu","ネ":"ne","ノ":"no","ハ":"ha","ヒ":"hi","フ":"fu","ヘ":"he","ホ":"ho",
+ "マ":"ma","ミ":"mi","ム":"mu","メ":"me","モ":"mo","ヤ":"ya","ユ":"yu","ヨ":"yo",
+ "ラ":"ra","リ":"ri","ル":"ru","レ":"re","ロ":"ro","ワ":"wa","ヲ":"o","ン":"n",
+ "ガ":"ga","ギ":"gi","グ":"gu","ゲ":"ge","ゴ":"go","ザ":"za","ジ":"ji","ズ":"zu","ゼ":"ze","ゾ":"zo",
+ "ダ":"da","ヂ":"ji","ヅ":"zu","デ":"de","ド":"do","バ":"ba","ビ":"bi","ブ":"bu","ベ":"be","ボ":"bo",
+ "パ":"pa","ピ":"pi","プ":"pu","ペ":"pe","ポ":"po","ヴ":"vu"
+};
+// は is "wa" only as the topic particle; standalone word-internal は is "ha".
+// The kana strings below mark particle-は by surrounding spaces, so we resolve:
+function romaOf(c,isParticle){if(c==="は")return isParticle?"wa":"ha";const r=ROMA[c];return r==="wa*"?"ha":r}
+const SMALLY={"ゃ":"ya","ゅ":"yu","ょ":"yo","ャ":"ya","ュ":"yu","ョ":"yo"};
+const SMALLV={"ぁ":"a","ぃ":"i","ぅ":"u","ぇ":"e","ぉ":"o","ァ":"a","ィ":"i","ゥ":"u","ェ":"e","ォ":"o"};
+const PUNCT="、。！？!?「」・…（）()";
+
+/* Tokenize a kana string into [{k,r}] clusters; spaces become gaps.
+   Particle detection: は/へ standing alone between spaces reads wa/e. */
+function tokenize(kana){
+  const out=[];let i=0;
+  while(i<kana.length){
+    const c=kana[i];
+    if(c===" "||c==="　"){out.push({gap:true});i++;continue}
+    if(PUNCT.includes(c)){out.push({k:c,r:""});i++;continue}
+    if(c==="ー"){
+      if(out.length){const p=out[out.length-1];if(!p.gap){p.k+="ー";const v=p.r.slice(-1);p.r+=v;i++;continue}}
+      out.push({k:c,r:""});i++;continue}
+    if(c==="っ"||c==="ッ"){
+      let j=i+1,k=c,r="";
+      if(j<kana.length&&ROMA[kana[j]]){
+        let base=kana[j],br=romaOf(base,false);j++;k+=base;
+        if(j<kana.length&&SMALLY[kana[j]]){const sy=SMALLY[kana[j]];const pre=br.slice(0,-1);br=pre+(["sh","ch","j"].includes(pre)?sy.slice(1):sy);k+=kana[j];j++;}
+        r=(br.startsWith("ch")?"t":br[0])+br;
+      }
+      out.push({k,r});i=j;continue}
+    if(ROMA[c]){
+      // particle wa/e: は at the end of a word (before space/punct) reads wa,
+      // which also covers こんにちは; へ needs space on both sides.
+      const prevCh=i===0?" ":kana[i-1], nextCh=i+1>=kana.length?"。":kana[i+1];
+      const nextEnds=(nextCh===" "||nextCh==="　"||PUNCT.includes(nextCh));
+      const prevSpace=(prevCh===" "||prevCh==="　");
+      let r=(c==="は"&&nextEnds)?"wa":(c==="へ"&&prevSpace&&nextEnds)?"e":romaOf(c,false);
+      let k=c,j=i+1;
+      if(j<kana.length&&SMALLY[kana[j]]){const sy=SMALLY[kana[j]];const pre=r.slice(0,-1);r=pre+(["sh","ch","j"].includes(pre)?sy.slice(1):sy);k+=kana[j];j++;}
+      else if(j<kana.length&&SMALLV[kana[j]]){const v=SMALLV[kana[j]];r=(c==="ウ"||c==="う")?"w"+v:r.slice(0,-1)+v;k+=kana[j];j++;}
+      out.push({k,r});i=j;continue}
+    out.push({k:c,r:""});i++;
+  }
+  return out;
+}
+function kbHtml(kana){
+  return `<div class="kb">${tokenize(kana).map(t=>t.gap?'<span class="gap"></span>':
+    `<span class="tkn"><span class="tk">${t.k}</span><span class="tr">${t.r}</span></span>`).join("")}</div>`;
+}
+
+/* ---------------- data ----------------
+   jp   = natural written form (kanji ok — it's read TO you)
+   kana = pure kana reading, spaces separate words (particles は/へ alone read wa/e)
+   en   = meaning */
 const SCENES=[
- {id:"clubhouse",jp:"クラブハウス",en:"A golfer chats you up",desc:"Greetings, where you're from, introducing yourself",
+ {id:"konbini",jp:"コンビニ",en:"Buying beer at a konbini",desc:"Asking for items, bag, points card, paying",
   steps:[
-   {who:"npc",jp:"こんにちは！いい天気ですね。",romaji:"konnichiwa! ii tenki desu ne",en:"Hello! Nice weather, isn't it?"},
-   {who:"npc",jp:"どちらからですか？",romaji:"dochira kara desu ka?",en:"Where are you from?"},
-   {who:"you",intent:"Tell him: I'm from Korea",hint:"kankoku (Korea) + kara (from) + kimashita (came)",jp:"韓国から来ました。",kana:"かんこくから きました",romaji:"kankoku kara kimashita"},
-   {who:"npc",jp:"そうですか！私は田中です。",romaji:"sou desu ka! watashi wa tanaka desu",en:"Oh really! I'm Tanaka."},
-   {who:"you",intent:"I'm Henry. Nice to meet you",hint:"your name + desu, then the all-purpose greeting",jp:"ヘンリーです。よろしくお願いします。",kana:"へんりーです。よろしくおねがいします",romaji:"henrii desu. yoroshiku onegaishimasu"},
-   {who:"npc",jp:"ゴルフはよくしますか？",romaji:"gorufu wa yoku shimasu ka?",en:"Do you play golf often?"},
-   {who:"you",intent:"Yes, I love golf",hint:"gorufu (golf) + ga + suki desu (like)",jp:"はい、ゴルフが好きです。",kana:"はい、ごるふが すきです",romaji:"hai, gorufu ga suki desu"},
-   {who:"npc",jp:"今日は頑張ってください！",romaji:"kyou wa ganbatte kudasai!",en:"Good luck out there today!"},
-   {who:"you",intent:"Thank you",hint:"the long one",jp:"ありがとうございます。",kana:"ありがとうございます",romaji:"arigatou gozaimasu"}
+   {who:"npc",jp:"いらっしゃいませ！",kana:"いらっしゃいませ！",en:"Welcome! (standard shop greeting — no reply needed)"},
+   {who:"you",intent:"Excuse me, two beers and one onigiri, please",hint:"sumimasen + biiru futatsu (two) + to (and) + onigiri hitotsu (one) + kudasai",jp:"すみません、ビールふたつとおにぎりひとつください。",kana:"すみません、ビール ふたつ と おにぎり ひとつ ください。"},
+   {who:"npc",jp:"はい。おにぎりは温めますか？",kana:"はい。おにぎり は あたためますか？",en:"Sure. Shall I warm up the onigiri?"},
+   {who:"you",intent:"No thanks, I'm fine",hint:"the all-purpose polite no",jp:"だいじょうぶです。",kana:"だいじょうぶです。"},
+   {who:"npc",jp:"袋はいりますか？",kana:"ふくろ は いりますか？",en:"Do you need a bag?"},
+   {who:"you",intent:"Yes, please",hint:"when the answer is yes-please, onegaishimasu alone does the job",jp:"お願いします。",kana:"おねがいします。"},
+   {who:"npc",jp:"ポイントカードはお持ちですか？",kana:"ポイントカード は おもちですか？",en:"Do you have a points card?"},
+   {who:"you",intent:"I don't have one",hint:"nai (there isn't / don't have) + desu",jp:"ないです。",kana:"ないです。"},
+   {who:"npc",jp:"620円です。",kana:"ろっぴゃく にじゅう えん です。",en:"That'll be 620 yen."},
+   {who:"you",intent:"By card, please",hint:"kaado + de (by/with) + onegaishimasu",jp:"カードでお願いします。",kana:"カード で おねがいします。"},
+   {who:"npc",jp:"ありがとうございました！",kana:"ありがとうございました！",en:"Thank you! (past tense — the transaction is done)"}
   ]},
- {id:"konbini",jp:"コンビニ",en:"Buying beer at a konbini",desc:"Asking for items, refusing a bag, paying by card",
+ {id:"resto",jp:"レストラン",en:"Ordering at a restaurant",desc:"Party size, drinks, recommendations, compliments, the bill",
   steps:[
-   {who:"npc",jp:"いらっしゃいませ！",romaji:"irasshaimase!",en:"Welcome! (standard shop greeting — no reply needed)"},
-   {who:"you",intent:"Excuse me, two beers please",hint:"sumimasen + biiru + futatsu (two) + kudasai",jp:"すみません、ビールふたつください。",kana:"すみません、びーる ふたつ ください",romaji:"sumimasen, biiru futatsu kudasai"},
-   {who:"npc",jp:"はい。袋はいりますか？",romaji:"hai. fukuro wa irimasu ka?",en:"Sure. Do you need a bag?"},
-   {who:"you",intent:"No thanks, I'm fine",hint:"the all-purpose polite no",jp:"だいじょうぶです。",kana:"だいじょうぶです",romaji:"daijoubu desu"},
-   {who:"npc",jp:"620円です。",romaji:"roppyaku nijuu en desu",en:"That'll be 620 yen."},
-   {who:"you",intent:"By card, please",hint:"kaado + de (by/with) + onegaishimasu",jp:"カードでお願いします。",kana:"かーどで おねがいします",romaji:"kaado de onegaishimasu"},
-   {who:"npc",jp:"ありがとうございました！",romaji:"arigatou gozaimashita!",en:"Thank you! (past tense — the transaction is done)"}
+   {who:"npc",jp:"いらっしゃいませ！何名様ですか？",kana:"いらっしゃいませ！なんめいさま ですか？",en:"Welcome! How many people?"},
+   {who:"you",intent:"Two people",hint:"futari (two people) + desu",jp:"ふたりです。",kana:"ふたりです。"},
+   {who:"npc",jp:"こちらへどうぞ。お飲み物は？",kana:"こちら へ どうぞ。おのみもの は？",en:"This way, please. Anything to drink?"},
+   {who:"you",intent:"Beer, please",hint:"you know this one cold by now",jp:"ビールください。",kana:"ビール ください。"},
+   {who:"npc",jp:"はい。ご注文は？",kana:"はい。ごちゅうもん は？",en:"Sure. And to order?"},
+   {who:"you",intent:"What do you recommend?",hint:"osusume (recommendation) + wa + nan desu ka (what is)",jp:"おすすめは何ですか？",kana:"おすすめ は なんですか？"},
+   {who:"npc",jp:"ラーメンが人気です。",kana:"ラーメン が にんき です。",en:"The ramen is popular."},
+   {who:"you",intent:"Then one ramen, please",hint:"ja (well then) + hitotsu (one) + kudasai",jp:"じゃ、ラーメンひとつください。",kana:"じゃ、ラーメン ひとつ ください。"},
+   {who:"npc",jp:"かしこまりました！",kana:"かしこまりました！",en:"Certainly! (very polite)"},
+   {who:"npc",jp:"お待たせしました！",kana:"おまたせしました！",en:"Here you go! (lit. “I kept you waiting” — said when food arrives)"},
+   {who:"you",intent:"It's delicious!",hint:"oishii (delicious) + desu",jp:"おいしいです！",kana:"おいしいです！"},
+   {who:"npc",jp:"ありがとうございます！",kana:"ありがとうございます！",en:"Thank you!"},
+   {who:"you",intent:"(after eating) The check, please",hint:"o-kaikei (the bill) + onegaishimasu",jp:"お会計お願いします。",kana:"おかいけい おねがいします。"},
+   {who:"npc",jp:"1500円です。",kana:"せん ごひゃく えん です。",en:"That's 1,500 yen."},
+   {who:"you",intent:"By card, please",hint:"same as the konbini — this one is everywhere",jp:"カードでお願いします。",kana:"カード で おねがいします。"}
   ]},
- {id:"checkin",jp:"チェックイン",en:"Golf course check-in",desc:"Reservation, rental clubs, locker",
+ {id:"checkin",jp:"チェックイン",en:"Golf course check-in",desc:"Reservation, rentals, price, cart, locker, bath",
   steps:[
-   {who:"npc",jp:"おはようございます。",romaji:"ohayou gozaimasu",en:"Good morning. (front desk)"},
-   {who:"you",intent:"I have a reservation. I'm Henry",hint:"yoyaku (reservation) + shite imasu, then name + desu",jp:"予約しています。ヘンリーです。",kana:"よやくしています。へんりーです",romaji:"yoyaku shite imasu. henrii desu"},
-   {who:"npc",jp:"ヘンリー様ですね。9時スタートです。",romaji:"henrii-sama desu ne. kuji sutaato desu",en:"Mr. Henry, correct? You start at 9."},
-   {who:"you",intent:"Do you have rental clubs?",hint:"rentaru kurabu + wa + arimasu ka (do you have?)",jp:"レンタルクラブはありますか？",kana:"れんたるくらぶは ありますか",romaji:"rentaru kurabu wa arimasu ka?"},
-   {who:"npc",jp:"はい、あります。ロッカーはこちらです。",romaji:"hai, arimasu. rokkaa wa kochira desu",en:"Yes, we do. The lockers are this way."},
-   {who:"you",intent:"Thank you",hint:"",jp:"ありがとうございます。",kana:"ありがとうございます",romaji:"arigatou gozaimasu"}
+   {who:"npc",jp:"おはようございます。",kana:"おはようございます。",en:"Good morning. (front desk)"},
+   {who:"you",intent:"I have a reservation. I'm Henry",hint:"yoyaku (reservation) + shite imasu, then name + desu",jp:"予約しています。ヘンリーです。",kana:"よやく しています。ヘンリー です。"},
+   {who:"npc",jp:"ヘンリー様ですね。9時スタートです。",kana:"ヘンリーさま ですね。くじ スタート です。",en:"Mr. Henry, correct? You start at 9."},
+   {who:"you",intent:"Do you have rental clubs?",hint:"rentaru kurabu + wa + arimasu ka (do you have?)",jp:"レンタルクラブはありますか？",kana:"レンタルクラブ は ありますか？"},
+   {who:"npc",jp:"はい、あります。",kana:"はい、あります。",en:"Yes, we do."},
+   {who:"you",intent:"How much is it?",hint:"straight from the phrase kit",jp:"いくらですか？",kana:"いくらですか？"},
+   {who:"npc",jp:"3000円です。",kana:"さんぜん えん です。",en:"3,000 yen."},
+   {who:"you",intent:"OK then, I'll take it",hint:"ja (well then) + onegaishimasu",jp:"じゃ、お願いします。",kana:"じゃ、おねがいします。"},
+   {who:"npc",jp:"カートは2人乗りです。",kana:"カート は ふたりのり です。",en:"The cart seats two."},
+   {who:"you",intent:"Where are the lockers?",hint:"rokkaa + wa + doko desu ka (where is)",jp:"ロッカーはどこですか？",kana:"ロッカー は どこですか？"},
+   {who:"npc",jp:"こちらです。お風呂は2階にあります。",kana:"こちらです。おふろ は にかい に あります。",en:"This way. The bath is on the 2nd floor."},
+   {who:"you",intent:"Thank you",hint:"",jp:"ありがとうございます。",kana:"ありがとうございます。"}
   ]},
- {id:"resto",jp:"レストラン",en:"Ordering at a restaurant",desc:"Party size, recommendations, ordering, the bill",
+ {id:"clubhouse",jp:"クラブハウス",en:"A golfer chats you up",desc:"Where you're from, first time in Japan, small talk",
   steps:[
-   {who:"npc",jp:"いらっしゃいませ！何名様ですか？",romaji:"irasshaimase! nanmei-sama desu ka?",en:"Welcome! How many people?"},
-   {who:"you",intent:"Two people",hint:"futari (two people) + desu",jp:"ふたりです。",kana:"ふたりです",romaji:"futari desu"},
-   {who:"npc",jp:"こちらへどうぞ。ご注文は？",romaji:"kochira e douzo. go-chuumon wa?",en:"This way, please. What'll you have?"},
-   {who:"you",intent:"What do you recommend?",hint:"osusume (recommendation) + wa + nan desu ka (what is)",jp:"おすすめは何ですか？",kana:"おすすめは なんですか",romaji:"osusume wa nan desu ka?"},
-   {who:"npc",jp:"ラーメンが人気です。",romaji:"raamen ga ninki desu",en:"The ramen is popular."},
-   {who:"you",intent:"Then one ramen and one beer, please",hint:"ja (well then) + hitotsu (one) + to (and)",jp:"じゃ、ラーメンひとつとビールひとつください。",kana:"じゃ、らーめんひとつと びーるひとつ ください",romaji:"ja, raamen hitotsu to biiru hitotsu kudasai"},
-   {who:"npc",jp:"かしこまりました！",romaji:"kashikomarimashita!",en:"Certainly! (very polite)"},
-   {who:"you",intent:"(after eating) The check, please",hint:"o-kaikei (the bill) + onegaishimasu",jp:"お会計お願いします。",kana:"おかいけい おねがいします",romaji:"o-kaikei onegaishimasu"}
+   {who:"npc",jp:"こんにちは！いい天気ですね。",kana:"こんにちは！いい てんき ですね。",en:"Hello! Nice weather, isn't it?"},
+   {who:"npc",jp:"どちらからですか？",kana:"どちら から ですか？",en:"Where are you from?"},
+   {who:"you",intent:"I'm from Korea",hint:"kankoku (Korea) + kara (from) + kimashita (came)",jp:"韓国から来ました。",kana:"かんこく から きました。"},
+   {who:"npc",jp:"そうですか！私は田中です。",kana:"そうですか！わたし は たなか です。",en:"Oh really! I'm Tanaka."},
+   {who:"you",intent:"I'm Henry. Nice to meet you",hint:"your name + desu, then the all-purpose greeting",jp:"ヘンリーです。よろしくお願いします。",kana:"ヘンリー です。よろしく おねがいします。"},
+   {who:"npc",jp:"ゴルフはよくしますか？",kana:"ゴルフ は よく しますか？",en:"Do you play golf often?"},
+   {who:"you",intent:"Yes, I love golf",hint:"gorufu (golf) + ga + suki desu (like)",jp:"はい、ゴルフが好きです。",kana:"はい、ゴルフ が すき です。"},
+   {who:"npc",jp:"日本は初めてですか？",kana:"にほん は はじめて ですか？",en:"Is this your first time in Japan?"},
+   {who:"you",intent:"Yes, it's my first time",hint:"hajimete (first time) + desu",jp:"はい、初めてです。",kana:"はい、はじめて です。"},
+   {who:"npc",jp:"このコースはきれいですよ。",kana:"この コース は きれい ですよ。",en:"This course is beautiful, you know."},
+   {who:"you",intent:"I'm looking forward to it",hint:"tanoshimi (something to look forward to) + desu",jp:"楽しみです。",kana:"たのしみ です。"},
+   {who:"npc",jp:"今日は頑張ってください！",kana:"きょう は がんばって ください！",en:"Good luck out there today!"},
+   {who:"you",intent:"Thank you",hint:"the long one",jp:"ありがとうございます。",kana:"ありがとうございます。"},
+   {who:"npc",jp:"また後で！",kana:"また あとで！",en:"See you later!"},
+   {who:"you",intent:"See you later! (just mirror him)",hint:"echoing the other person's phrase back is a completely natural move",jp:"また後で！",kana:"また あとで！"}
   ]}
 ];
 
@@ -278,21 +399,21 @@ const HIRA=[["あ","a"],["い","i"],["う","u"],["え","e"],["お","o"],["か","
 const KATA=[["ア","a"],["イ","i"],["ウ","u"],["エ","e"],["オ","o"],["カ","ka"],["キ","ki"],["ク","ku"],["ケ","ke"],["コ","ko"],["サ","sa"],["シ","shi"],["ス","su"],["セ","se"],["ソ","so"],["タ","ta"],["チ","chi"],["ツ","tsu"],["テ","te"],["ト","to"],["ナ","na"],["ニ","ni"],["ヌ","nu"],["ネ","ne"],["ノ","no"],["ハ","ha"],["ヒ","hi"],["フ","fu"],["ヘ","he"],["ホ","ho"],["マ","ma"],["ミ","mi"],["ム","mu"],["メ","me"],["モ","mo"],["ヤ","ya"],[null,null],["ユ","yu"],[null,null],["ヨ","yo"],["ラ","ra"],["リ","ri"],["ル","ru"],["レ","re"],["ロ","ro"],["ワ","wa"],[null,null],["ヲ","wo"],[null,null],["ン","n"]];
 
 const PHRASES=[
- {jp:"すみません",romaji:"sumimasen",en:"Excuse me / sorry — the all-purpose opener"},
- {jp:"ありがとうございます",romaji:"arigatou gozaimasu",en:"Thank you"},
- {jp:"お願いします",romaji:"onegaishimasu",en:"Please — ends any order or request"},
- {jp:"〜ください",romaji:"~ kudasai",en:"Please give me ~"},
- {jp:"だいじょうぶです",romaji:"daijoubu desu",en:"I'm fine / no thanks — the polite refusal"},
- {jp:"〜はありますか？",romaji:"~ wa arimasu ka?",en:"Do you have ~?"},
- {jp:"〜はどこですか？",romaji:"~ wa doko desu ka?",en:"Where is ~?"},
- {jp:"いくらですか？",romaji:"ikura desu ka?",en:"How much is it?"},
- {jp:"わかりません",romaji:"wakarimasen",en:"I don't understand"},
- {jp:"もう一度お願いします",romaji:"mou ichido onegaishimasu",en:"One more time, please"},
- {jp:"ゆっくりお願いします",romaji:"yukkuri onegaishimasu",en:"Slowly, please"},
- {jp:"韓国から来ました",romaji:"kankoku kara kimashita",en:"I'm from Korea"},
- {jp:"ナイスショット！",romaji:"naisu shotto!",en:"Nice shot! (mandatory on course)"},
- {jp:"お先にどうぞ",romaji:"osaki ni douzo",en:"After you / go ahead"},
- {jp:"お会計お願いします",romaji:"o-kaikei onegaishimasu",en:"The check, please"}
+ {jp:"すみません",kana:"すみません",romaji:"sumimasen",en:"Excuse me / sorry — the all-purpose opener"},
+ {jp:"ありがとうございます",kana:"ありがとうございます",romaji:"arigatou gozaimasu",en:"Thank you"},
+ {jp:"お願いします",kana:"おねがいします",romaji:"onegaishimasu",en:"Please — ends any order or request"},
+ {jp:"〜ください",kana:"ください",romaji:"~ kudasai",en:"Please give me ~"},
+ {jp:"だいじょうぶです",kana:"だいじょうぶです",romaji:"daijoubu desu",en:"I'm fine / no thanks — the polite refusal"},
+ {jp:"〜はありますか？",kana:"は ありますか？",romaji:"~ wa arimasu ka?",en:"Do you have ~?"},
+ {jp:"〜はどこですか？",kana:"は どこですか？",romaji:"~ wa doko desu ka?",en:"Where is ~?"},
+ {jp:"いくらですか？",kana:"いくらですか？",romaji:"ikura desu ka?",en:"How much is it?"},
+ {jp:"わかりません",kana:"わかりません",romaji:"wakarimasen",en:"I don't understand"},
+ {jp:"もう一度お願いします",kana:"もう いちど おねがいします",romaji:"mou ichido onegaishimasu",en:"One more time, please"},
+ {jp:"ゆっくりお願いします",kana:"ゆっくり おねがいします",romaji:"yukkuri onegaishimasu",en:"Slowly, please"},
+ {jp:"韓国から来ました",kana:"かんこく から きました",romaji:"kankoku kara kimashita",en:"I'm from Korea"},
+ {jp:"ナイスショット！",kana:"ナイスショット！",romaji:"naisu shotto!",en:"Nice shot! (mandatory on course)"},
+ {jp:"お先にどうぞ",kana:"おさき に どうぞ",romaji:"osaki ni douzo",en:"After you / go ahead"},
+ {jp:"お会計お願いします",kana:"おかいけい おねがいします",romaji:"o-kaikei onegaishimasu",en:"The check, please"}
 ];
 
 /* ---------------- storage ---------------- */
@@ -300,8 +421,8 @@ const store={
   get(k,d){try{const v=localStorage.getItem("gj_"+k);return v?JSON.parse(v):d}catch(e){return d}},
   set(k,v){try{localStorage.setItem("gj_"+k,JSON.stringify(v))}catch(e){}}
 };
-let kanaStats=store.get("kanaStats",{});    // key: char, val:{r:right,w:wrong}
-let sceneDone=store.get("sceneDone",{});    // key: scene id, val: {ok,miss}
+let kanaStats=store.get("kanaStats",{});
+let sceneDone=store.get("sceneDone",{});
 
 /* ---------------- speech ---------------- */
 let jpVoice=null;
@@ -321,10 +442,58 @@ const SR=window.SpeechRecognition||window.webkitSpeechRecognition||null;
 
 /* ---------------- tabs ---------------- */
 function showTab(t){
-  for(const id of["talk","kana","phrase"]){
+  for(const id of["path","talk","kana","phrase"]){
     document.getElementById("view-"+id).classList.toggle("hidden",id!==t);
     document.getElementById("tab-"+id).classList.toggle("on",id===t);
   }
+  if(t==="path")renderPath();
+}
+
+/* ---------------- path ---------------- */
+function solidCount(set){return set.filter(x=>x[0]&&kanaStats[x[0]]&&kanaStats[x[0]].r>=3&&kanaStats[x[0]].r>kanaStats[x[0]].w).length}
+function scenePerfect(id){const d=sceneDone[id];return d&&d.miss===0&&d.ok>0}
+function sceneTried(id){return !!sceneDone[id]}
+function chip(html,cls){return `<span class="chip ${cls}">${html}</span>`}
+function renderPath(){
+  const kata=solidCount(KATA),hira=solidCount(HIRA);
+  const lv3=["konbini","resto"],lv5=["checkin","clubhouse"];
+  const lv3done=lv3.every(scenePerfect),lv3tried=lv3.some(sceneTried);
+  const lv5done=lv5.every(scenePerfect),lv5tried=lv5.some(sceneTried);
+  const rows=[
+   {n:"0",t:"How Japanese works",d:"One 2-minute read. That's all the grammar theory this course will ever make you do.",
+    chip:chip("read below","prog"),extra:`<div class="crash"><details><summary>The 5 facts (tap)</summary><ul>
+      <li><b>The verb comes last.</b> “I beer drink.” Everything before the verb is flexible.</li>
+      <li><b>Particles are the glue.</b> Tiny words after each noun mark its job: <span class="jp-ex">は</span> wa (topic), <span class="jp-ex">が</span> ga (subject), <span class="jp-ex">を</span> o (object), <span class="jp-ex">に</span> ni (to/at), <span class="jp-ex">で</span> de (by/at), and <span class="jp-ex">か</span> ka at the end turns anything into a question.</li>
+      <li><b>No plurals, no articles, no gender.</b> <span class="jp-ex">ビール</span> = beer, a beer, the beers.</li>
+      <li><b>です / 〜ます at the end = polite.</b> As a tourist this is the only politeness level you need. Ever.</li>
+      <li><b>Every syllable ends in a vowel or n.</b> That's why golf → <span class="jp-ex">ゴルフ</span> gorufu and beer → <span class="jp-ex">ビール</span> biiru.</li>
+    </ul></details></div>`},
+   {n:"1",t:"Katakana — 46 characters",d:"Drill in the Kana tab until 40+ are solid (green). Unlocks menus, pro shops, and half of every conversation scene.",
+    chip:kata>=40?chip("✓ "+kata+"/46","done"):kata>0?chip(kata+"/46 solid","prog"):chip("start here",""),go:"kana"},
+   {n:"2",t:"The 15 survival phrases",d:"Phrases tab: shadow each one 3 times out loud, then turn on Hide mode and produce all 15 from English.",
+    chip:chip("self-check",""),go:"phrase"},
+   {n:"3",t:"First conversations",d:"Talk tab: Konbini, then Restaurant. Replay each scene until you get every line right.",
+    chip:lv3done?chip("✓ perfect","done"):lv3tried?chip("in progress","prog"):chip("",""),go:"talk"},
+   {n:"4",t:"Hiragana — 46 characters",d:"Same drill, curvy set. After this you can read every reading shown under the conversations.",
+    chip:hira>=40?chip("✓ "+hira+"/46","done"):hira>0?chip(hira+"/46 solid","prog"):chip("",""),go:"kana"},
+   {n:"5",t:"Golf day",d:"Talk tab: Check-in, then Clubhouse. Perfect both and you can survive a full Japanese golf morning.",
+    chip:lv5done?chip("✓ perfect","done"):lv5tried?chip("in progress","prog"):chip("",""),go:"talk"},
+   {n:"6",t:"Numbers and money",d:"Counting, prices, yen amounts at speed. Next build — unlocked once levels 1-5 are moving.",lock:true},
+   {n:"7",t:"On-course talk",d:"Club names, scores, ナイスショット culture, wind and distance. Next build.",lock:true},
+   {n:"8",t:"Small talk deep dive",d:"Longer clubhouse conversations: handicap, home course, drinks after. Next build.",lock:true},
+   {n:"100",t:"Free conversation",d:"Unscripted roleplay with the mic — order anything, chat with anyone. The target.",lock:true}
+  ];
+  document.getElementById("path-list").innerHTML=rows.map(r=>`
+    <div class="level${r.lock?" locked":""}">
+      <span class="num">${r.n}</span>
+      <div class="body">
+        <div class="t">${r.t}</div>
+        <div class="d">${r.d}</div>
+        ${r.extra||""}
+        ${r.go&&!r.lock?`<button class="go" onclick="showTab('${r.go}')">Go →</button>`:""}
+      </div>
+      ${r.lock?chip("coming",""):r.chip}
+    </div>`).join("");
 }
 
 /* ---------------- conversation ---------------- */
@@ -368,20 +537,22 @@ function renderNpc(step){
   el.className="bubble npc";
   el.innerHTML=`<div class="who">Them</div>
     <div class="jp-line">${step.jp}</div>
-    <div class="romaji">${step.romaji}</div>
+    ${kbHtml(step.kana)}
     <div class="gloss hidden">${step.en}</div>
     <div class="tools">
       <button class="icon-btn" data-say>🔊 Replay</button>
+      <button class="icon-btn" data-slow>🐢 Slow</button>
       <button class="icon-btn" data-gloss>Show meaning</button>
     </div>`;
-  el.querySelector("[data-say]").onclick=()=>say(step.jp);
+  el.querySelector("[data-say]").onclick=()=>say(step.kana);
+  el.querySelector("[data-slow]").onclick=()=>say(step.kana,0.6);
   el.querySelector("[data-gloss]").onclick=e=>{
     el.querySelector(".gloss").classList.toggle("hidden");
     e.target.textContent=el.querySelector(".gloss").classList.contains("hidden")?"Show meaning":"Hide meaning";
   };
   document.getElementById("chat").appendChild(el);
   el.scrollIntoView({block:"nearest",behavior:"smooth"});
-  say(step.jp);
+  say(step.kana);
   curStep++;
   setTimeout(nextStep,600);
 }
@@ -398,8 +569,11 @@ function renderTurn(step){
     <div class="mic-out hidden" data-micout></div>
     <div class="answer hidden">
       <div class="jp-line" style="font-family:var(--jp);font-size:20px">${step.jp}</div>
-      <div class="romaji">${step.romaji}</div>
-      <div class="tools" style="margin-top:8px"><button class="icon-btn" data-say>🔊 Listen and repeat</button></div>
+      ${kbHtml(step.kana)}
+      <div class="tools" style="margin-top:8px">
+        <button class="icon-btn" data-say>🔊 Listen and repeat</button>
+        <button class="icon-btn" data-slow>🐢 Slow</button>
+      </div>
       <div class="btn-row">
         <button class="btn good" data-grade="1">Got it ○</button>
         <button class="btn bad" data-grade="0">Missed ✗</button>
@@ -407,9 +581,10 @@ function renderTurn(step){
     </div>`;
   const answer=el.querySelector(".answer");
   el.querySelector("[data-reveal]").onclick=e=>{
-    answer.classList.remove("hidden");e.target.disabled=true;e.target.style.opacity=.4;say(step.jp);
+    answer.classList.remove("hidden");e.target.disabled=true;e.target.style.opacity=.4;say(step.kana);
   };
-  el.querySelector("[data-say]").onclick=()=>say(step.jp,0.75);
+  el.querySelector("[data-say]").onclick=()=>say(step.kana,0.75);
+  el.querySelector("[data-slow]").onclick=()=>say(step.kana,0.55);
   if(SR){
     const micBtn=el.querySelector("[data-mic]"),out=el.querySelector("[data-micout]");
     micBtn.onclick=()=>{
@@ -441,11 +616,11 @@ function finishScene(){
   const missed=curResults.filter(r=>!r.ok);
   rec.innerHTML=`<div class="recap">
     <h3>Scene complete — ${ok}/${curResults.length} ${miss===0?"🎌 perfect":""}</h3>
-    ${missed.length?`<ul>${missed.map(r=>`<li class="miss">✗ “${r.step.intent}” → <span class="jp">${r.step.jp}</span> <span style="font-family:var(--mono);font-size:12px">${r.step.romaji}</span></li>`).join("")}</ul>
+    ${missed.length?`<ul>${missed.map(r=>`<li class="miss">✗ “${r.step.intent}” → <span class="jp">${r.step.jp}</span></li>`).join("")}</ul>
     <p style="font-size:13px;color:var(--ink-soft);margin-top:10px">Restart the scene to review the lines you missed.</p>`
     :`<p style="font-size:14px">All correct. On to the next scene.</p>`}
     <div class="btn-row">
-      <button class="btn ghost" onclick="startScene(cur||SCENES.find(s=>s.id==='${cur.id}'))">Retry scene</button>
+      <button class="btn ghost" onclick="startScene(SCENES.find(s=>s.id==='${cur.id}'))">Retry scene</button>
       <button class="btn primary" onclick="exitScene()">All scenes</button>
     </div></div>`;
   rec.scrollIntoView({block:"nearest",behavior:"smooth"});
@@ -493,7 +668,7 @@ function drillPick(){
   for(const item of pool){
     const st=kanaStats[item[0]]||{r:0,w:0};
     let w=1+st.w*3-Math.min(st.r,3);
-    if(st.r===0&&st.w===0)w=3;      // unseen first-ish
+    if(st.r===0&&st.w===0)w=3;
     for(let i=0;i<Math.max(1,w);i++)weighted.push(item);
   }
   let pick=weighted[Math.floor(Math.random()*weighted.length)];
@@ -552,7 +727,7 @@ function renderPhrases(){
         <div class="en">${p.en}</div>
       </div>
       <button class="play" aria-label="Play audio">🔊</button>`;
-    el.querySelector(".play").onclick=()=>say(p.jp);
+    el.querySelector(".play").onclick=()=>say(p.kana||p.jp);
     if(hiding){
       const txt=el.querySelector(".txt");
       txt.onclick=()=>el.classList.remove("hiding");
@@ -586,6 +761,7 @@ function exportProgress(){
 }
 
 /* ---------------- init ---------------- */
+renderPath();
 renderScenePicker();
 renderKanaChart();
 renderPhrases();
