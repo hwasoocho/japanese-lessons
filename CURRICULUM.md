@@ -3,11 +3,17 @@
 9 units. Each unit is 1-3 lessons. Total ~15 lessons to target level.
 Order is by "how soon you'll need it at Haneda/on the course", not by textbook logic.
 
-## Unit 0 — Sound system + Korean cheat codes (1 lesson)
+## Unit 0 — Sound system + kana + Korean cheat codes (3-4 lessons)
 
 The 5 sounds Koreans get wrong, long vowels, double consonants, pitch of politeness.
 The particle map (은/는→wa, 이/가→ga, 을/를→o...) and 20 instant cognates.
-After this: you can pronounce anything you learn later without a bad accent.
+**Kana track (Henry's call, 2026-07-04): learn hiragana + katakana properly.**
+Hangul glosses distort exactly the sounds that matter; kana is the real sound map
+(1 kana = 1 beat). Katakana is priority for the golf/tourist domain — most target
+vocab is katakana loanwords (ビール, カート, ロッカー, ナイスショット).
+Handwritten practice required — this is the one unit where pen beats voice.
+Kanji stays permanently out of scope.
+After this: you can pronounce and READ (kana-level) anything in later lessons.
 
 ## Unit 1 — Survival core (2 lessons)
 
