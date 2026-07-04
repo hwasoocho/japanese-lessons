@@ -195,7 +195,12 @@
     </section>
   </main>
 
-  <footer>발음: macOS 내장 일본어 음성 (설정에서 Kyoko 설치 시 최상). 진행 상황은 이 브라우저에 저장됩니다.</footer>
+  <footer>
+    발음: macOS 내장 일본어 음성 (설정에서 Kyoko 설치 시 최상). 진행 상황은 이 브라우저에 저장됩니다.
+    <div class="btn-row">
+      <button class="btn ghost" id="export-btn" onclick="exportProgress()">📋 진행 상황 내보내기 (레포에 붙여넣기)</button>
+    </div>
+  </footer>
 </div>
 
 <script>
@@ -532,6 +537,29 @@ function renderPhrases(){
     }
     list.appendChild(el);
   }
+}
+
+/* ---------------- export ---------------- */
+function exportProgress(){
+  const lines=["### 앱 진행 상황 export — "+new Date().toISOString().slice(0,10)];
+  const doneIds=Object.keys(sceneDone);
+  lines.push("","**장면:**");
+  if(doneIds.length===0)lines.push("- 완료한 장면 없음");
+  for(const id of doneIds){
+    const s=SCENES.find(x=>x.id===id),d=sceneDone[id];
+    if(s)lines.push(`- ${s.ko} (${s.jp}): ${d.ok}/${d.ok+d.miss}`);
+  }
+  const chars=Object.keys(kanaStats);
+  const weak=chars.filter(c=>kanaStats[c].w>kanaStats[c].r);
+  const strong=chars.filter(c=>kanaStats[c].r>=3&&kanaStats[c].r>kanaStats[c].w);
+  lines.push("","**가나 드릴:** "+(chars.length===0?"기록 없음":
+    `${chars.length}자 시도, 안정 ${strong.length}자${strong.length?` (${strong.join(" ")})`:""}, 약한 글자 ${weak.length}자${weak.length?` (${weak.join(" ")})`:""}`));
+  const text=lines.join("\n");
+  const btn=document.getElementById("export-btn");
+  const done=()=>{btn.textContent="✓ 복사됨 — PROGRESS.md에 붙여넣으세요";setTimeout(()=>{btn.textContent="📋 진행 상황 내보내기 (레포에 붙여넣기)"},3000)};
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(text).then(done).catch(()=>prompt("복사해서 PROGRESS.md에 붙여넣기:",text));
+  }else prompt("복사해서 PROGRESS.md에 붙여넣기:",text);
 }
 
 /* ---------------- init ---------------- */
