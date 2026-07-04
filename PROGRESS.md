@@ -50,6 +50,14 @@ Populated from scene misses and kana drill stats after each export.
 
 ## Session log
 
+- **2026-07-04 (session 1, continued):** Henry asked for longer conversations,
+  per-character readings, and a dead-simple 0→100 path. Shipped: Path tab
+  (levels 0-100, auto progress from kana stats + scene scores; levels 6-100 are
+  the build queue: numbers/money → on-course talk → small talk deep dive →
+  free mic conversation), kana+romaji breakdown under every conversation line
+  (tokenizer handles digraphs, sokuon, long vowels, particle は/へ), all 4
+  scenes lengthened to 11-15 turns, slow-audio (🐢) buttons.
+
 - **2026-07-04 (session 1):** Repo + curriculum created. Mid-session pivots:
   (a) drill rounds rejected → conversation-first; (b) hangul-only glosses
   rejected → kana track added to Unit 0; (c) terminal rejected → built
