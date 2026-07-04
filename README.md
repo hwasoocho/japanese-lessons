@@ -21,13 +21,16 @@ You already speak Korean, which is the single biggest cheat code for Japanese:
 
 So lessons skip grammar theory and go straight to: **pattern + swap words + drill out loud**.
 
+The full technique stack (Pimsleur-style production drills, phrase-level SRS, shadowing, scenario roleplay, frequency-first vocab — and why Duolingo's recognition loop is explicitly banned) is in `METHOD.md`. Every drill session follows the session shape defined there.
+
 ## How a session works
 
-1. Open the current lesson in `lessons/`
-2. Claude drills you: Korean/English prompt → you answer in Japanese (spoken aloud, typed in romaji or hangul-approximation)
-3. Mistakes get logged at the bottom of the lesson file
-4. `PROGRESS.md` updated after each session
-5. Next session starts with a 2-minute review of previous mistakes
+See `METHOD.md` for the full session shape. Short version:
+
+1. 2-min SRS review of the queue in `PROGRESS.md`
+2. New pattern + swap drill — Korean prompt → you produce Japanese out loud → then the answer. Never multiple choice.
+3. Shadowing lines, then a scenario roleplay (Claude plays clerk/caddie/staff in Japanese)
+4. Mistakes logged at the bottom of the lesson file, `PROGRESS.md` updated, commit
 
 ## Files
 
