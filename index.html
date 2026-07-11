@@ -273,6 +273,7 @@
       <div class="kana-controls">
         <button class="pill on" id="pill-kata" onclick="setKanaSet('kata')">Katakana (golf first)</button>
         <button class="pill" id="pill-hira" onclick="setKanaSet('hira')">Hiragana</button>
+        <button class="pill" id="pill-both" onclick="setKanaSet('both')">Both</button>
         <button class="pill" id="pill-drill" onclick="toggleDrill()">▶ Start drill</button>
         <button class="pill" id="pill-cards" onclick="toggleCards()">🃏 Flashcards</button>
       </div>
@@ -700,11 +701,12 @@ function finishScene(){
 
 /* ---------------- kana ---------------- */
 let kanaSet="kata";
-function kanaData(){return kanaSet==="kata"?KATA:HIRA}
+function kanaData(){return kanaSet==="kata"?KATA:kanaSet==="hira"?HIRA:KATA.concat(HIRA)}
 function setKanaSet(s){
   kanaSet=s;
   document.getElementById("pill-kata").classList.toggle("on",s==="kata");
   document.getElementById("pill-hira").classList.toggle("on",s==="hira");
+  document.getElementById("pill-both").classList.toggle("on",s==="both");
   renderKanaChart();
   if(carding){cardShuffle();cardNext();}
 }

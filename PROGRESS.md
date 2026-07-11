@@ -57,7 +57,9 @@ Populated from scene misses and kana drill stats after each export.
   highlighted, romaji hidden). Space / Enter / → / tap flips to romaji +
   dakuten derivation + word readings and glosses; press again for the next
   card. Deck is the whole set shuffled, recycles when exhausted. Mutually
-  exclusive with the drill; switching kana set reshuffles.
+  exclusive with the drill; switching kana set reshuffles. Added a **Both**
+  set pill (Katakana + Hiragana combined, 137 cards) — applies to the chart
+  and drill too.
 
 - **2026-07-11 (session 2, Unit 2 build):** Numbers and money lesson shipped:
   new Numbers tab (数) with the pattern explainer (10 base words, the five
