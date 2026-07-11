@@ -50,6 +50,15 @@ Populated from scene misses and kana drill stats after each export.
 
 ## Session log
 
+- **2026-07-11 (session 2, flashcards):** Henry flagged that the kana chart
+  invites romaji-peeking — he wants exposure without the answer visible.
+  Shipped a 🃏 Flashcards mode in the Kana tab: one character per card plus up
+  to 4 real words containing it (pulled from the set's example words, character
+  highlighted, romaji hidden). Space / Enter / → / tap flips to romaji +
+  dakuten derivation + word readings and glosses; press again for the next
+  card. Deck is the whole set shuffled, recycles when exhausted. Mutually
+  exclusive with the drill; switching kana set reshuffles.
+
 - **2026-07-11 (session 2, Unit 2 build):** Numbers and money lesson shipped:
   new Numbers tab (数) with the pattern explainer (10 base words, the five
   sound-shift blocks 300/600/800/3000/8000 framed as the dakuten pattern,

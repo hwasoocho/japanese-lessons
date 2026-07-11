@@ -149,6 +149,18 @@
   .drill-card .verdict .correct-r{font-family:var(--mono);font-weight:700}
   .drill-stats{font-size:13px;color:var(--ink-soft);margin-top:14px}
 
+  /* flashcards — same card shell as the drill, back side hidden until flip */
+  #card-el{cursor:pointer;-webkit-tap-highlight-color:transparent}
+  #card-el:not(.revealed) .cw-back{visibility:hidden}
+  #card-roma{font-family:var(--mono);font-size:22px;color:var(--pine-deep);font-weight:700;min-height:30px;margin-top:6px}
+  #card-dv{font-family:var(--jp);font-size:13px;color:var(--pine-deep);min-height:20px}
+  .card-words{margin:18px auto 0;display:flex;flex-direction:column;gap:10px;text-align:left;max-width:300px}
+  .card-word .jp{font-family:var(--jp);font-size:22px;line-height:1.4}
+  .card-word .jp b{color:var(--vermilion);font-weight:400}
+  .card-word .wr{font-family:var(--mono);font-size:12.5px;color:var(--ink-soft)}
+  .card-word .wg{font-size:12.5px;color:var(--ink-soft)}
+  .card-hint{margin-top:16px;font-size:12px;color:var(--ink-soft)}
+
   /* ---------- phrases ---------- */
   .phrase-list{display:flex;flex-direction:column;gap:10px}
   .phrase{background:var(--paper);border:1px solid var(--sage);border-radius:12px;padding:14px 16px;display:flex;gap:14px;align-items:center}
@@ -262,6 +274,7 @@
         <button class="pill on" id="pill-kata" onclick="setKanaSet('kata')">Katakana (golf first)</button>
         <button class="pill" id="pill-hira" onclick="setKanaSet('hira')">Hiragana</button>
         <button class="pill" id="pill-drill" onclick="toggleDrill()">▶ Start drill</button>
+        <button class="pill" id="pill-cards" onclick="toggleCards()">🃏 Flashcards</button>
       </div>
       <div id="kana-chart" class="kana-grid"></div>
       <div id="kana-drill" class="hidden">
@@ -274,6 +287,20 @@
             <button class="btn primary" id="drill-next-btn" onclick="drillCheck()">Check</button>
           </div>
           <div class="drill-stats" id="drill-stats"></div>
+        </div>
+      </div>
+      <div id="kana-cards" class="hidden">
+        <div class="drill-card" id="card-el" onclick="cardAdvance()">
+          <div class="big" id="card-kana"></div>
+          <div class="cw-back" id="card-roma"></div>
+          <div class="cw-back" id="card-dv"></div>
+          <div class="card-words" id="card-words"></div>
+          <div class="card-hint">Read the character and the words out loud, then tap or press space to flip. Space again for the next card.</div>
+          <div class="btn-row" style="justify-content:center">
+            <button class="btn ghost" onclick="event.stopPropagation();cardHear()">🔊 Hear it</button>
+            <button class="btn primary" id="card-btn" onclick="event.stopPropagation();cardAdvance()">Show romaji</button>
+          </div>
+          <div class="drill-stats" id="card-stats"></div>
         </div>
       </div>
     </section>
@@ -679,6 +706,7 @@ function setKanaSet(s){
   document.getElementById("pill-kata").classList.toggle("on",s==="kata");
   document.getElementById("pill-hira").classList.toggle("on",s==="hira");
   renderKanaChart();
+  if(carding){cardShuffle();cardNext();}
 }
 function statCls(ch){
   const st=kanaStats[ch];if(!st)return"";
@@ -711,6 +739,7 @@ function renderKanaChart(){
 }
 let drilling=false,drillCur=null,drillRight=0,drillTotal=0,answered=false;
 function toggleDrill(){
+  if(!drilling&&carding)toggleCards();
   drilling=!drilling;
   document.getElementById("pill-drill").classList.toggle("on",drilling);
   document.getElementById("pill-drill").textContent=drilling?"■ Stop drill":"▶ Start drill";
@@ -768,6 +797,76 @@ function drillCheck(){
 }
 document.getElementById("drill-input").addEventListener("keydown",e=>{
   if(e.key==="Enter")drillCheck();
+});
+
+/* ---------------- flashcards ----------------
+   One character per card, real words that contain it, romaji hidden until flip.
+   Space / tap = flip, space / tap again = next. Deck = the whole set, shuffled. */
+let carding=false,cardDeck=[],cardIdx=0,cardRevealed=false;
+function cardWordsFor(ch){
+  const own=kanaData().find(x=>x[0]===ch);
+  const words=own&&own[2]?[[own[2],own[3]]]:[];   // own example word first
+  for(const[c,,w,g]of kanaData()){
+    if(words.length>=4)break;
+    if(!c||c===ch||!w||!w.includes(ch))continue;
+    if(!words.some(x=>x[0]===w))words.push([w,g]);
+  }
+  return words;
+}
+function cardShuffle(){
+  cardDeck=kanaData().filter(x=>x[0]).map(x=>x[0]);
+  for(let i=cardDeck.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[cardDeck[i],cardDeck[j]]=[cardDeck[j],cardDeck[i]]}
+  cardIdx=0;
+}
+function toggleCards(){
+  if(!carding&&drilling)toggleDrill();
+  carding=!carding;
+  document.getElementById("pill-cards").classList.toggle("on",carding);
+  document.getElementById("pill-cards").textContent=carding?"■ Stop cards":"🃏 Flashcards";
+  document.getElementById("kana-chart").classList.toggle("hidden",carding);
+  document.getElementById("kana-cards").classList.toggle("hidden",!carding);
+  if(carding){cardShuffle();cardNext();}
+  else renderKanaChart();
+}
+function cardNext(){
+  if(cardIdx>=cardDeck.length)cardShuffle();
+  const ch=cardDeck[cardIdx];cardRevealed=false;
+  const item=kanaData().find(x=>x[0]===ch);
+  document.getElementById("card-kana").textContent=ch;
+  document.getElementById("card-roma").textContent=item[1];
+  const dv=derivation(ch);
+  document.getElementById("card-dv").textContent=dv?`${ch} = ${dv}`:"";
+  const words=cardWordsFor(ch);
+  document.getElementById("card-words").innerHTML=words.length
+    ?words.map(([w,g])=>`<div class="card-word">
+        <span class="jp">${[...w].map(c=>c===ch?`<b>${c}</b>`:c).join("")}</span>
+        <div><span class="cw-back wr">${wordRomaji(w)}</span><span class="cw-back wg"> — ${g}</span></div>
+      </div>`).join("")
+    :`<div class="card-word"><span class="cw-back wg">${item[3]||""}</span></div>`;
+  document.getElementById("card-el").classList.remove("revealed");
+  document.getElementById("card-btn").textContent="Show romaji";
+  document.getElementById("card-stats").textContent=`Card ${cardIdx+1} of ${cardDeck.length}`;
+  cardIdx++;
+}
+function cardAdvance(){
+  if(!cardRevealed){
+    cardRevealed=true;
+    document.getElementById("card-el").classList.add("revealed");
+    document.getElementById("card-btn").textContent="Next →";
+    cardHear();
+  }else cardNext();
+}
+function cardHear(){
+  const ch=document.getElementById("card-kana").textContent;
+  say(ch==="ん"||ch==="ン"?"んー":ch,0.8);
+}
+document.addEventListener("keydown",e=>{
+  if(!carding||document.getElementById("view-kana").classList.contains("hidden"))return;
+  if(e.key===" "||e.key==="Enter"||e.key==="ArrowRight"){
+    e.preventDefault();
+    if(document.activeElement&&document.activeElement.blur)document.activeElement.blur();
+    cardAdvance();
+  }
 });
 
 /* ---------------- numbers ---------------- */
