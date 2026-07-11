@@ -5,10 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>ゴルフ日本語 — kana wallpaper</title>
 <style>
-  /* Dark inversion of the app palette (index.html :root) so it sits quietly on a desktop */
+  /* Gruvbox dark: bg0 #282828, bg1 #3c3836, bg2 #504945, fg1 #ebdbb2, gray #928374,
+     green #b8bb26, yellow #fabd2f */
   :root{
-    --bg:#1B1E1A; --cell:#22261F; --line:#31362D;
-    --ink:#E9E7DD; --ink-soft:#8B9080; --accent:#8FB89A; --gold:#CDB98A;
+    --bg:#282828; --cell:#3c3836; --line:#504945;
+    --ink:#ebdbb2; --ink-soft:#928374; --accent:#b8bb26; --gold:#fabd2f;
     --jp:"Hiragino Mincho ProN","Yu Mincho","Noto Serif JP",serif;
     --ui:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Noto Sans JP",sans-serif;
     --mono:ui-monospace,"SF Mono",Menlo,monospace;
@@ -30,7 +31,8 @@
   body.nowords .cell .k{font-size:40px}
   body.nowords .cell .r{font-size:12px}
   body.nowords .set{width:1080px}
-  body.nowords #board{justify-content:space-evenly}
+  /* side padding sized to survive the 16:9 → 3:2 fill-crop on the MacBook display */
+  body.nowords #board{justify-content:space-evenly;padding:130px 280px 110px}
   /* phone: single set, big top spacer so the lock-screen clock has room */
   body.phone #board{padding:250px 18px 30px;gap:0}
   body.phone .set{width:100%}
