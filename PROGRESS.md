@@ -10,7 +10,7 @@ what to build next. Do not rely on Claude-side memory for lesson state.
 |------|----------|--------|
 | 0 — Sounds + kana + cheat codes | lesson-01, app 가나 tab | 🔄 in progress — kana drilling started, katakana first |
 | 1 — Survival core | app 표현 tab (15 phrases), scenes | 🔄 in progress via scenes |
-| 2 — Numbers, money, shopping | konbini scene (partial) | 🔜 needs number lessons + more scenes |
+| 2 — Numbers, money, shopping | Numbers tab (patterns + 2-way price drill), proshop scene | 🔄 built — needs Henry to drill + play the scene |
 | 3 — Restaurant and bar | restaurant scene (partial) | 🔜 needs izakaya/allergy/split scenes |
 | 4 — Getting around | — | not built |
 | 5 — Golf logistics | check-in scene (partial) | 🔜 needs caddie/cart/onsen/lunch scenes |
@@ -49,6 +49,18 @@ _(none yet — export after first app session)_
 Populated from scene misses and kana drill stats after each export.
 
 ## Session log
+
+- **2026-07-11 (session 2, Unit 2 build):** Numbers and money lesson shipped:
+  new Numbers tab (数) with the pattern explainer (10 base words, the five
+  sound-shift blocks 300/600/800/3000/8000 framed as the dakuten pattern,
+  まん 10,000-grouping, ひとつ/ふたつ ordering counters) + a two-direction
+  price drill (see ¥ → say it, self-grade; hear it → type digits, auto-check)
+  over 30 realistic golf/food prices; `yenKana()` generates readings
+  programmatically (verified against 15 ground-truth cases incl. まん compounds).
+  New Talk scene: プロショップ (15 turns — glove 3,800, cheaper 2,500, balls
+  ろっぴゃく each, total さんぜん ななひゃく, card payment). Path level 6
+  unlocked with chip (30 right + perfect proshop = done). Export now includes
+  numbers stats.
 
 - **2026-07-11 (session 2, continued):** Exposure tooling + chart polish:
   (a) wallpaper.html + generated wallpapers (muted gruvbox, characters-only

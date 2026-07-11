@@ -118,6 +118,11 @@
   .kana-explainer{background:var(--paper);border:1px solid var(--sage);border-radius:12px;padding:16px 18px;margin-bottom:18px;font-size:13.5px;max-width:62ch}
   .kana-explainer b{color:var(--pine-deep)}
   .kana-explainer .row{display:flex;gap:22px;align-items:flex-end;margin-top:12px;flex-wrap:wrap}
+  .num-tables{display:flex;gap:14px;flex-wrap:wrap;margin-top:10px}
+  .num-tables table{border-collapse:collapse;font-size:13px}
+  .num-tables td,.num-tables th{border:1px solid var(--sage);padding:4px 9px;text-align:center;white-space:nowrap}
+  .num-tables th{background:var(--washi)}
+  .num-tables .jp td{font-family:var(--jp);font-size:15px}
   .kana-explainer .glyph{font-family:var(--jp);font-size:30px;line-height:1.2;display:block}
   .kana-explainer .lbl{font-size:11.5px;color:var(--ink-soft)}
   .kana-controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:18px}
@@ -211,6 +216,7 @@
       <button id="tab-path" class="on" onclick="showTab('path')">Path<span class="jp-label">道</span></button>
       <button id="tab-talk" onclick="showTab('talk')">Talk<span class="jp-label">会話</span></button>
       <button id="tab-kana" onclick="showTab('kana')">Kana<span class="jp-label">かな</span></button>
+      <button id="tab-num" onclick="showTab('num')">Numbers<span class="jp-label">数</span></button>
       <button id="tab-phrase" onclick="showTab('phrase')">Phrases<span class="jp-label">表現</span></button>
     </nav>
   </header>
@@ -269,6 +275,51 @@
           </div>
           <div class="drill-stats" id="drill-stats"></div>
         </div>
+      </div>
+    </section>
+
+    <!-- Numbers -->
+    <section id="view-num" class="hidden">
+      <div class="kana-explainer">
+        <b>Ten words run the whole system.</b> Learn 1-10 and everything to 9,999 is pure composition:
+        11 = <span class="glyph" style="font-size:18px">じゅういち</span> (10+1), 24 = <span class="glyph" style="font-size:18px">にじゅうよん</span> (2×10+4).
+        Zero irregular words until 100.
+        <div class="num-tables">
+          <table>
+            <tr><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th><th>7</th><th>8</th><th>9</th><th>10</th></tr>
+            <tr class="jp"><td>いち</td><td>に</td><td>さん</td><td>よん</td><td>ご</td><td>ろく</td><td>なな</td><td>はち</td><td>きゅう</td><td>じゅう</td></tr>
+            <tr><td>ichi</td><td>ni</td><td>san</td><td>yon</td><td>go</td><td>roku</td><td>nana</td><td>hachi</td><td>kyuu</td><td>juu</td></tr>
+          </table>
+        </div>
+        <div style="margin-top:14px"><b>The sound shifts</b> — hundreds are <span class="glyph" style="font-size:18px">ひゃく</span> hyaku and thousands are <span class="glyph" style="font-size:18px">せん</span> sen, except these five (it's your dakuten pattern again — h→b, h→p):</div>
+        <div class="num-tables">
+          <table>
+            <tr><th>300</th><th>600</th><th>800</th><th>3000</th><th>8000</th></tr>
+            <tr class="jp"><td>さんびゃく</td><td>ろっぴゃく</td><td>はっぴゃく</td><td>さんぜん</td><td>はっせん</td></tr>
+            <tr><td>sanbyaku</td><td>roppyaku</td><td>happyaku</td><td>sanzen</td><td>hassen</td></tr>
+          </table>
+        </div>
+        <div style="margin-top:14px"><b>Japan counts in 10,000s.</b> The unit is <span class="glyph" style="font-size:18px">まん</span> man: 10,000 = いちまん (one man), 120,000 = じゅうにまん (twelve man). A ¥198,000 driver is じゅうきゅうまん はっせん えん — nineteen man, eight thousand. Prices end in <span class="glyph" style="font-size:18px">えん</span> en, and you ask with いくらですか。</div>
+        <div style="margin-top:14px"><b>Ordering things</b> uses its own 1-5: <span class="glyph" style="font-size:18px">ひとつ ふたつ みっつ よっつ いつつ</span> (hitotsu futatsu mittsu yottsu itsutsu) — ビール ふたつ ください. People: ひとり (1), ふたり (2), さんにん (3).</div>
+      </div>
+      <p class="section-note">The drill is production-first, both directions. <b>See ¥ → say it:</b> say the price out loud, reveal, self-grade. <b>Hear it → type ¥:</b> listen, type the digits. Real register speed is the goal.</p>
+      <div class="kana-controls">
+        <button class="pill on" id="pill-num-say" onclick="setNumMode('say')">See ¥ → say it</button>
+        <button class="pill" id="pill-num-hear" onclick="setNumMode('hear')">Hear it → type ¥</button>
+      </div>
+      <div class="drill-card">
+        <div class="big" id="num-big" style="font-size:64px"></div>
+        <div id="num-input-wrap" class="hidden"><input id="num-input" inputmode="numeric" autocomplete="off" placeholder="yen amount" aria-label="type the yen amount"></div>
+        <div class="verdict" id="num-verdict"></div>
+        <div class="btn-row" style="justify-content:center">
+          <button class="btn ghost" onclick="numHear()">🔊 Hear it</button>
+          <button class="btn primary" id="num-main-btn" onclick="numMain()">Reveal</button>
+        </div>
+        <div id="num-grade" class="btn-row hidden" style="justify-content:center">
+          <button class="btn good" onclick="numGrade(true)">○ Got it</button>
+          <button class="btn bad" onclick="numGrade(false)">✗ Missed</button>
+        </div>
+        <div class="drill-stats" id="num-stats"></div>
       </div>
     </section>
 
@@ -367,6 +418,24 @@ const SCENES=[
    {who:"you",intent:"Thank you",hint:"the long one",jp:"ありがとうございます。",kana:"ありがとうございます。"},
    {who:"npc",jp:"また後で！",kana:"また あとで！",en:"See you later!"},
    {who:"you",intent:"See you later! (just mirror him)",hint:"echoing the other person's phrase back is a completely natural move",jp:"また後で！",kana:"また あとで！"}
+  ]},
+ {id:"proshop",jp:"プロショップ",en:"Shopping at the pro shop",desc:"Asking prices, too expensive, buying two, paying by card",
+  steps:[
+   {who:"npc",jp:"いらっしゃいませ！",kana:"いらっしゃいませ！",en:"Welcome!"},
+   {who:"you",intent:"Excuse me, how much is this glove?",hint:"kono (this) + guroobu + wa + ikura desu ka",jp:"すみません、このグローブはいくらですか？",kana:"すみません、この グローブ は いくら ですか？"},
+   {who:"npc",jp:"3,800円です。",kana:"さんぜん はっぴゃく えん です。",en:"3,800 yen. (hear the shifts: sanZEN hapPYAKU)"},
+   {who:"you",intent:"Hmm, a little expensive...",hint:"chotto (a little) + takai (expensive) + desu ne",jp:"ちょっと高いですね。",kana:"ちょっと たかい ですね。"},
+   {who:"npc",jp:"こちらは2,500円です。",kana:"こちら は にせん ごひゃく えん です。",en:"This one is 2,500 yen."},
+   {who:"you",intent:"Then this one, please",hint:"ja (well then) + kore + kudasai",jp:"じゃ、これください。",kana:"じゃ、これ ください。"},
+   {who:"npc",jp:"ボールはいかがですか？",kana:"ボール は いかがですか？",en:"How about some balls? (ikaga = polite 'how about')"},
+   {who:"you",intent:"How much are the balls?",hint:"you know this pattern cold by now",jp:"ボールはいくらですか？",kana:"ボール は いくら ですか？"},
+   {who:"npc",jp:"1つ600円です。",kana:"ひとつ ろっぴゃく えん です。",en:"600 yen each. (ropPYAKU — shift again)"},
+   {who:"you",intent:"Two, please",hint:"futatsu (two things) + kudasai",jp:"ふたつください。",kana:"ふたつ ください。"},
+   {who:"npc",jp:"全部で3,700円です。",kana:"ぜんぶ で さんぜん ななひゃく えん です。",en:"3,700 yen all together. (zenbu de = in total)"},
+   {who:"you",intent:"Do you take cards?",hint:"kaado + wa + tsukaemasu ka (can I use?)",jp:"カードは使えますか？",kana:"カード は つかえますか？"},
+   {who:"npc",jp:"はい、大丈夫です。",kana:"はい、だいじょうぶです。",en:"Yes, no problem."},
+   {who:"you",intent:"By card then, please",hint:"the konbini classic",jp:"カードでお願いします。",kana:"カード で おねがいします。"},
+   {who:"npc",jp:"レシートです。ありがとうございました！",kana:"レシート です。ありがとうございました！",en:"Your receipt. Thank you!"}
   ]}
 ];
 
@@ -396,6 +465,7 @@ const store={
 };
 let kanaStats=store.get("kanaStats",{});
 let sceneDone=store.get("sceneDone",{});
+let numStats=store.get("numStats",{r:0,w:0});
 
 /* ---------------- speech ---------------- */
 let jpVoice=null;
@@ -415,11 +485,12 @@ const SR=window.SpeechRecognition||window.webkitSpeechRecognition||null;
 
 /* ---------------- tabs ---------------- */
 function showTab(t){
-  for(const id of["path","talk","kana","phrase"]){
+  for(const id of["path","talk","kana","num","phrase"]){
     document.getElementById("view-"+id).classList.toggle("hidden",id!==t);
     document.getElementById("tab-"+id).classList.toggle("on",id===t);
   }
   if(t==="path")renderPath();
+  if(t==="num"&&!numCur)numNext();
 }
 
 /* ---------------- path ---------------- */
@@ -451,7 +522,8 @@ function renderPath(){
     chip:hira>=40?chip("✓ "+hira+"/46","done"):hira>0?chip(hira+"/46 solid","prog"):chip("",""),go:"kana"},
    {n:"5",t:"Golf day",d:"Talk tab: Check-in, then Clubhouse. Perfect both and you can survive a full Japanese golf morning.",
     chip:lv5done?chip("✓ perfect","done"):lv5tried?chip("in progress","prog"):chip("",""),go:"talk"},
-   {n:"6",t:"Numbers and money",d:"Counting, prices, yen amounts at speed. Next build — unlocked once levels 1-5 are moving.",lock:true},
+   {n:"6",t:"Numbers and money",d:"Numbers tab: ten words + five sound shifts run every price in Japan. Drill both directions until ¥ amounts parse at register speed, then play the Pro shop scene.",
+    chip:numStats.r>=30&&scenePerfect("proshop")?chip("✓ "+numStats.r+" right","done"):(numStats.r>0||sceneTried("proshop"))?chip((numStats.r||0)+" right","prog"):chip("",""),go:"num"},
    {n:"7",t:"On-course talk",d:"Club names, scores, ナイスショット culture, wind and distance. Next build.",lock:true},
    {n:"8",t:"Small talk deep dive",d:"Longer clubhouse conversations: handicap, home course, drinks after. Next build.",lock:true},
    {n:"100",t:"Free conversation",d:"Unscripted roleplay with the mic — order anything, chat with anyone. The target.",lock:true}
@@ -698,6 +770,90 @@ document.getElementById("drill-input").addEventListener("keydown",e=>{
   if(e.key==="Enter")drillCheck();
 });
 
+/* ---------------- numbers ---------------- */
+const NUM_D=["","いち","に","さん","よん","ご","ろく","なな","はち","きゅう"];
+function numKana(n){ // 1-9999 → spaced kana blocks (spaces = tokenizer word gaps)
+  const p=[];
+  const s=Math.floor(n/1000),h=Math.floor(n/100)%10,j=Math.floor(n/10)%10,o=n%10;
+  if(s)p.push(s===1?"せん":s===3?"さんぜん":s===8?"はっせん":NUM_D[s]+"せん");
+  if(h)p.push(h===1?"ひゃく":h===3?"さんびゃく":h===6?"ろっぴゃく":h===8?"はっぴゃく":NUM_D[h]+"ひゃく");
+  if(j)p.push(j===1?"じゅう":NUM_D[j]+"じゅう");
+  if(o)p.push(NUM_D[o]);
+  return p.join(" ");
+}
+function yenKana(n){ // whole yen amounts, まん system above 10,000
+  const man=Math.floor(n/10000),rest=n%10000,p=[];
+  if(man)p.push(numKana(man).replace(/ /g,"")+"まん");
+  if(rest)p.push(numKana(rest));
+  return p.join(" ")+" えん";
+}
+/* realistic prices, biased toward the sound-shift blocks (300/600/800/3000/8000) */
+const PRICES=[120,180,300,450,600,800,980,1200,1500,1800,2500,3000,3300,3800,4600,5000,
+  6300,6800,8000,8800,9800,12000,15000,18000,24000,38000,60000,89000,128000,198000];
+let numMode="say",numCur=null,numRevealed=false,numRight=0,numTotal=0;
+function setNumMode(m){
+  numMode=m;
+  document.getElementById("pill-num-say").classList.toggle("on",m==="say");
+  document.getElementById("pill-num-hear").classList.toggle("on",m==="hear");
+  numNext();
+}
+function numNext(){
+  let pick=PRICES[Math.floor(Math.random()*PRICES.length)];
+  if(pick===numCur)pick=PRICES[Math.floor(Math.random()*PRICES.length)];
+  numCur=pick;numRevealed=false;
+  document.getElementById("num-verdict").innerHTML="";
+  document.getElementById("num-grade").classList.add("hidden");
+  document.getElementById("num-input-wrap").classList.toggle("hidden",numMode==="say");
+  document.getElementById("num-stats").textContent=numTotal?`This session ${numRight}/${numTotal}`:"";
+  const big=document.getElementById("num-big");
+  if(numMode==="say"){
+    big.textContent="¥"+numCur.toLocaleString("en-US");
+    document.getElementById("num-main-btn").textContent="Reveal";
+  }else{
+    big.textContent="🔊";
+    const inp=document.getElementById("num-input");
+    inp.value="";inp.className="";inp.focus();
+    document.getElementById("num-main-btn").textContent="Check";
+    say(yenKana(numCur),0.85);
+  }
+}
+function numReading(){
+  const k=yenKana(numCur);
+  return`<div style="margin-top:6px"><span style="font-family:var(--jp);font-size:19px">${k}</span><div style="font-family:var(--mono);font-size:13px;color:var(--ink-soft)">${wordRomaji(k)}</div></div>`;
+}
+function numMain(){
+  if(numRevealed){numNext();return}
+  if(numMode==="say"){
+    numRevealed=true;
+    document.getElementById("num-verdict").innerHTML=numReading();
+    document.getElementById("num-grade").classList.remove("hidden");
+    document.getElementById("num-main-btn").textContent="Next →";
+    say(yenKana(numCur),0.85);
+  }else{
+    const inp=document.getElementById("num-input");
+    const guess=parseInt(inp.value.replace(/[,¥\s]/g,""),10);
+    if(isNaN(guess)){inp.focus();return}
+    numRevealed=true;
+    const ok=guess===numCur;
+    numScore(ok);
+    inp.className=ok?"right":"wrong";
+    document.getElementById("num-verdict").innerHTML=(ok
+      ?`<span style="color:var(--pine-deep)">Correct ○ ¥${numCur.toLocaleString("en-US")}</span>`
+      :`<span style="color:var(--vermilion)">✗ It's ¥${numCur.toLocaleString("en-US")}</span>`)+numReading();
+    document.getElementById("num-main-btn").textContent="Next →";
+  }
+}
+function numGrade(ok){numScore(ok);numNext()}
+function numScore(ok){
+  if(ok){numStats.r++;numRight++}else numStats.w++;
+  numTotal++;store.set("numStats",numStats);
+  document.getElementById("num-stats").textContent=`This session ${numRight}/${numTotal}`;
+}
+function numHear(){if(numCur)say(yenKana(numCur),0.85)}
+document.getElementById("num-input").addEventListener("keydown",e=>{
+  if(e.key==="Enter")numMain();
+});
+
 /* ---------------- phrases ---------------- */
 let hiding=false;
 function toggleHide(){
@@ -741,6 +897,7 @@ function exportProgress(){
   const strong=chars.filter(c=>kanaStats[c].r>=3&&kanaStats[c].r>kanaStats[c].w);
   lines.push("","**Kana drill:** "+(chars.length===0?"no attempts yet":
     `${chars.length} chars attempted, solid ${strong.length}${strong.length?` (${strong.join(" ")})`:""}, weak ${weak.length}${weak.length?` (${weak.join(" ")})`:""}`));
+  lines.push("","**Numbers drill:** "+((numStats.r||numStats.w)?`${numStats.r} right, ${numStats.w} missed lifetime`:"no attempts yet"));
   const text=lines.join("\n");
   const btn=document.getElementById("export-btn");
   const done=()=>{btn.textContent="✓ Copied — paste into PROGRESS.md";setTimeout(()=>{btn.textContent="📋 Export progress (paste into PROGRESS.md)"},3000)};
