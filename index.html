@@ -12,6 +12,7 @@
     --jp:"Hiragino Mincho ProN","Yu Mincho","Noto Serif JP",serif;
     --ui:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Noto Sans JP",sans-serif;
     --mono:ui-monospace,"SF Mono",Menlo,monospace;
+    color-scheme:light dark;
   }
   *{box-sizing:border-box;margin:0;padding:0}
   html{-webkit-text-size-adjust:100%}
@@ -162,6 +163,21 @@
     .bubble .jp-line{font-size:18px}
     .drill-card .big{font-size:72px}
     .turn-card{width:auto}
+  }
+  /* Dark mode: muted gruvbox, same palette as wallpaper.html.
+     Kept last so its overrides beat the base component rules. */
+  @media (prefers-color-scheme:dark){
+    :root{
+      --washi:#282828; --paper:#32302f; --ink:#d5c4a1; --ink-soft:#928374;
+      --pine:#689d6a; --pine-deep:#8ec07c; --pine-tint:#313629;
+      --vermilion:#d16a5a; --vermilion-tint:#3a2c28; --sage:#443f39;
+    }
+    nav button:hover{background:rgba(142,192,124,.08)}
+    .icon-btn{background:rgba(142,192,124,.12)}
+    .icon-btn:hover{background:rgba(142,192,124,.2)}
+    .chip.done,.btn.good{border-color:#4a5a44}
+    .btn.bad{border-color:#5a4038}
+    .chip.prog{background:#3a3527;border-color:#565034;color:#c8b26a}
   }
 </style>
 </head>
