@@ -128,6 +128,7 @@
   .kana-cell:hover{border-color:var(--pine)}
   .kana-cell .k{font-family:var(--jp);font-size:26px;display:block;line-height:1.2}
   .kana-cell .r{font-family:var(--mono);font-size:11px;color:var(--ink-soft)}
+  .kana-cell .dv{font-family:var(--jp);font-size:11px;color:var(--pine-deep);display:block;line-height:1.3}
   .kana-cell .w{font-family:var(--jp);font-size:13px;display:block;margin-top:6px;line-height:1.3}
   .kana-cell .wg{font-size:10px;color:var(--ink-soft);display:block;line-height:1.3}
   .kana-cell.weak{border-color:var(--vermilion);background:var(--vermilion-tint)}
@@ -614,13 +615,22 @@ function statCls(ch){
   return"";
 }
 function wordRomaji(w){return tokenize(w).map(t=>t.gap?" ":t.r).join("")}
+/* voiced kana decompose to base + combining mark: だ → た+゛, ぱ → は+゜ */
+function derivation(ch){
+  const d=ch.normalize("NFD");
+  if(d.length<2)return"";
+  const mark=d[1]==="゙"?"゛":"゜";
+  return`${d[0]} ＋ ${mark}`;
+}
 function renderKanaChart(){
   const g=document.getElementById("kana-chart");g.innerHTML="";
   for(const[ch,ro,word,gloss]of kanaData()){
     if(!ch){const d=document.createElement("div");d.className="kana-cell blank";g.appendChild(d);continue}
     const b=document.createElement("button");
     b.className="kana-cell "+statCls(ch);
+    const dv=derivation(ch);
     b.innerHTML=`<span class="k">${ch}</span><span class="r">${ro}</span>`
+      +(dv?`<span class="dv">= ${dv}</span>`:"")
       +(word?`<span class="w">${word}</span><span class="wg">${wordRomaji(word)} — ${gloss}</span>`
              :`<span class="w">&nbsp;</span><span class="wg">${gloss}</span>`);
     b.onclick=()=>{say(ch==="ん"||ch==="ン"?"んー":ch,0.8);if(word)say(word,0.8)};
@@ -673,7 +683,9 @@ function drillCheck(){
   drillTotal++;store.set("kanaStats",kanaStats);
   inp.className=ok?"right":"wrong";
   const word=drillCur[2],gloss=drillCur[3];
-  const wordLine=word?`<div style="font-size:13px;color:var(--ink-soft);margin-top:6px"><span style="font-family:var(--jp)">${word}</span> ${wordRomaji(word)} — ${gloss}</div>`:"";
+  const dv=derivation(drillCur[0]);
+  const wordLine=(dv?`<div style="font-size:12px;color:var(--pine-deep);margin-top:6px"><span style="font-family:var(--jp)">${drillCur[0]} = ${dv}</span></div>`:"")
+    +(word?`<div style="font-size:13px;color:var(--ink-soft);margin-top:6px"><span style="font-family:var(--jp)">${word}</span> ${wordRomaji(word)} — ${gloss}</div>`:"");
   document.getElementById("drill-verdict").innerHTML=(ok
     ?`<span style="color:var(--pine-deep)">Correct ○</span>`
     :`<span style="color:var(--vermilion)">✗ It's <span class="correct-r">${target}</span></span>`)+wordLine;

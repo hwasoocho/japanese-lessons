@@ -77,7 +77,7 @@ const HIRA=[
  ["わ","wa","わたし","I"],[null,null],["を","wo",null,"object marker only"],[null,null],["ん","n","うん","yeah (casual)"],
  ["が","ga","がんばって","good luck!"],["ぎ","gi","みぎ","right (side)"],["ぐ","gu","すぐ","right away"],["げ","ge","げんき","lively, well"],["ご","go","ごはん","rice, meal"],
  ["ざ","za","ざんねん","too bad!"],["じ","ji","じかん","time"],["ず","zu","ちず","map"],["ぜ","ze","ぜんぶ","everything"],["ぞ","zo","どうぞ","here you go"],
- ["だ","da","だめ","no good"],["ぢ","ji","はなぢ","nosebleed (rare)"],["づ","zu","つづく","to continue (rare)"],["で","de","でんしゃ","train"],["ど","do","どこ","where?"],
+ ["だ","da","だめ","no good"],[null,null],[null,null],["で","de","でんしゃ","train"],["ど","do","どこ","where?"],
  ["ば","ba","かばん","bag"],["び","bi","えび","shrimp"],["ぶ","bu","ぶた","pork"],["べ","be","べんり","convenient"],["ぼ","bo","ぼく","I (casual)"],
  ["ぱ","pa","いっぱい","a lot, full"],["ぴ","pi","ぴったり","perfect fit"],["ぷ","pu","てんぷら","tempura"],["ぺ","pe","ぺこぺこ","starving"],["ぽ","po","さんぽ","a walk"]];
 const KATA=[
@@ -90,9 +90,9 @@ const KATA=[
  ["マ","ma","マナー","etiquette"],["ミ","mi","ミルク","milk"],["ム","mu","チーム","team"],["メ","me","メニュー","menu"],["モ","mo","モーニング","breakfast set"],
  ["ヤ","ya","ヤバイ","crazy! (slang)"],[null,null],["ユ","yu","ユニクロ","Uniqlo"],[null,null],["ヨ","yo","ヨガ","yoga"],
  ["ラ","ra","ラーメン","ramen"],["リ","ri","リモコン","remote"],["ル","ru","ルール","rules"],["レ","re","レシート","receipt"],["ロ","ro","ロッカー","locker"],
- ["ワ","wa","ワイン","wine"],[null,null],["ヲ","wo",null,"almost never used"],[null,null],["ン","n","パン","bread"],
+ ["ワ","wa","ワイン","wine"],[null,null],[null,null],[null,null],["ン","n","パン","bread"],
  ["ガ","ga","ガイド","guide"],["ギ","gi","ギター","guitar"],["グ","gu","グリーン","the green"],["ゲ","ge","ゲーム","game"],["ゴ","go","ゴルフ","golf"],
  ["ザ","za","ピザ","pizza"],["ジ","ji","ジュース","juice"],["ズ","zu","サイズ","size"],["ゼ","ze","ゼロ","zero"],["ゾ","zo","ゾーン","zone"],
- ["ダ","da","ダブル","double (eagle!)"],["ヂ","ji",null,"almost never used"],["ヅ","zu",null,"almost never used"],["デ","de","デザート","dessert"],["ド","do","ドライバー","driver (club)"],
+ ["ダ","da","ダブル","double (eagle!)"],[null,null],[null,null],["デ","de","デザート","dessert"],["ド","do","ドライバー","driver (club)"],
  ["バ","ba","バーディー","birdie"],["ビ","bi","ビール","beer"],["ブ","bu","ブランド","brand"],["ベ","be","ベッド","bed"],["ボ","bo","ボギー","bogey"],
  ["パ","pa","パー","par"],["ピ","pi","ピン","pin"],["プ","pu","プレー","a round, play"],["ペ","pe","ペン","pen"],["ポ","po","ポイント","points"]];
