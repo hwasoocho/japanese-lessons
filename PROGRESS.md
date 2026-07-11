@@ -50,6 +50,14 @@ Populated from scene misses and kana drill stats after each export.
 
 ## Session log
 
+- **2026-07-11 (session 2, continued):** Exposure tooling + chart polish:
+  (a) wallpaper.html + generated wallpapers (muted gruvbox, characters-only
+  desktop set on Henry's Mac, phone PNGs in wallpapers/ to save from Safari);
+  (b) dark mode on the trainer (muted gruvbox, 🌙/☀️ header toggle, saved
+  choice wins over OS); (c) voiced cells show their derivation (だ = た ＋ ゛,
+  computed via NFD decomposition) in chart and drill; (d) dropped unused kana
+  ヲ ヂ ヅ ぢ づ from data (chart, drill, wallpapers) — を kept (particle).
+
 - **2026-07-11 (session 2):** Kana chart upgraded for word-anchored learning:
   every cell now shows a high-frequency example word (kana + romaji + meaning
   — menus, stations, golf: すし, ごはん, ゴルフ, バーディー…), tap plays the
