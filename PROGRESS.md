@@ -50,6 +50,14 @@ Populated from scene misses and kana drill stats after each export.
 
 ## Session log
 
+- **2026-07-11 (session 2):** Kana chart upgraded for word-anchored learning:
+  every cell now shows a high-frequency example word (kana + romaji + meaning
+  — menus, stations, golf: すし, ごはん, ゴルフ, バーディー…), tap plays the
+  character then the word. Added the voiced dakuten/handakuten rows (が ざ だ
+  ば ぱ + katakana equivalents, +25 per script) to the chart AND the drill —
+  prompted by Henry asking where ご of ごはん was. Drill now shows the example
+  word after each answer and accepts di/du/zi typings.
+
 - **2026-07-04 (session 1, continued):** Henry asked for longer conversations,
   per-character readings, and a dead-simple 0→100 path. Shipped: Path tab
   (levels 0-100, auto progress from kana stats + scene scores; levels 6-100 are
