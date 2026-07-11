@@ -12,7 +12,7 @@
     --jp:"Hiragino Mincho ProN","Yu Mincho","Noto Serif JP",serif;
     --ui:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Noto Sans JP",sans-serif;
     --mono:ui-monospace,"SF Mono",Menlo,monospace;
-    color-scheme:light dark;
+    color-scheme:light;
   }
   *{box-sizing:border-box;margin:0;padding:0}
   html{-webkit-text-size-adjust:100%}
@@ -165,21 +165,35 @@
     .turn-card{width:auto}
   }
   /* Dark mode: muted gruvbox, same palette as wallpaper.html.
+     Driven by html[data-theme] (set from the 🌙 toggle or the OS setting).
      Kept last so its overrides beat the base component rules. */
-  @media (prefers-color-scheme:dark){
-    :root{
-      --washi:#282828; --paper:#32302f; --ink:#d5c4a1; --ink-soft:#928374;
-      --pine:#689d6a; --pine-deep:#8ec07c; --pine-tint:#313629;
-      --vermilion:#d16a5a; --vermilion-tint:#3a2c28; --sage:#443f39;
-    }
-    nav button:hover{background:rgba(142,192,124,.08)}
-    .icon-btn{background:rgba(142,192,124,.12)}
-    .icon-btn:hover{background:rgba(142,192,124,.2)}
-    .chip.done,.btn.good{border-color:#4a5a44}
-    .btn.bad{border-color:#5a4038}
-    .chip.prog{background:#3a3527;border-color:#565034;color:#c8b26a}
+  html[data-theme="dark"]{
+    --washi:#282828; --paper:#32302f; --ink:#d5c4a1; --ink-soft:#928374;
+    --pine:#689d6a; --pine-deep:#8ec07c; --pine-tint:#313629;
+    --vermilion:#d16a5a; --vermilion-tint:#3a2c28; --sage:#443f39;
+    color-scheme:dark;
   }
+  html[data-theme="dark"] nav button:hover{background:rgba(142,192,124,.08)}
+  html[data-theme="dark"] .icon-btn{background:rgba(142,192,124,.12)}
+  html[data-theme="dark"] .icon-btn:hover{background:rgba(142,192,124,.2)}
+  html[data-theme="dark"] .chip.done,html[data-theme="dark"] .btn.good{border-color:#4a5a44}
+  html[data-theme="dark"] .btn.bad{border-color:#5a4038}
+  html[data-theme="dark"] .chip.prog{background:#3a3527;border-color:#565034;color:#c8b26a}
+  .theme-btn{margin-left:auto;font-size:19px;padding:6px 9px;border-radius:9px;border:1px solid var(--sage);background:var(--paper)}
+  .theme-btn:hover{border-color:var(--ink-soft)}
 </style>
+<script>
+/* Resolve theme before first paint: saved choice wins, else follow the OS. */
+(function(){
+  let saved=null;try{saved=JSON.parse(localStorage.getItem("gj_theme"))}catch(e){}
+  const mq=matchMedia("(prefers-color-scheme:dark)");
+  document.documentElement.dataset.theme=saved||(mq.matches?"dark":"light");
+  mq.addEventListener("change",e=>{
+    let s=null;try{s=JSON.parse(localStorage.getItem("gj_theme"))}catch(_){}
+    if(!s)document.documentElement.dataset.theme=e.matches?"dark":"light";
+  });
+})();
+</script>
 </head>
 <body>
 <div class="wrap">
@@ -190,6 +204,7 @@
         <h1>ゴルフ日本語 — Golf Japanese</h1>
         <div class="sub">Conversation-first trainer. Say it out loud, then check.</div>
       </div>
+      <button class="theme-btn" id="theme-btn" onclick="toggleTheme()" aria-label="Toggle dark mode">🌙</button>
     </div>
     <nav>
       <button id="tab-path" class="on" onclick="showTab('path')">Path<span class="jp-label">道</span></button>
@@ -722,11 +737,24 @@ function exportProgress(){
   }else prompt("Copy this into PROGRESS.md:",text);
 }
 
+/* ---------------- theme ---------------- */
+function toggleTheme(){
+  const next=document.documentElement.dataset.theme==="dark"?"light":"dark";
+  document.documentElement.dataset.theme=next;
+  store.set("theme",next);
+  updateThemeBtn();
+}
+function updateThemeBtn(){
+  document.getElementById("theme-btn").textContent=
+    document.documentElement.dataset.theme==="dark"?"☀️":"🌙";
+}
+
 /* ---------------- init ---------------- */
 renderPath();
 renderScenePicker();
 renderKanaChart();
 renderPhrases();
+updateThemeBtn();
 </script>
 </body>
 </html>
