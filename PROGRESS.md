@@ -50,6 +50,17 @@ Populated from scene misses and kana drill stats after each export.
 
 ## Session log
 
+- **2026-07-12 (session 3, stale-PWA fix):** Henry's installed app wasn't
+  picking up deploys even after relaunch. Root causes: (1) GitHub Pages serves
+  Cache-Control max-age=600 and the sw's plain fetch() honored the HTTP cache —
+  "network-first" was returning 10-min-stale files; now fetch(…, cache:
+  "no-cache") forces ETag revalidation. (2) The page renders before a new sw
+  takes over, so an update needed TWO relaunches; now the page reloads itself
+  once on controllerchange (guarded for first install), and reg.update() runs
+  on every return to foreground, not just launch. Verified end-to-end on a /tmp
+  copy: mutate files → dispatch visibilitychange → page auto-reloads with new
+  content. sw VERSION now gj-v3.
+
 - **2026-07-12 (session 3, PWA polish):** (a) Pull-to-refresh built for the
   installed app — iOS standalone PWAs have NO native reload gesture (no browser
   chrome), so #ptr + touch handlers reload past a 60px pull; only activates in

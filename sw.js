@@ -1,6 +1,6 @@
 /* Network-first service worker: a push to main still shows up on next load,
    the cache only kicks in when offline. Bump VERSION when cached files change. */
-const VERSION = "gj-v2";
+const VERSION = "gj-v3";
 const CORE = [
   "./",
   "index.html",
@@ -25,7 +25,9 @@ self.addEventListener("activate", e => {
 self.addEventListener("fetch", e => {
   if (e.request.method !== "GET") return;
   e.respondWith(
-    fetch(e.request)
+    /* no-cache forces revalidation — GitHub Pages serves max-age=600, so a
+       plain fetch() would return the HTTP-cached copy for up to 10 minutes */
+    fetch(e.request, { cache: "no-cache" })
       .then(res => {
         const copy = res.clone();
         caches.open(VERSION).then(c => c.put(e.request, copy));
