@@ -36,8 +36,11 @@
     box-shadow:0 1px 0 rgba(34,39,31,.15);flex:none}
   .brand h1{font-size:20px;font-weight:700;letter-spacing:-.01em}
   .brand .sub{font-size:13px;color:var(--ink-soft)}
-  nav{display:flex;gap:4px;margin-top:22px;border-bottom:1px solid var(--sage)}
-  nav button{padding:10px 14px 12px;font-size:15px;font-weight:600;color:var(--ink-soft);
+  /* nav scrolls within itself on narrow screens instead of widening the page */
+  nav{display:flex;gap:4px;margin-top:22px;border-bottom:1px solid var(--sage);
+    overflow-x:auto;scrollbar-width:none}
+  nav::-webkit-scrollbar{display:none}
+  nav button{padding:10px 14px 12px;font-size:15px;font-weight:600;color:var(--ink-soft);flex:none;white-space:nowrap;
     border-bottom:2px solid transparent;margin-bottom:-1px;border-radius:6px 6px 0 0}
   nav button:hover{color:var(--ink);background:rgba(47,93,58,.05)}
   nav button.on{color:var(--pine-deep);border-bottom-color:var(--pine)}
@@ -126,7 +129,7 @@
   .kana-explainer{background:var(--paper);border:1px solid var(--sage);border-radius:12px;padding:16px 18px;margin-bottom:18px;font-size:13.5px;max-width:62ch}
   .kana-explainer b{color:var(--pine-deep)}
   .kana-explainer .row{display:flex;gap:22px;align-items:flex-end;margin-top:12px;flex-wrap:wrap}
-  .num-tables{display:flex;gap:14px;flex-wrap:wrap;margin-top:10px}
+  .num-tables{display:flex;gap:14px;flex-wrap:wrap;margin-top:10px;overflow-x:auto}
   .num-tables table{border-collapse:collapse;font-size:13px}
   .num-tables td,.num-tables th{border:1px solid var(--sage);padding:4px 9px;text-align:center;white-space:nowrap}
   .num-tables th{background:var(--washi)}
@@ -205,8 +208,13 @@
   html[data-theme="dark"] .chip.done,html[data-theme="dark"] .btn.good{border-color:#4a5a44}
   html[data-theme="dark"] .btn.bad{border-color:#5a4038}
   html[data-theme="dark"] .chip.prog{background:#3a3527;border-color:#565034;color:#c8b26a}
-  .theme-btn{margin-left:auto;font-size:19px;padding:6px 9px;border-radius:9px;border:1px solid var(--sage);background:var(--paper)}
-  .theme-btn:hover{border-color:var(--ink-soft)}
+  .theme-switch{margin-left:auto;flex:none;width:52px;height:28px;border-radius:999px;
+    border:1px solid var(--sage);background:var(--washi);position:relative;transition:background .2s,border-color .2s}
+  .theme-switch:hover{border-color:var(--ink-soft)}
+  .theme-switch .knob{position:absolute;top:2px;left:2px;width:22px;height:22px;border-radius:50%;
+    background:var(--paper);border:1px solid var(--sage);transition:left .2s}
+  html[data-theme="dark"] .theme-switch{background:var(--pine);border-color:var(--pine)}
+  html[data-theme="dark"] .theme-switch .knob{left:26px;border-color:var(--pine-deep)}
 </style>
 <script>
 /* Resolve theme before first paint: saved choice wins, else follow the OS. */
@@ -230,7 +238,7 @@
         <h1>ゴルフ日本語 — Golf Japanese</h1>
         <div class="sub">Conversation-first trainer. Say it out loud, then check.</div>
       </div>
-      <button class="theme-btn" id="theme-btn" onclick="toggleTheme()" aria-label="Toggle dark mode">🌙</button>
+      <button class="theme-switch" id="theme-btn" role="switch" aria-checked="false" onclick="toggleTheme()" aria-label="Dark mode"><span class="knob"></span></button>
     </div>
     <nav>
       <button id="tab-path" class="on" onclick="showTab('path')">Path<span class="jp-label">道</span></button>
@@ -1029,8 +1037,8 @@ function toggleTheme(){
   updateThemeBtn();
 }
 function updateThemeBtn(){
-  document.getElementById("theme-btn").textContent=
-    document.documentElement.dataset.theme==="dark"?"☀️":"🌙";
+  document.getElementById("theme-btn").setAttribute("aria-checked",
+    document.documentElement.dataset.theme==="dark"?"true":"false");
 }
 
 /* ---------------- init ---------------- */

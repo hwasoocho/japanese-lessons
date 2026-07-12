@@ -50,6 +50,13 @@ Populated from scene misses and kana drill stats after each export.
 
 ## Session log
 
+- **2026-07-12 (session 3, mobile fixes):** Henry flagged horizontal scroll on
+  mobile — the 6-tab nav (471px) and the Numbers 1-10 table (494px) were wider
+  than the 390px viewport and stretched the page. Both now scroll within
+  themselves (nav scrollbar hidden); page scrollWidth verified == viewport on
+  every tab at 390px and 375px. Also replaced the 🌙 emoji theme button with a
+  proper toggle switch (pine track + sliding knob, role="switch").
+
 - **2026-07-12 (session 3):** PWA + flashcards promoted. (a) The trainer is
   now installable on iPhone: manifest.webmanifest, app icons (the vermilion 語
   seal, icons/), apple-touch meta tags, safe-area padding, and a network-first
