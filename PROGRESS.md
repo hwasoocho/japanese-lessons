@@ -50,6 +50,15 @@ Populated from scene misses and kana drill stats after each export.
 
 ## Session log
 
+- **2026-07-12 (session 3, richer flashcards):** Henry asked for 3-5 words per
+  character on the cards (was often 1). Added a shared WORDS pool to
+  kana-data.js (~140 words, same golf/food/travel themes; を gets particle
+  phrases like これをください since it never appears inside words) and
+  cardWordsFor now falls through to it after the set's example words, cap
+  raised 4 → 5. Verified in-browser: every character in all three sets shows
+  3-5 words, flip still hides romaji, no page overflow at 390px. Wallpapers
+  untouched (they only read HIRA/KATA). sw VERSION → gj-v4.
+
 - **2026-07-12 (session 3, stale-PWA fix):** Henry's installed app wasn't
   picking up deploys even after relaunch. Root causes: (1) GitHub Pages serves
   Cache-Control max-age=600 and the sw's plain fetch() honored the HTTP cache —

@@ -855,8 +855,13 @@ function cardWordsFor(ch){
   const own=cardsData().find(x=>x[0]===ch);
   const words=own&&own[2]?[[own[2],own[3]]]:[];   // own example word first
   for(const[c,,w,g]of cardsData()){
-    if(words.length>=4)break;
+    if(words.length>=5)break;
     if(!c||c===ch||!w||!w.includes(ch))continue;
+    if(!words.some(x=>x[0]===w))words.push([w,g]);
+  }
+  for(const[w,g]of WORDS){                        // then the shared pool
+    if(words.length>=5)break;
+    if(!w.includes(ch))continue;
     if(!words.some(x=>x[0]===w))words.push([w,g]);
   }
   return words;
