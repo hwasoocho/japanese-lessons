@@ -50,6 +50,16 @@ Populated from scene misses and kana drill stats after each export.
 
 ## Session log
 
+- **2026-07-12 (session 3):** PWA + flashcards promoted. (a) The trainer is
+  now installable on iPhone: manifest.webmanifest, app icons (the vermilion 語
+  seal, icons/), apple-touch meta tags, safe-area padding, and a network-first
+  service worker (sw.js — pushes still show up on next load, cache only used
+  offline; bump VERSION in sw.js when cached files change). Henry installs via
+  Safari → Share → Add to Home Screen. (b) Flashcards are now a first-class
+  Cards tab (カード) with its own Katakana/Hiragana/Both pills and independent
+  set state, instead of a sub-mode buried in the Kana tab; deck starts
+  automatically on first open. Kana tab keeps chart + drill.
+
 - **2026-07-11 (session 2, flashcards):** Henry flagged that the kana chart
   invites romaji-peeking — he wants exposure without the answer visible.
   Shipped a 🃏 Flashcards mode in the Kana tab: one character per card plus up
