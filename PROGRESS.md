@@ -50,6 +50,15 @@ Populated from scene misses and kana drill stats after each export.
 
 ## Session log
 
+- **2026-07-12 (session 3, PWA polish):** (a) Pull-to-refresh built for the
+  installed app — iOS standalone PWAs have NO native reload gesture (no browser
+  chrome), so #ptr + touch handlers reload past a 60px pull; only activates in
+  display-mode standalone (Safari keeps its native one), native rubber band
+  disabled via overscroll-behavior in a standalone media query. (b) Henry
+  flagged the tab menu still extends horizontally — swipe-scroll nav replaced
+  with flex-wrap at ≤560px (two rows, smaller padding). Verified: no page
+  overflow at 390/375px, pull simulation reloads, small pull springs back.
+
 - **2026-07-12 (session 3, mobile fixes):** Henry flagged horizontal scroll on
   mobile — the 6-tab nav (471px) and the Numbers 1-10 table (494px) were wider
   than the 390px viewport and stretched the page. Both now scroll within

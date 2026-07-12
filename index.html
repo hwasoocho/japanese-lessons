@@ -188,6 +188,10 @@
     .bubble,.turn-card{animation:rise .25s ease both}
     @keyframes rise{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
   }
+  @media (max-width:560px){
+    nav{flex-wrap:wrap}
+    nav button{padding:8px 10px 10px;font-size:14px}
+  }
   @media (max-width:520px){
     .bubble .jp-line{font-size:18px}
     .drill-card .big{font-size:72px}
@@ -215,6 +219,16 @@
     background:var(--paper);border:1px solid var(--sage);transition:left .2s}
   html[data-theme="dark"] .theme-switch{background:var(--pine);border-color:var(--pine)}
   html[data-theme="dark"] .theme-switch .knob{left:26px;border-color:var(--pine-deep)}
+
+  /* pull-to-refresh — the installed app has no browser chrome, so no native
+     reload gesture. The JS (bottom of the page) only activates in standalone. */
+  @media (display-mode: standalone){html,body{overscroll-behavior-y:none}}
+  #ptr{position:fixed;top:env(safe-area-inset-top,0px);left:0;right:0;height:0;overflow:hidden;z-index:99;pointer-events:none;
+    display:flex;align-items:flex-end;justify-content:center}
+  #ptr span{display:block;font-size:20px;color:var(--ink-soft);padding-bottom:9px;transition:transform .2s}
+  #ptr.ready span{transform:rotate(180deg);color:var(--pine)}
+  #ptr.loading span{animation:ptr-spin .7s linear infinite}
+  @keyframes ptr-spin{to{transform:rotate(360deg)}}
 </style>
 <script>
 /* Resolve theme before first paint: saved choice wins, else follow the OS. */
@@ -1040,6 +1054,43 @@ function updateThemeBtn(){
   document.getElementById("theme-btn").setAttribute("aria-checked",
     document.documentElement.dataset.theme==="dark"?"true":"false");
 }
+
+/* ---------------- pull-to-refresh (installed PWA only) ----------------
+   Standalone mode has no browser chrome, hence no native reload gesture.
+   The CSS overscroll-behavior rule above disables the native rubber band in
+   standalone; this pulls the page down manually and reloads past the threshold. */
+(function(){
+  if(!(matchMedia("(display-mode: standalone)").matches||navigator.standalone))return;
+  const bar=document.createElement("div");
+  bar.id="ptr";bar.innerHTML="<span>↓</span>";
+  document.body.prepend(bar);
+  const wrap=document.querySelector(".wrap"),arrow=bar.firstChild;
+  const THRESHOLD=60;              // pull distance (after 0.45 resistance) that triggers reload
+  let startY=null,d=0,loading=false;
+  window.addEventListener("touchstart",e=>{
+    startY=(!loading&&scrollY<=0)?e.touches[0].clientY:null;d=0;
+  },{passive:true});
+  window.addEventListener("touchmove",e=>{
+    if(startY===null)return;
+    d=Math.max(0,Math.min((e.touches[0].clientY-startY)*0.45,90));
+    wrap.style.transition="none";bar.style.transition="none";
+    wrap.style.transform=d?`translateY(${d}px)`:"";bar.style.height=d+"px";
+    bar.classList.toggle("ready",d>=THRESHOLD);
+  },{passive:true});
+  window.addEventListener("touchend",()=>{
+    if(startY===null)return;
+    startY=null;
+    wrap.style.transition="transform .2s";bar.style.transition="height .2s";
+    if(d>=THRESHOLD){
+      loading=true;
+      arrow.textContent="↻";bar.classList.remove("ready");bar.classList.add("loading");
+      wrap.style.transform=`translateY(${THRESHOLD}px)`;bar.style.height=THRESHOLD+"px";
+      setTimeout(()=>location.reload(),150);
+    }else{
+      wrap.style.transform="";bar.style.height="0px";bar.classList.remove("ready");
+    }
+  });
+})();
 
 /* ---------------- init ---------------- */
 if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js");
