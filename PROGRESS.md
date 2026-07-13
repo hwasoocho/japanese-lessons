@@ -50,6 +50,16 @@ Populated from scene misses and kana drill stats after each export.
 
 ## Session log
 
+- **2026-07-13 (session 4, reverse cards + word audio):** Henry asked for (a) a
+  reverse flashcard direction — see the romaji, picture the character in his
+  head, flip to see it — and (b) tap-to-hear pronunciation on every word on a
+  card. Added a Kana → romaji / Romaji → kana pill row to the Cards tab; in
+  reverse mode the big slot shows romaji (mono, 48px) and the words are hidden
+  until flip (they contain the answer character), flip swaps in the character.
+  Every card word is now tappable → say(word) via the existing TTS, without
+  advancing the card. Verified in-browser both directions, word tap, mode
+  switching, no overflow at 390px. sw VERSION → gj-v5.
+
 - **2026-07-12 (session 3, richer flashcards):** Henry asked for 3-5 words per
   character on the cards (was often 1). Added a shared WORDS pool to
   kana-data.js (~140 words, same golf/food/travel themes; を gets particle
