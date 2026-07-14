@@ -50,6 +50,21 @@ Populated from scene misses and kana drill stats after each export.
 
 ## Session log
 
+- **2026-07-14 (session 5, legible font):** Henry flagged the Japanese font was
+  muddying strokes for him — it was `--jp: Hiragino Mincho ProN` (a Mincho
+  *serif* with thick/thin strokes + うろこ flicks). Swapped `--jp` app-wide to
+  `"Noto Sans JP","Hiragino Kaku Gothic ProN","Hiragino Sans",-apple-system` —
+  a clean modern gothic (the "Pretendard of Japanese"), loaded via Google Fonts
+  `<link>` with a system-gothic fallback so the offline PWA still renders gothic
+  (never reverts to Mincho). Verified in light + dark, kana chart + scenes.
+  sw VERSION → gj-v6. **Open:** Henry also said "romaji → hiragana as well" and
+  picked "Cards reverse is broken for hiragana," but I reproduced the Cards
+  Romaji → kana mode on the hiragana set and it works correctly (front shows
+  romaji, flip reveals the kana + words). Either his phone is on a stale PWA
+  cache predating session 4's reverse cards, or he actually wants a reverse
+  direction on the Kana *drill* (which really is one-way, kana → romaji only).
+  Awaiting his confirmation before building.
+
 - **2026-07-13 (session 4, reverse cards + word audio):** Henry asked for (a) a
   reverse flashcard direction — see the romaji, picture the character in his
   head, flip to see it — and (b) tap-to-hear pronunciation on every word on a
