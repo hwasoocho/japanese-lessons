@@ -1,10 +1,11 @@
 /* Network-first service worker: a push to main still shows up on next load,
    the cache only kicks in when offline. Bump VERSION when cached files change. */
-const VERSION = "gj-v6";
+const VERSION = "gj-v7";
 const CORE = [
   "./",
   "index.html",
   "kana-data.js",
+  "fonts/kana-stroke-order.woff2",
   "manifest.webmanifest",
   "icons/icon-192.png",
   "icons/icon-512.png"

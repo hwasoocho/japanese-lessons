@@ -50,6 +50,19 @@ Populated from scene misses and kana drill stats after each export.
 
 ## Session log
 
+- **2026-07-14 (session 5, stroke-order toggle):** Henry asked whether a font
+  exists that shows stroke order with numbers, for the kana page. It does:
+  **KanjiStrokeOrders** (nihilist.org.uk, BSD-licensed) prints a small number
+  at the start of each stroke and covers all kana. Constraint: numbers only
+  render legibly large (~100pt+), so it can't go in the small chart cells.
+  Subset the 18MB TTF to the kana block (U+3040–30FF) → `fonts/kana-stroke-order.woff2`
+  (48KB), bundled + cached in the sw. Added a **筆順 Stroke order** pill toggle
+  to the Kana drill (chose "toggle on the drill" over tap-to-enlarge): when on,
+  the big drill character swaps to the stroke-order font at 150px (128px on
+  mobile). State persisted via store.set("stroke"). Verified: numbers render
+  light + dark, survives reload, toggle-off reverts to Noto, no overflow at
+  390px. sw VERSION → gj-v7.
+
 - **2026-07-14 (session 5, legible font):** Henry flagged the Japanese font was
   muddying strokes for him — it was `--jp: Hiragino Mincho ProN` (a Mincho
   *serif* with thick/thin strokes + うろこ flicks). Swapped `--jp` app-wide to
