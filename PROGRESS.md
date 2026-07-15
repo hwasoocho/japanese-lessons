@@ -53,15 +53,19 @@ Populated from scene misses and kana drill stats after each export.
 - **2026-07-14 (session 5, stroke-order toggle):** Henry asked whether a font
   exists that shows stroke order with numbers, for the kana page. It does:
   **KanjiStrokeOrders** (nihilist.org.uk, BSD-licensed) prints a small number
-  at the start of each stroke and covers all kana. Constraint: numbers only
-  render legibly large (~100pt+), so it can't go in the small chart cells.
-  Subset the 18MB TTF to the kana block (U+3040–30FF) → `fonts/kana-stroke-order.woff2`
-  (48KB), bundled + cached in the sw. Added a **筆順 Stroke order** pill toggle
-  to the Kana drill (chose "toggle on the drill" over tap-to-enlarge): when on,
-  the big drill character swaps to the stroke-order font at 150px (128px on
-  mobile). State persisted via store.set("stroke"). Verified: numbers render
-  light + dark, survives reload, toggle-off reverts to Noto, no overflow at
-  390px. sw VERSION → gj-v7.
+  at the start of each stroke and covers all kana. Subset the 18MB TTF to the
+  kana block (U+3040–30FF) → `fonts/kana-stroke-order.woff2` (48KB), bundled +
+  cached in the sw. Added a **筆順 Stroke order** pill toggle. FIRST put it on
+  the drill (misread the ask) — Henry corrected: he wants it on the **kana
+  table (chart)**, not the drill. MOVED it: the toggle now lives in the chart's
+  control row and adds `.stroke-mode` to `#kana-chart`, which swaps every cell's
+  character to the stroke-order font at 54px (word/derivation hide to make room,
+  romaji stays, 5-column gojuon rows preserved). State persisted via
+  store.set("stroke"). Tradeoff flagged to Henry: at 5 columns on a phone the
+  character maxes ~54px, so the numbers are present but small (legible up close
+  on retina; bigger would need fewer columns or tap-to-enlarge). Verified light
+  + dark, hira + kata, toggle-off restores words/Noto, no overflow at 390px.
+  sw VERSION → gj-v8.
 
 - **2026-07-14 (session 5, legible font):** Henry flagged the Japanese font was
   muddying strokes for him — it was `--jp: Hiragino Mincho ProN` (a Mincho

@@ -157,10 +157,13 @@
   .kana-cell.weak{border-color:var(--vermilion);background:var(--vermilion-tint)}
   .kana-cell.strong .r{color:var(--pine)}
   .kana-cell.blank{visibility:hidden}
+  /* 筆順 stroke-order mode: swap chart characters to the numbered-stroke font.
+     Numbers need size, so the character grows and the word/derivation hide to
+     make room (romaji stays). 5-column gojuon rows are preserved. */
+  #kana-chart.stroke-mode .k{font-family:"KanaStroke";font-size:54px;line-height:1.15}
+  #kana-chart.stroke-mode .dv,#kana-chart.stroke-mode .w,#kana-chart.stroke-mode .wg{display:none}
   .drill-card{background:var(--paper);border:1px solid var(--sage);border-radius:16px;padding:36px 24px;text-align:center;max-width:480px}
   .drill-card .big{font-family:var(--jp);font-size:96px;line-height:1.1}
-  .drill-card .big.stroke{font-family:"KanaStroke";font-size:150px}
-  .drill-topctl{display:flex;justify-content:center;margin-bottom:20px}
   .drill-card input{margin-top:18px;font-family:var(--mono);font-size:22px;text-align:center;width:180px;
     padding:10px;border:1.5px solid var(--sage);border-radius:10px;background:var(--washi);color:var(--ink)}
   .drill-card input.right{border-color:var(--pine);background:var(--pine-tint)}
@@ -206,7 +209,6 @@
   @media (max-width:520px){
     .bubble .jp-line{font-size:18px}
     .drill-card .big{font-size:72px}
-    .drill-card .big.stroke{font-size:128px}
     .turn-card{width:auto}
   }
   /* Dark mode: muted gruvbox, same palette as wallpaper.html.
@@ -317,14 +319,12 @@
         <button class="pill on" id="pill-kata" onclick="setKanaSet('kata')">Katakana (golf first)</button>
         <button class="pill" id="pill-hira" onclick="setKanaSet('hira')">Hiragana</button>
         <button class="pill" id="pill-both" onclick="setKanaSet('both')">Both</button>
+        <button class="pill" id="pill-stroke" onclick="toggleStroke()">筆順 Stroke order</button>
         <button class="pill" id="pill-drill" onclick="toggleDrill()">▶ Start drill</button>
       </div>
       <div id="kana-chart" class="kana-grid"></div>
       <div id="kana-drill" class="hidden">
         <div class="drill-card">
-          <div class="drill-topctl">
-            <button class="pill" id="pill-stroke" onclick="toggleStroke()">筆順 Stroke order</button>
-          </div>
           <div class="big" id="drill-kana"></div>
           <div><input id="drill-input" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="romaji" aria-label="type the romaji"></div>
           <div class="verdict" id="drill-verdict"></div>
@@ -806,12 +806,12 @@ function toggleDrill(){
   if(drilling){drillRight=0;drillTotal=0;drillNext();}
   else renderKanaChart();
 }
-/* 筆順 = brush order. Swaps the big drill character to the stroke-order font,
+/* 筆順 = brush order. Swaps the kana-table characters to the stroke-order font,
    which prints a small number at the start of each stroke. Persisted like theme. */
 let strokeOrder=store.get("stroke",false);
 function applyStroke(){
   document.getElementById("pill-stroke").classList.toggle("on",strokeOrder);
-  document.getElementById("drill-kana").classList.toggle("stroke",strokeOrder);
+  document.getElementById("kana-chart").classList.toggle("stroke-mode",strokeOrder);
 }
 function toggleStroke(){
   strokeOrder=!strokeOrder;
