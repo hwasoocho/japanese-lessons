@@ -195,6 +195,11 @@
   .sent-who{font-size:12px;color:var(--ink-soft);letter-spacing:.4px;text-transform:uppercase;margin-bottom:14px}
   .sent-jp{font-family:var(--jp);font-size:16px;color:var(--ink-soft);margin-top:16px}
   .sent-en{font-size:15px;margin-top:6px}
+  /* English → Japanese direction: meaning on the front, whole Japanese side hidden until flip */
+  #card-sent{display:flex;flex-direction:column}
+  #card-sent.e2j .sent-who{order:-2}
+  #card-sent.e2j .sent-en{order:-1;font-size:19px;margin:0;visibility:visible}
+  #card-el:not(.revealed) #card-sent.e2j #sent-kb{visibility:hidden}
 
   /* ---------- phrases ---------- */
   .phrase-list{display:flex;flex-direction:column;gap:10px}
@@ -365,7 +370,13 @@
         <button class="pill" id="pill-dir-r2k" onclick="setCardDir('r2k')">Romaji → kana</button>
       </div>
       </div>
-      <div class="kana-controls hidden" id="card-sent-controls"></div>
+      <div id="card-sent-wrap" class="hidden">
+        <div class="kana-controls" id="card-sent-controls"></div>
+        <div class="kana-controls">
+          <button class="pill on" id="pill-sdir-j2e" onclick="setSentDir('j2e')">Japanese → meaning</button>
+          <button class="pill" id="pill-sdir-e2j" onclick="setSentDir('e2j')">English → Japanese</button>
+        </div>
+      </div>
       <div class="drill-card" id="card-el" onclick="cardAdvance()">
         <div class="big" id="card-kana"></div>
         <div class="cw-back" id="card-roma"></div>
@@ -980,20 +991,31 @@ document.getElementById("drill-input").addEventListener("keydown",e=>{
    Space / tap = flip, space / tap again = next. Deck = the whole set, shuffled.
    Own set state (cardSet) so switching sets here doesn't touch the Kana tab. */
 let cardSet="kata",cardDeck=[],cardIdx=0,cardRevealed=false,cardDir="k2r",cardCur=null;
-let cardMode="char",sentCat="all",sentDeck=[],sentIdx=0,sentCur=null;
+let cardMode="char",sentCat="all",sentDeck=[],sentIdx=0,sentCur=null,sentDir="j2e";
 function cardsData(){return cardSet==="kata"?KATA:cardSet==="hira"?HIRA:KATA.concat(HIRA)}
 function setCardMode(m){
   cardMode=m;
   document.getElementById("pill-cmode-char").classList.toggle("on",m==="char");
   document.getElementById("pill-cmode-sent").classList.toggle("on",m==="sent");
   document.getElementById("card-char-controls").classList.toggle("hidden",m==="sent");
-  document.getElementById("card-sent-controls").classList.toggle("hidden",m!=="sent");
+  document.getElementById("card-sent-wrap").classList.toggle("hidden",m!=="sent");
   document.getElementById("card-el").classList.toggle("sent-mode",m==="sent");
-  document.getElementById("card-hint").textContent=m==="sent"
-    ?"Read the sentence out loud and guess the meaning, then tap or press space to reveal romaji + meaning. Space again for the next card."
-    :"Read the character and the words out loud, then tap or press space to flip. Space again for the next card. Tap any word to hear it.";
+  document.getElementById("card-hint").textContent=m==="sent"?sentHint():
+    "Read the character and the words out loud, then tap or press space to flip. Space again for the next card. Tap any word to hear it.";
   if(m==="sent"){renderSentPills();sentShuffle();sentNext();}
   else{cardShuffle();cardNext();}
+}
+function sentHint(){
+  return sentDir==="e2j"
+    ?"Say it in Japanese out loud, then tap or press space to check. Space again for the next card."
+    :"Read the sentence out loud and guess the meaning, then tap or press space to reveal romaji + meaning. Space again for the next card.";
+}
+function setSentDir(d){
+  sentDir=d;
+  document.getElementById("pill-sdir-j2e").classList.toggle("on",d==="j2e");
+  document.getElementById("pill-sdir-e2j").classList.toggle("on",d==="e2j");
+  document.getElementById("card-hint").textContent=sentHint();
+  sentShuffle();sentNext();
 }
 function renderSentPills(){
   document.getElementById("card-sent-controls").innerHTML=SENT_CATS.map(([k,label])=>
@@ -1013,8 +1035,9 @@ function sentNext(){
   document.getElementById("sent-kb").innerHTML=kbHtml(s.kana);
   document.getElementById("sent-jp").textContent=s.jp;
   document.getElementById("sent-en").textContent=s.en;
+  document.getElementById("card-sent").classList.toggle("e2j",sentDir==="e2j");
   document.getElementById("card-el").classList.remove("revealed");
-  document.getElementById("card-btn").textContent="Show romaji + meaning";
+  document.getElementById("card-btn").textContent=sentDir==="e2j"?"Show Japanese":"Show romaji + meaning";
   document.getElementById("card-stats").textContent=`Card ${sentIdx+1} of ${sentDeck.length}`;
   sentIdx++;
 }

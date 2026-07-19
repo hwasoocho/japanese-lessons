@@ -50,6 +50,16 @@ Populated from scene misses and kana drill stats after each export.
 
 ## Session log
 
+- **2026-07-19 (session 6, reverse sentence cards):** Henry asked for the
+  reverse direction on sentence cards. Added a Japanese → meaning /
+  English → Japanese pill row (mirrors the char cards' direction pills). In
+  English → Japanese the front shows the English meaning (production
+  practice: say it in Japanese out loud); flip reveals the kana tokens with
+  romaji, the written form, and plays TTS. Implemented as an `e2j` class on
+  #card-sent (flex order puts the meaning on top, kb hidden until reveal).
+  Verified both directions, direction switching mid-deck, char mode
+  unaffected, 390px, no console errors. sw VERSION → gj-v10.
+
 - **2026-07-19 (session 6, sentence cards):** Henry finished the kana card
   phase and asked for a sentence flashcard mode: guess the sentence, flip to
   see romaji + meaning, themed around the golf trip. Cards tab now has a
