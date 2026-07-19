@@ -185,6 +185,16 @@
   .card-word .wr{font-family:var(--mono);font-size:12.5px;color:var(--ink-soft)}
   .card-word .wg{font-size:12.5px;color:var(--ink-soft)}
   .card-hint{margin-top:16px;font-size:12px;color:var(--ink-soft)}
+  /* sentence cards: char-card children and #card-sent swap via .sent-mode */
+  #card-el.sent-mode #card-kana,#card-el.sent-mode #card-roma,#card-el.sent-mode #card-dv,#card-el.sent-mode #card-words{display:none}
+  #card-el:not(.sent-mode) #card-sent{display:none}
+  #card-sent .kb{justify-content:center;gap:8px 10px}
+  #card-sent .kb .tk{font-size:27px}
+  #card-sent .kb .tr{font-size:11.5px}
+  #card-el:not(.revealed) #card-sent .kb .tr{visibility:hidden}
+  .sent-who{font-size:12px;color:var(--ink-soft);letter-spacing:.4px;text-transform:uppercase;margin-bottom:14px}
+  .sent-jp{font-family:var(--jp);font-size:16px;color:var(--ink-soft);margin-top:16px}
+  .sent-en{font-size:15px;margin-top:6px}
 
   /* ---------- phrases ---------- */
   .phrase-list{display:flex;flex-direction:column;gap:10px}
@@ -339,7 +349,12 @@
 
     <!-- Cards -->
     <section id="view-cards" class="hidden">
-      <p class="section-note">One character per card with real words that contain it — romaji hidden until you flip. <b>Read the character and the words out loud first</b>, then flip to check. In <b>Romaji → kana</b> the card shows the romaji instead — picture the character in your head, then flip to see it. Tap any word to hear it. The deck is the whole set, shuffled.</p>
+      <p class="section-note">Flashcards, romaji hidden until you flip. <b>Characters:</b> one kana per card with real words that contain it. Read them out loud, then flip to check. <b>Sentences:</b> real trip sentences, airport to izakaya. Read the sentence out loud and guess the meaning, then flip for romaji + meaning. The deck is shuffled.</p>
+      <div class="kana-controls">
+        <button class="pill on" id="pill-cmode-char" onclick="setCardMode('char')">Characters</button>
+        <button class="pill" id="pill-cmode-sent" onclick="setCardMode('sent')">Sentences (trip)</button>
+      </div>
+      <div id="card-char-controls">
       <div class="kana-controls">
         <button class="pill on" id="pill-cards-kata" onclick="setCardSet('kata')">Katakana (golf first)</button>
         <button class="pill" id="pill-cards-hira" onclick="setCardSet('hira')">Hiragana</button>
@@ -349,11 +364,19 @@
         <button class="pill on" id="pill-dir-k2r" onclick="setCardDir('k2r')">Kana → romaji</button>
         <button class="pill" id="pill-dir-r2k" onclick="setCardDir('r2k')">Romaji → kana</button>
       </div>
+      </div>
+      <div class="kana-controls hidden" id="card-sent-controls"></div>
       <div class="drill-card" id="card-el" onclick="cardAdvance()">
         <div class="big" id="card-kana"></div>
         <div class="cw-back" id="card-roma"></div>
         <div class="cw-back" id="card-dv"></div>
         <div class="card-words" id="card-words"></div>
+        <div id="card-sent">
+          <div class="sent-who" id="sent-who"></div>
+          <div id="sent-kb"></div>
+          <div class="sent-jp cw-back" id="sent-jp"></div>
+          <div class="sent-en cw-back" id="sent-en"></div>
+        </div>
         <div class="card-hint" id="card-hint">Read the character and the words out loud, then tap or press space to flip. Space again for the next card. Tap any word to hear it.</div>
         <div class="btn-row" style="justify-content:center">
           <button class="btn ghost" onclick="event.stopPropagation();cardHear()">🔊 Hear it</button>
@@ -541,6 +564,88 @@ const PHRASES=[
  {jp:"ナイスショット！",kana:"ナイスショット！",romaji:"naisu shotto!",en:"Nice shot! (mandatory on course)"},
  {jp:"お先にどうぞ",kana:"おさき に どうぞ",romaji:"osaki ni douzo",en:"After you / go ahead"},
  {jp:"お会計お願いします",kana:"おかいけい おねがいします",romaji:"o-kaikei onegaishimasu",en:"The check, please"}
+];
+
+/* Sentence cards: the whole trip in sentences, airport to izakaya.
+   Same field meanings as SCENES steps (jp natural / kana spaced / en).
+   who: "you" = a line you produce, "npc" = a line you must understand. */
+const SENT_CATS=[["all","All"],["airport","Airport"],["rental","Rental car"],["hotel","Hotel"],
+  ["course","Course check-in"],["golf","On course"],["resto","Restaurant"],["izakaya","Izakaya"],["konbini","Konbini"]];
+const SENTENCES=[
+ // airport arrival
+ {cat:"airport",who:"npc",jp:"パスポートをお願いします。",kana:"パスポート を おねがいします。",en:"Your passport, please."},
+ {cat:"airport",who:"you",jp:"観光です。",kana:"かんこうです。",en:"Sightseeing. (the answer to 'purpose of visit')"},
+ {cat:"airport",who:"you",jp:"ゴルフをしに来ました。",kana:"ゴルフ を し に きました。",en:"I came to play golf."},
+ {cat:"airport",who:"you",jp:"五泊します。",kana:"ごはく します。",en:"I'm staying five nights."},
+ {cat:"airport",who:"you",jp:"荷物はどこですか？",kana:"にもつ は どこ ですか？",en:"Where is the baggage (claim)?"},
+ {cat:"airport",who:"you",jp:"レンタカーのカウンターはどこですか？",kana:"レンタカー の カウンター は どこ ですか？",en:"Where is the rental car counter?"},
+ {cat:"airport",who:"you",jp:"両替はどこですか？",kana:"りょうがえ は どこ ですか？",en:"Where can I exchange money?"},
+ {cat:"airport",who:"you",jp:"タクシー乗り場はどこですか？",kana:"タクシー のりば は どこ ですか？",en:"Where is the taxi stand?"},
+ // car rental
+ {cat:"rental",who:"you",jp:"国際免許証です。",kana:"こくさい めんきょしょう です。",en:"Here's my international driving permit."},
+ {cat:"rental",who:"you",jp:"ナビは英語にできますか？",kana:"ナビ は えいご に できますか？",en:"Can the GPS be set to English?"},
+ {cat:"rental",who:"you",jp:"ETCカードはありますか？",kana:"イーティーシーカード は ありますか？",en:"Do you have an ETC card? (highway toll card)"},
+ {cat:"rental",who:"you",jp:"保険はついていますか？",kana:"ほけん は ついて いますか？",en:"Is insurance included?"},
+ {cat:"rental",who:"you",jp:"返すのは何時までですか？",kana:"かえす の は なんじ まで ですか？",en:"Until what time do I return it?"},
+ {cat:"rental",who:"you",jp:"満タンで返します。",kana:"まんタン で かえします。",en:"I'll return it with a full tank."},
+ {cat:"rental",who:"npc",jp:"傷を確認してください。",kana:"きず を かくにん して ください。",en:"Please check for scratches (before driving off)."},
+ {cat:"rental",who:"you",jp:"ガソリンスタンドはどこですか？",kana:"ガソリンスタンド は どこ ですか？",en:"Where is a gas station?"},
+ // hotel
+ {cat:"hotel",who:"you",jp:"チェックインをお願いします。",kana:"チェックイン を おねがいします。",en:"Check-in, please."},
+ {cat:"hotel",who:"you",jp:"予約しています。ヘンリーです。",kana:"よやく しています。ヘンリー です。",en:"I have a reservation. I'm Henry."},
+ {cat:"hotel",who:"npc",jp:"お部屋は8階です。",kana:"おへや は はっかい です。",en:"Your room is on the 8th floor."},
+ {cat:"hotel",who:"you",jp:"朝ごはんは何時からですか？",kana:"あさごはん は なんじ から ですか？",en:"What time does breakfast start?"},
+ {cat:"hotel",who:"you",jp:"温泉は何階ですか？",kana:"おんせん は なんかい ですか？",en:"What floor is the onsen on?"},
+ {cat:"hotel",who:"you",jp:"Wi-Fiのパスワードは何ですか？",kana:"ワイファイ の パスワード は なんですか？",en:"What's the Wi-Fi password?"},
+ {cat:"hotel",who:"you",jp:"荷物を預かってもらえますか？",kana:"にもつ を あずかって もらえますか？",en:"Could you keep my luggage?"},
+ {cat:"hotel",who:"you",jp:"チェックアウトは何時ですか？",kana:"チェックアウト は なんじ ですか？",en:"What time is checkout?"},
+ {cat:"hotel",who:"you",jp:"タクシーを呼んでください。",kana:"タクシー を よんで ください。",en:"Please call a taxi."},
+ // golf course check-in (from the Check-in + Pro shop scenes)
+ {cat:"course",who:"you",jp:"予約しています。ヘンリーです。",kana:"よやく しています。ヘンリー です。",en:"I have a reservation. I'm Henry."},
+ {cat:"course",who:"you",jp:"スタートは何時ですか？",kana:"スタート は なんじ ですか？",en:"What time do I start?"},
+ {cat:"course",who:"you",jp:"レンタルクラブはありますか？",kana:"レンタルクラブ は ありますか？",en:"Do you have rental clubs?"},
+ {cat:"course",who:"you",jp:"ロッカーはどこですか？",kana:"ロッカー は どこですか？",en:"Where are the lockers?"},
+ {cat:"course",who:"npc",jp:"カートは2人乗りです。",kana:"カート は ふたりのり です。",en:"The cart seats two."},
+ {cat:"course",who:"npc",jp:"お風呂は2階にあります。",kana:"おふろ は にかい に あります。",en:"The bath is on the 2nd floor."},
+ {cat:"course",who:"you",jp:"このグローブはいくらですか？",kana:"この グローブ は いくら ですか？",en:"How much is this glove?"},
+ {cat:"course",who:"you",jp:"カードは使えますか？",kana:"カード は つかえますか？",en:"Do you take cards?"},
+ // on course
+ {cat:"golf",who:"you",jp:"ナイスショット！",kana:"ナイスショット！",en:"Nice shot! (mandatory on course)"},
+ {cat:"golf",who:"you",jp:"お先にどうぞ。",kana:"おさき に どうぞ。",en:"After you / go ahead."},
+ {cat:"golf",who:"you",jp:"ボールが見つかりません。",kana:"ボール が みつかりません。",en:"I can't find my ball."},
+ {cat:"golf",who:"you",jp:"残り何ヤードですか？",kana:"のこり なんヤード ですか？",en:"How many yards left? (to the caddie)"},
+ {cat:"golf",who:"you",jp:"ドライバーをお願いします。",kana:"ドライバー を おねがいします。",en:"Driver, please. (to the caddie)"},
+ {cat:"golf",who:"you",jp:"いい天気ですね。",kana:"いい てんき ですね。",en:"Nice weather, isn't it?"},
+ {cat:"golf",who:"npc",jp:"頑張ってください！",kana:"がんばって ください！",en:"Good luck out there!"},
+ {cat:"golf",who:"you",jp:"お疲れさまでした！",kana:"おつかれさまでした！",en:"Good round! (the after-round phrase)"},
+ // restaurant (from the Restaurant scene)
+ {cat:"resto",who:"you",jp:"ふたりです。",kana:"ふたりです。",en:"Two people."},
+ {cat:"resto",who:"you",jp:"英語のメニューはありますか？",kana:"えいご の メニュー は ありますか？",en:"Do you have an English menu?"},
+ {cat:"resto",who:"you",jp:"おすすめは何ですか？",kana:"おすすめ は なんですか？",en:"What do you recommend?"},
+ {cat:"resto",who:"you",jp:"じゃ、ラーメンひとつください。",kana:"じゃ、ラーメン ひとつ ください。",en:"Then one ramen, please."},
+ {cat:"resto",who:"you",jp:"お水をください。",kana:"おみず を ください。",en:"Water, please."},
+ {cat:"resto",who:"npc",jp:"お待たせしました！",kana:"おまたせしました！",en:"Here you go! (said when food arrives)"},
+ {cat:"resto",who:"you",jp:"おいしいです！",kana:"おいしいです！",en:"It's delicious!"},
+ {cat:"resto",who:"you",jp:"お会計お願いします。",kana:"おかいけい おねがいします。",en:"The check, please."},
+ // izakaya / dinner with alcohol
+ {cat:"izakaya",who:"you",jp:"とりあえずビールで！",kana:"とりあえず ビール で！",en:"To start, beer! (the classic izakaya opener)"},
+ {cat:"izakaya",who:"you",jp:"生ふたつください。",kana:"なま ふたつ ください。",en:"Two draft beers, please. (nama = draft)"},
+ {cat:"izakaya",who:"you",jp:"乾杯！",kana:"かんぱい！",en:"Cheers!"},
+ {cat:"izakaya",who:"you",jp:"これとこれをください。",kana:"これ と これ を ください。",en:"This one and this one, please. (pointing at the menu)"},
+ {cat:"izakaya",who:"you",jp:"おかわりください。",kana:"おかわり ください。",en:"Another one, please. (refill)"},
+ {cat:"izakaya",who:"you",jp:"ハイボールはありますか？",kana:"ハイボール は ありますか？",en:"Do you have highballs?"},
+ {cat:"izakaya",who:"npc",jp:"もう一杯どうですか？",kana:"もう いっぱい どうですか？",en:"How about one more (glass)?"},
+ {cat:"izakaya",who:"you",jp:"そろそろ帰ります。",kana:"そろそろ かえります。",en:"I should get going."},
+ {cat:"izakaya",who:"you",jp:"別々でお願いします。",kana:"べつべつ で おねがいします。",en:"Separate checks, please."},
+ // konbini (from the Konbini scene)
+ {cat:"konbini",who:"you",jp:"ビールふたつとおにぎりひとつください。",kana:"ビール ふたつ と おにぎり ひとつ ください。",en:"Two beers and one onigiri, please."},
+ {cat:"konbini",who:"npc",jp:"温めますか？",kana:"あたためますか？",en:"Shall I warm it up?"},
+ {cat:"konbini",who:"you",jp:"だいじょうぶです。",kana:"だいじょうぶです。",en:"I'm fine / no thanks."},
+ {cat:"konbini",who:"npc",jp:"袋はいりますか？",kana:"ふくろ は いりますか？",en:"Do you need a bag?"},
+ {cat:"konbini",who:"you",jp:"ないです。",kana:"ないです。",en:"I don't have one. (points card)"},
+ {cat:"konbini",who:"npc",jp:"620円です。",kana:"ろっぴゃく にじゅう えん です。",en:"That'll be 620 yen."},
+ {cat:"konbini",who:"you",jp:"カードでお願いします。",kana:"カード で おねがいします。",en:"By card, please."},
+ {cat:"konbini",who:"you",jp:"トイレはありますか？",kana:"トイレ は ありますか？",en:"Is there a toilet?"}
 ];
 
 /* ---------------- storage ---------------- */
@@ -875,7 +980,44 @@ document.getElementById("drill-input").addEventListener("keydown",e=>{
    Space / tap = flip, space / tap again = next. Deck = the whole set, shuffled.
    Own set state (cardSet) so switching sets here doesn't touch the Kana tab. */
 let cardSet="kata",cardDeck=[],cardIdx=0,cardRevealed=false,cardDir="k2r",cardCur=null;
+let cardMode="char",sentCat="all",sentDeck=[],sentIdx=0,sentCur=null;
 function cardsData(){return cardSet==="kata"?KATA:cardSet==="hira"?HIRA:KATA.concat(HIRA)}
+function setCardMode(m){
+  cardMode=m;
+  document.getElementById("pill-cmode-char").classList.toggle("on",m==="char");
+  document.getElementById("pill-cmode-sent").classList.toggle("on",m==="sent");
+  document.getElementById("card-char-controls").classList.toggle("hidden",m==="sent");
+  document.getElementById("card-sent-controls").classList.toggle("hidden",m!=="sent");
+  document.getElementById("card-el").classList.toggle("sent-mode",m==="sent");
+  document.getElementById("card-hint").textContent=m==="sent"
+    ?"Read the sentence out loud and guess the meaning, then tap or press space to reveal romaji + meaning. Space again for the next card."
+    :"Read the character and the words out loud, then tap or press space to flip. Space again for the next card. Tap any word to hear it.";
+  if(m==="sent"){renderSentPills();sentShuffle();sentNext();}
+  else{cardShuffle();cardNext();}
+}
+function renderSentPills(){
+  document.getElementById("card-sent-controls").innerHTML=SENT_CATS.map(([k,label])=>
+    `<button class="pill${k===sentCat?" on":""}" onclick="setSentCat('${k}')">${label}</button>`).join("");
+}
+function setSentCat(c){sentCat=c;renderSentPills();sentShuffle();sentNext()}
+function sentData(){return sentCat==="all"?SENTENCES:SENTENCES.filter(s=>s.cat===sentCat)}
+function sentShuffle(){
+  sentDeck=sentData().slice();
+  for(let i=sentDeck.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[sentDeck[i],sentDeck[j]]=[sentDeck[j],sentDeck[i]]}
+  sentIdx=0;
+}
+function sentNext(){
+  if(sentIdx>=sentDeck.length)sentShuffle();
+  const s=sentDeck[sentIdx];sentCur=s;cardRevealed=false;
+  document.getElementById("sent-who").textContent=s.who==="you"?"You say":"You'll hear";
+  document.getElementById("sent-kb").innerHTML=kbHtml(s.kana);
+  document.getElementById("sent-jp").textContent=s.jp;
+  document.getElementById("sent-en").textContent=s.en;
+  document.getElementById("card-el").classList.remove("revealed");
+  document.getElementById("card-btn").textContent="Show romaji + meaning";
+  document.getElementById("card-stats").textContent=`Card ${sentIdx+1} of ${sentDeck.length}`;
+  sentIdx++;
+}
 function setCardSet(s){
   cardSet=s;
   document.getElementById("pill-cards-kata").classList.toggle("on",s==="kata");
@@ -938,16 +1080,18 @@ function cardNext(){
 function cardAdvance(){
   if(!cardRevealed){
     cardRevealed=true;
-    if(cardDir==="r2k"){ // swap the big slot from romaji to the character
+    if(cardMode==="char"&&cardDir==="r2k"){ // swap the big slot from romaji to the character
       document.getElementById("card-kana").textContent=cardCur;
       document.getElementById("card-kana").classList.remove("roma-front");
     }
     document.getElementById("card-el").classList.add("revealed");
     document.getElementById("card-btn").textContent="Next →";
     cardHear();
-  }else cardNext();
+  }else if(cardMode==="sent")sentNext();
+  else cardNext();
 }
 function cardHear(){
+  if(cardMode==="sent"){say(sentCur.kana);return}
   say(cardCur==="ん"||cardCur==="ン"?"んー":cardCur,0.8);
 }
 document.addEventListener("keydown",e=>{

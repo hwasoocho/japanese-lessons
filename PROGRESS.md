@@ -11,10 +11,10 @@ what to build next. Do not rely on Claude-side memory for lesson state.
 | 0 — Sounds + kana + cheat codes | lesson-01, app 가나 tab | 🔄 in progress — kana drilling started, katakana first |
 | 1 — Survival core | app 표현 tab (15 phrases), scenes | 🔄 in progress via scenes |
 | 2 — Numbers, money, shopping | Numbers tab (patterns + 2-way price drill), proshop scene | 🔄 built — needs Henry to drill + play the scene |
-| 3 — Restaurant and bar | restaurant scene (partial) | 🔜 needs izakaya/allergy/split scenes |
-| 4 — Getting around | — | not built |
-| 5 — Golf logistics | check-in scene (partial) | 🔜 needs caddie/cart/onsen/lunch scenes |
-| 6 — On-course talk | ナイスショット in phrase kit only | not built |
+| 3 — Restaurant and bar | restaurant scene (partial), resto + izakaya sentence cards | 🔜 needs izakaya/allergy/split scenes |
+| 4 — Getting around | airport + rental car + hotel sentence cards | 🔜 needs scenes |
+| 5 — Golf logistics | check-in scene (partial), course sentence cards | 🔜 needs caddie/cart/onsen/lunch scenes |
+| 6 — On-course talk | on-course sentence cards, ナイスショット in phrase kit | 🔜 needs a scene |
 | 7 — Small talk | clubhouse scene (partial) | 🔜 needs deeper branches (handicap, LINE exchange) |
 | 8 — Problem solving | ゆっくり/もう一度 in phrase kit | not built |
 
@@ -49,6 +49,25 @@ _(none yet — export after first app session)_
 Populated from scene misses and kana drill stats after each export.
 
 ## Session log
+
+- **2026-07-19 (session 6, sentence cards):** Henry finished the kana card
+  phase and asked for a sentence flashcard mode: guess the sentence, flip to
+  see romaji + meaning, themed around the golf trip. Cards tab now has a
+  Characters / Sentences (trip) mode row. Sentences mode: 66 sentences across
+  8 scenario pills (Airport, Rental car, Hotel, Course check-in, On course,
+  Restaurant, Izakaya, Konbini) + All. Front = the kana sentence tokenized
+  (kbHtml, per-token romaji hidden via the existing cw-back reveal), each card
+  tagged "You say" / "You'll hear". Flip reveals per-token romaji, the natural
+  written form (kanji), and the English meaning, and auto-plays TTS; space/tap
+  flow identical to character cards. Content reuses lines verbatim from the 5
+  scenes where they fit; new lines written for airport arrival, car rental,
+  hotel, on-course talk, and izakaya (とりあえずビールで, なま ふたつ, かんぱい,
+  おかわり, べつべつ), which have no scene yet. Verified in-browser: all 66
+  sentences tokenize with no missing romaji, は reads wa, hide/reveal both
+  modes, category filter, char mode restore, no overflow at 390px, light +
+  dark. sw VERSION → gj-v9. **Next up:** scenes for airport / rental car /
+  hotel / izakaya (Units 3-5) so the new sentence categories get conversation
+  entry points too.
 
 - **2026-07-14 (session 5, stroke-order toggle):** Henry asked whether a font
   exists that shows stroke order with numbers, for the kana page. It does:
