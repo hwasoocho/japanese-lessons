@@ -50,6 +50,26 @@ Populated from scene misses and kana drill stats after each export.
 
 ## Session log
 
+- **2026-07-21 (session 8, mined-video cards + retention):** Henry wants an
+  ongoing loop: mine natural Japanese out of YouTube videos (via the new
+  `jp-transcribe` skill), save the phrases in the trainer, and get *tested on
+  whether he remembers*. Built three things into the Cards → Sentences mode:
+  (1) a standing **"From videos"** category (`["video","From videos"]` in
+  SENT_CATS) that accumulates mined lines, each carrying a new `src` field
+  ("추성훈 · ホッピー通り") shown as an italic caption on reveal; (2) a **Review ★**
+  category that filters to net-missed cards (`sentWeak`: w>r); (3) **self-grade
+  retention** — on reveal, sentence cards show ✗ Missed / ✓ Got it (tap/space =
+  Got it, Missed is a deliberate click); grades persist in `sentStats` (keyed by
+  jp, {r,w}), the deck is now weighted so missed/new cards resurface more often
+  (mirrors the kana `drillPick`), and each card shows its ✓/✗ memo. Export now
+  lists sentence cards practiced + the due-for-review list. Saved the first
+  mined lines from the Choo Sung-hoon short (お父さんのために…, おすすめなんか
+  ありますか, おすすめありますか). Verified in browser: 3 mined lines tokenize
+  clean, Missed→Review flow, weighted deck, empty-review message, e2j direction,
+  char-mode button restore, no overflow at 390px, no console errors. sw VERSION
+  → gj-v12. That short was Choo speaking Korean; the only real Japanese was the
+  0:27 shop-owner exchange (rest = Korean narration about ホッピー通り/焼酎).
+
 - **2026-07-21 (session 7, expand sentence cards):** Henry asked for way more
   sentences per category, covering all common phrases even within those
   categories. Expanded SENTENCES 66 → 149 across the same 8 scenario pills
