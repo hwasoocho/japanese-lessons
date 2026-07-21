@@ -50,6 +50,26 @@ Populated from scene misses and kana drill stats after each export.
 
 ## Session log
 
+- **2026-07-21 (session 7, expand sentence cards):** Henry asked for way more
+  sentences per category, covering all common phrases even within those
+  categories. Expanded SENTENCES 66 → 149 across the same 8 scenario pills
+  (airport 19, rental 16, hotel 19, course 17, golf 21, resto 20, izakaya 18,
+  konbini 19). Filled each category with the common phrases a golf-trip tourist
+  actually hits: airport immigration Q&A + customs + SIM/exit/toilet; rental
+  automatic/insurance/nav-to-course/accident; hotel walk-in/AC-broken/no-hot-
+  water/wake-up-call; course green-fee/caddie/range/lunch-after-front-nine;
+  golf ナイスオン/パット/バーディー, ドンマイ, 惜しい, OB/池/バンカー/暫定球,
+  distances to caddie; restaurant allergy/卵はだめ/取り皿/ごちそうさま; izakaya
+  お通し/焼き鳥 塩orタレ/レモンサワー/日本酒; konbini いらっしゃいませ/温めて/
+  お箸/現金/Suica/ATM/氷. Data shape unchanged (cat/who/jp/kana/en) so render,
+  direction pills, and category filter needed no code change. Verified in
+  browser: all 149 tokenize with no missing romaji (punctuation excluded),
+  spot-checked romaji (こうそく, スイカ, ATM=eetii emu, おとおし, まんタン),
+  golf deck shows "Card 1 of 21", flip reveals jp+en, no overflow at 1200px.
+  sw VERSION → gj-v11. Avoided ウェ (not in ROMA) by using 高速 for highway.
+  **Next up:** scenes for airport / rental car / hotel / izakaya still owed
+  (the new categories have cards but no conversation entry point yet).
+
 - **2026-07-19 (session 6, reverse sentence cards):** Henry asked for the
   reverse direction on sentence cards. Added a Japanese → meaning /
   English → Japanese pill row (mirrors the char cards' direction pills). In
