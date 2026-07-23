@@ -1,6 +1,6 @@
 /* Network-first service worker: a push to main still shows up on next load,
    the cache only kicks in when offline. Bump VERSION when cached files change. */
-const VERSION = "gj-v15";
+const VERSION = "gj-v16";
 const CORE = [
   "./",
   "index.html",
