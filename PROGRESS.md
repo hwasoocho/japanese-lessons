@@ -50,6 +50,28 @@ Populated from scene misses and kana drill stats after each export.
 
 ## Session log
 
+- **2026-07-23 (session 9, dedupe + massive card expansion):** Henry asked to
+  dedupe the sentence cards and add way more, "like 50 each." Expanded SENTENCES
+  from 149 → **434** across the 8 scenario pills, each now ~50+ (airport 54,
+  rental 51, hotel 53, course 51, golf 63, resto 55, izakaya 50, konbini 54;
+  video 3 untouched). Generated in parallel (one agent per scenario, each fed the
+  existing phrases to avoid) then merged, deduped globally by exact `jp` keeping
+  first occurrence (collapsed 4 real dups: 予約しています。ヘンリーです。 was in
+  rental+hotel+course → kept in rental; 別々でお願いします。 and 何名様ですか？
+  were in resto+izakaya → kept in resto), and validated every `kana` reading
+  against the real `tokenize()` (0 leaked kanji/Latin chars; fixed one ATM →
+  エーティーエム). New coverage fills each scenario with the phrases a golf tourist
+  actually hits: immigration Q&A + baggage + customs + takkyubin (airport); SUV/
+  ETC/map-code/gas/breakdown (rental); early-checkin/onsen-tattoo/packed-breakfast
+  (hotel); dress code/self-play/halfway-lunch/settle-bill (course); shot calls
+  (fore/sit/get-up), yardage+club to caddie, green reading, penalties, small talk,
+  scoring (golf); ticket machine/allergies/less-oil/vegetarian (resto); nomihoudai/
+  drink variety/pouring/last-order (izakaya); point-card/warm-bento/PayPay/ATM/
+  stamps (konbini). Cards regrouped by category with comment headers, video cards
+  kept last with their `src`. Verified in browser: 434 cards load, 0 kana leaks,
+  0 console errors, category filter + reveal (romaji under each kana + meaning) +
+  Missed/Got-it all work. sw VERSION → gj-v13.
+
 - **2026-07-21 (session 8, mined-video cards + retention):** Henry wants an
   ongoing loop: mine natural Japanese out of YouTube videos (via the new
   `jp-transcribe` skill), save the phrases in the trainer, and get *tested on
