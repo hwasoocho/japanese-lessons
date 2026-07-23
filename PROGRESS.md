@@ -71,6 +71,16 @@ Populated from scene misses and kana drill stats after each export.
   kept last with their `src`. Verified in browser: 434 cards load, 0 kana leaks,
   0 console errors, category filter + reveal (romaji under each kana + meaning) +
   Missed/Got-it all work. sw VERSION → gj-v13.
+  Follow-up same session: Henry wanted the *replies* he'll hear back when he asks
+  どこですか/ありますか/いくらですか/何時ですか, not just his own lines. Added a new
+  **Answers** category pill (`["reply","Answers"]` in SENT_CATS, placed after
+  From videos) with 45 npc comprehension cards: directions (まっすぐ, 右/左,
+  つきあたり, 二階, エレベーターの横, 五分ほど), availability (ございます, 売り切れ),
+  yes/included (付いています, 別料金, 無料, できます/できません), price (五百円です,
+  お一人様千円), time/hours (九時から, 二十四時間営業, 準備中, 本日は終了), and staff
+  acknowledgements (少々お待ちください, かしこまりました, 承知しました). All who:"npc"
+  so the card front reads "YOU'LL HEAR". Deck now 479 total (reply 45). Validated
+  0 kana leaks, 0 dups; verified Answers pill filters + reveal in browser. sw → gj-v14.
 
 - **2026-07-21 (session 8, mined-video cards + retention):** Henry wants an
   ongoing loop: mine natural Japanese out of YouTube videos (via the new
