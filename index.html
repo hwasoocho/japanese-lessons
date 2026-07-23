@@ -109,6 +109,9 @@
   .kb .tk{font-family:var(--jp);font-size:17px;display:block;line-height:1.3}
   .kb .tr{font-family:var(--mono);font-size:10px;color:var(--ink-soft);display:block}
   .kb .gap{width:10px}
+  /* Talk scene: NPC lines are reveal cards — no romaji spoiler until revealed */
+  .bubble.npc .kb .tr{visibility:hidden}
+  .bubble.npc.revealed .kb .tr{visibility:visible}
 
   .turn-card{background:var(--paper);border:1.5px solid var(--vermilion);border-radius:14px;padding:18px;align-self:flex-end;max-width:92%;width:460px}
   .turn-card .who{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--vermilion);margin-bottom:8px}
@@ -546,6 +549,21 @@ const SCENES=[
    {who:"npc",jp:"また後で！",kana:"また あとで！",en:"See you later!"},
    {who:"you",intent:"See you later! (just mirror him)",hint:"echoing the other person's phrase back is a completely natural move",jp:"また後で！",kana:"また あとで！"}
   ]},
+ {id:"halfway",jp:"ハーフの休憩",en:"Halfway break with a golf buddy",desc:"Casual plain-form banter — snacks, treating, no keigo",
+  steps:[
+   {who:"npc",jp:"疲れた？",kana:"つかれた？",en:"Tired? (plain form — with a buddy you drop です)"},
+   {who:"you",intent:"A little, yeah",hint:"chotto (a little) + ne (softener) — no desu with a friend",jp:"ちょっとね。",kana:"ちょっとね。"},
+   {who:"npc",jp:"何か食べる？",kana:"なにか たべる？",en:"Wanna eat something? (nanika = something; plain 食べる + rising tone = casual question)"},
+   {who:"you",intent:"Wanna eat roll cake?",hint:"the invitation uses the NEGATIVE — tabenai? is literally 'won't you eat?' but lands as a warm 'wanna eat?'",jp:"ロールケーキ食べない？",kana:"ロールケーキ たべない？"},
+   {who:"npc",jp:"いいね！食べるなら僕も食べる。",kana:"いいね！たべるなら ぼくも たべる。",en:"Nice! If you're eating, I'll eat too. (なら = 'if it's the case that', 僕も = me too)"},
+   {who:"you",intent:"Then two, please",hint:"jaa (well then) + futatsu (two things) + kudasai",jp:"じゃあ、ふたつください。",kana:"じゃあ、ふたつ ください。"},
+   {who:"npc",jp:"僕がおごるよ。",kana:"ぼくが おごるよ。",en:"I'll treat you. (おごる = pay for someone, よ = telling-you)"},
+   {who:"you",intent:"Really? Is that okay?",hint:"e (huh/really?) + ii no? — casual 'is it okay?' (の = casual question particle)",jp:"え、いいの？",kana:"え、いいの？"},
+   {who:"npc",jp:"うん、気にしないで。",kana:"うん、きにしないで。",en:"Yeah, don't worry about it. (ki ni shinaide = don't mind it)"},
+   {who:"you",intent:"Thanks! Next one's on me",hint:"arigatou, then tsugi (next) + wa + boku (me) + ne",jp:"ありがとう！次は僕ね。",kana:"ありがとう！つぎ は ぼく ね。"},
+   {who:"npc",jp:"じゃあ、後半も頑張ろう！",kana:"じゃあ、こうはんも がんばろう！",en:"Alright, let's crush the back nine too! (がんばろう = let's do our best — plain volitional)"},
+   {who:"you",intent:"Yeah, let's go!",hint:"un (yeah) + ikou (let's go — plain volitional of iku)",jp:"うん、行こう！",kana:"うん、いこう！"}
+  ]},
  {id:"proshop",jp:"プロショップ",en:"Shopping at the pro shop",desc:"Asking prices, too expensive, buying two, paying by card",
   steps:[
    {who:"npc",jp:"いらっしゃいませ！",kana:"いらっしゃいませ！",en:"Welcome!"},
@@ -588,10 +606,24 @@ const PHRASES=[
 /* Sentence cards: the whole trip in sentences, airport to izakaya.
    Same field meanings as SCENES steps (jp natural / kana spaced / en).
    who: "you" = a line you produce, "npc" = a line you must understand. */
-const SENT_CATS=[["all","All"],["review","Review ★"],["video","From videos"],["reply","Answers"],
+const SENT_CATS=[["all","All"],["review","Review ★"],["video","From videos"],["reply","Answers"],["casual","Casual"],
   ["airport","Airport"],["rental","Rental car"],["hotel","Hotel"],
   ["course","Course check-in"],["golf","On course"],["resto","Restaurant"],["izakaya","Izakaya"],["konbini","Konbini"]];
 const SENTENCES=[
+ // casual — plain-form peer banter (a golf buddy, no keigo)
+ {cat:"casual",who:"npc",jp:"疲れた？",kana:"つかれた？",en:"Tired? (plain form)"},
+ {cat:"casual",who:"you",jp:"ちょっとね。",kana:"ちょっとね。",en:"A little, yeah. (ne softener, no desu)"},
+ {cat:"casual",who:"you",jp:"何か食べる？",kana:"なにか たべる？",en:"Wanna eat something? (plain question, no か)"},
+ {cat:"casual",who:"you",jp:"ロールケーキ食べない？",kana:"ロールケーキ たべない？",en:"Wanna eat roll cake? (negative = warm invitation)"},
+ {cat:"casual",who:"you",jp:"食べるなら食べる。",kana:"たべるなら たべる。",en:"If you eat, I'll eat. (なら conditional)"},
+ {cat:"casual",who:"npc",jp:"僕も食べる。",kana:"ぼくも たべる。",en:"I'll eat too. (も = too)"},
+ {cat:"casual",who:"you",jp:"僕がおごるよ。",kana:"ぼくが おごるよ。",en:"I'll treat you. (おごる = pay for someone)"},
+ {cat:"casual",who:"you",jp:"え、いいの？",kana:"え、いいの？",en:"Really? Is that okay? (casual の question)"},
+ {cat:"casual",who:"npc",jp:"気にしないで。",kana:"きにしないで。",en:"Don't worry about it."},
+ {cat:"casual",who:"you",jp:"いいね！",kana:"いいね！",en:"Nice! / Sounds good!"},
+ {cat:"casual",who:"you",jp:"じゃあ、行こう！",kana:"じゃあ、いこう！",en:"Alright, let's go! (plain volitional)"},
+ {cat:"casual",who:"npc",jp:"頑張ろう！",kana:"がんばろう！",en:"Let's do our best! (plain volitional)"},
+ {cat:"casual",who:"you",jp:"次は僕ね。",kana:"つぎ は ぼく ね。",en:"Next one's on me."},
  // airport — immigration, baggage, customs, getting out, transport
  {cat:"airport",who:"npc",jp:"パスポートをお願いします。",kana:"パスポート を おねがいします。",en:"Your passport, please."},
  {cat:"airport",who:"npc",jp:"目的は何ですか？",kana:"もくてき は なんですか？",en:"What's the purpose of your visit?"},
@@ -1207,26 +1239,31 @@ function nextStep(){
 function renderNpc(step){
   const el=document.createElement("div");
   el.className="bubble npc";
-  el.innerHTML=`<div class="who">Them</div>
+  el.innerHTML=`<div class="who">Them — read it, then reveal</div>
     <div class="jp-line">${step.jp}</div>
     ${kbHtml(step.kana)}
     <div class="gloss hidden">${step.en}</div>
     <div class="tools">
       <button class="icon-btn" data-say>🔊 Replay</button>
       <button class="icon-btn" data-slow>🐢 Slow</button>
-      <button class="icon-btn" data-gloss>Show meaning</button>
+    </div>
+    <div class="btn-row">
+      <button class="btn primary" data-reveal>Reveal romaji + meaning</button>
+      <button class="btn good hidden" data-next>Next →</button>
     </div>`;
   el.querySelector("[data-say]").onclick=()=>say(step.kana);
   el.querySelector("[data-slow]").onclick=()=>say(step.kana,0.6);
-  el.querySelector("[data-gloss]").onclick=e=>{
-    el.querySelector(".gloss").classList.toggle("hidden");
-    e.target.textContent=el.querySelector(".gloss").classList.contains("hidden")?"Show meaning":"Hide meaning";
+  const reveal=el.querySelector("[data-reveal]"),next=el.querySelector("[data-next]");
+  reveal.onclick=()=>{
+    el.classList.add("revealed");
+    el.querySelector(".gloss").classList.remove("hidden");
+    reveal.classList.add("hidden");
+    next.classList.remove("hidden");
   };
+  next.onclick=()=>{curStep++;nextStep()};
   document.getElementById("chat").appendChild(el);
   el.scrollIntoView({block:"nearest",behavior:"smooth"});
   say(step.kana);
-  curStep++;
-  setTimeout(nextStep,600);
 }
 function renderTurn(step){
   const el=document.createElement("div");

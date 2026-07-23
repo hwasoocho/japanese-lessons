@@ -16,6 +16,7 @@ what to build next. Do not rely on Claude-side memory for lesson state.
 | 5 — Golf logistics | check-in scene (partial), course sentence cards | 🔜 needs caddie/cart/onsen/lunch scenes |
 | 6 — On-course talk | on-course sentence cards, ナイスショット in phrase kit | 🔜 needs a scene |
 | 7 — Small talk | clubhouse scene (partial) | 🔜 needs deeper branches (handicap, LINE exchange) |
+| 7.5 — Casual peer register | halfway-break scene (plain form), Casual card pill | 🔄 built 2026-07-23 — first casual/plain-form content; needs Henry to play it |
 | 8 — Problem solving | ゆっくり/もう一度 in phrase kit | not built |
 
 ## Decisions (binding for future sessions)
@@ -49,6 +50,26 @@ _(none yet — export after first app session)_
 Populated from scene misses and kana drill stats after each export.
 
 ## Session log
+
+- **2026-07-23 (session 10, casual register + Talk reveal cards):** Two changes
+  from Henry. (1) He pointed out every scene is a polite service transaction
+  (です・ます, you-vs-staff) with zero casual peer register — no plain-form
+  banter like the roll-cake exchange we did in chat (食べない？ negative-invitation,
+  なら conditional, いいね, おごる). Added a **casual track**, not a rewrite of the
+  service scenes: a new Talk scene **ハーフの休憩** (halfway break with a golf buddy,
+  Tanaka, plain form, 12 turns — 疲れた？/なにか食べる？/ロールケーキ食べない？/食べるなら
+  僕も食べる/僕がおごるよ/え、いいの？/後半も頑張ろう/行こう), plus a **Casual** sentence-card
+  pill (`["casual","Casual"]` in SENT_CATS after Answers) with 13 banter one-liners.
+  (2) Henry wanted the Talk conversation to be reveal cards too — no romaji
+  spoilers. Reworked `renderNpc`: NPC lines now hide romaji (CSS
+  `.bubble.npc .kb .tr{visibility:hidden}` until `.revealed`) AND the meaning,
+  show them together on a **Reveal romaji + meaning** tap, and require a manual
+  **Next →** (removed the 600ms auto-advance). Your-turn cards were already
+  reveal-style (unchanged). Verified in browser: casual scene 12 steps + 13 cards
+  all tokenize clean (0 leaked kanji/latin — punctuation-only empties expected;
+  つぎ は→wa, こうはん→ha inside word, all volitionals read right), 0 dups, Casual
+  pill renders + filters, NPC reveal hides→shows romaji+meaning→Next advances,
+  existing konbini greeting is now a reveal card too. sw VERSION → gj-v15.
 
 - **2026-07-23 (session 9, dedupe + massive card expansion):** Henry asked to
   dedupe the sentence cards and add way more, "like 50 each." Expanded SENTENCES
