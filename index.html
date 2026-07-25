@@ -200,6 +200,12 @@
   .sent-en{font-size:15px;margin-top:6px}
   .sent-src{font-size:12px;color:var(--ink-soft);font-style:italic;margin-top:8px}
   #card-sent.e2j .sent-src{order:2}
+  /* word-by-word breakdown shown on reveal (Cards, Phrases, Talk) */
+  .parts{margin-top:14px;border-top:1px solid var(--sage);padding-top:10px;display:flex;flex-direction:column;gap:5px;text-align:left}
+  .parts .part{display:grid;grid-template-columns:minmax(64px,auto) 1fr;gap:12px;align-items:baseline;font-size:13.5px;line-height:1.35}
+  .parts .pw{font-family:var(--jp);font-size:16px;color:var(--ink);cursor:pointer}
+  .parts .pg{color:var(--ink-soft)}
+  #card-sent.e2j .sent-parts{order:1}
   .grade-row{margin-top:12px}
   /* English → Japanese direction: meaning on the front, whole Japanese side hidden until flip */
   #card-sent{display:flex;flex-direction:column}
@@ -216,7 +222,7 @@
   .phrase .en{font-size:13.5px;color:var(--ink-soft);margin-top:2px}
   .phrase .play{flex:none;width:38px;height:38px;border-radius:50%;background:var(--pine-tint);color:var(--pine-deep);font-size:15px;display:flex;align-items:center;justify-content:center}
   .phrase .play:hover{background:var(--pine);color:#fff}
-  .phrase.hiding .jp,.phrase.hiding .romaji{filter:blur(7px);cursor:pointer}
+  .phrase.hiding .jp,.phrase.hiding .romaji,.phrase.hiding .parts{filter:blur(7px);cursor:pointer}
 
   footer{margin-top:56px;font-size:12px;color:var(--ink-soft);border-top:1px solid var(--sage);padding-top:14px}
   @media (prefers-reduced-motion:no-preference){
@@ -393,6 +399,7 @@
           <div id="sent-kb"></div>
           <div class="sent-jp cw-back" id="sent-jp"></div>
           <div class="sent-en cw-back" id="sent-en"></div>
+          <div class="sent-parts cw-back" id="sent-parts"></div>
           <div class="sent-src cw-back" id="sent-src"></div>
         </div>
         <div class="card-hint" id="card-hint">Read the character and the words out loud, then tap or press space to flip. Space again for the next card. Tap any word to hear it.</div>
@@ -477,6 +484,20 @@
 function kbHtml(kana){
   return `<div class="kb">${tokenize(kana).map(t=>t.gap?'<span class="gap"></span>':
     `<span class="tkn"><span class="tk">${t.k}</span><span class="tr">${t.r}</span></span>`).join("")}</div>`;
+}
+/* Break a spaced kana string into its words and gloss each from GLOSS —
+   the word-by-word breakdown shown on reveal (Cards, Phrases, Talk). Word
+   boundaries are the spaces/punctuation already in the kana strings. */
+const GLOSS_SEP=/[\s　、。！？!?「」・…（）()]+/;
+function decompose(kana){
+  return kana.split(GLOSS_SEP).filter(Boolean).map(w=>({w,g:GLOSS[w]||""}));
+}
+function partsHtml(kana){
+  const parts=decompose(kana);
+  if(!parts.length)return"";
+  return `<div class="parts">${parts.map(p=>
+    `<div class="part"><span class="pw" onclick="event.stopPropagation();say('${p.w}')">${p.w}</span><span class="pg">${p.g}</span></div>`
+  ).join("")}</div>`;
 }
 
 /* ---------------- data ----------------
@@ -584,6 +605,204 @@ const SCENES=[
   ]}
 ];
 
+
+/* GLOSS: word-by-word meanings for the reveal breakdown (Cards, Phrases,
+   Talk). Keys are the space/punct-separated words in the kana strings above;
+   particles show their grammatical role in [brackets]. Ordered by frequency. */
+const GLOSS={
+ "は":"[topic marker]", "を":"[object marker]", "です":"[is / am / are (polite)]", "ください":"please give me / please do",
+ "ですか":"[? (polite)]", "の":"[of / 's]", "に":"[to / at / on]", "で":"[at / by / with]",
+ "か":"[? (question)]", "どこ":"where", "おねがいします":"please", "が":"[subject marker]",
+ "ありますか":"is there / do you have?", "します":"do", "あります":"there is / I have", "これ":"this",
+ "この":"this (+noun)", "もらえますか":"could I get / may I have?", "いい":"good / fine", "カード":"card",
+ "して":"do / doing", "えん":"yen", "おねがい":"please / a favor", "と":"[and / with]",
+ "こちら":"this way / this one", "はい":"yes", "まで":"[until / up to]", "ですね":"[right? (polite)]",
+ "もう":"already / more", "にもつ":"luggage", "ひとつ":"one (thing)", "いいですか":"is it okay?",
+ "います":"there is / I am (present)", "いますか":"is there / are you?", "できますか":"can you / is it possible?", "いくら":"how much",
+ "へや":"room", "おしえて":"please tell me", "から":"[from / because]", "ゴルフバッグ":"golf bag",
+ "しますか":"will you do?", "すこし":"a little", "ついて":"about / attached", "ね":"[right? (softener)]",
+ "ビール":"beer", "ふくろ":"bag / sack", "ふたつ":"two (things)", "ありがとうございます":"thank you",
+ "おかいけい":"the bill / check", "カート":"(golf) cart", "きました":"came / has come", "くるま":"car",
+ "ゴルフ":"golf", "すみません":"excuse me / sorry", "せき":"seat", "だいじょうぶです":"it's okay / I'm fine",
+ "ただいま":"I'm back / just now", "たべる":"to eat", "ちょうしょく":"breakfast", "どうぞ":"please / go ahead",
+ "なんじ":"what time", "もの":"thing", "りょうきん":"fee / charge", "いちばん":"number one / most",
+ "いらっしゃいませ":"welcome (to store)", "おすすめ":"recommendation", "おにぎり":"rice ball", "カウンター":"counter",
+ "きょう":"today", "さんぜん":"three thousand", "じゃ":"well then", "タクシー":"taxi",
+ "チェックイン":"check-in", "つかいかた":"how to use", "つかえますか":"can I use?", "どう":"how",
+ "なにか":"something / anything", "なんですか":"what is it?", "なんヤード":"how many yards", "にかい":"second floor",
+ "にほん":"Japan", "ボール":"ball", "よやく":"reservation", "ロッカー":"locker",
+ "あちら":"that way / over there", "ありがとうございました":"thank you (for what was done)", "イーティーシーカード":"ETC card (toll card)", "いくつ":"how many",
+ "エーティーエム":"ATM", "おいて":"please put / leave", "おおきい":"big / large", "おかわり":"refill / another serving",
+ "おふろ":"bath", "おみず":"water", "かえますか":"can I exchange / change?", "かかりますか":"does it take / cost?",
+ "きんえん":"no smoking", "グローブ":"glove", "げんきん":"cash", "ございます":"there is (polite)",
+ "ごひゃく":"five hundred", "ゴルフじょう":"golf course", "しています":"am doing", "しました":"did / have done",
+ "じゃあ":"well then", "スタート":"start", "だいじょうぶ":"okay / fine", "チェックアウト":"check-out",
+ "ついか":"addition / extra", "つよい":"strong", "できます":"can do", "トイレ":"toilet / restroom",
+ "とき":"when / time", "どこですか":"where is it?", "ナビ":"navigation (GPS)", "なん":"what",
+ "なんめいさま":"how many people (polite)", "はじめて":"first time", "バス":"bus", "バッグ":"bag",
+ "ばんごう":"number", "べつ":"separate / different", "ヘンリー":"Henry", "ポイントカード":"point card (loyalty card)",
+ "ホテル":"hotel", "まんタン":"full tank", "みち":"road / way", "メニュー":"menu",
+ "よろしく":"nice to meet you / please", "ラーメン":"ramen", "レンタルクラブ":"rental (golf) clubs", "ろっぴゃく":"six hundred",
+ "わたし":"I / me", "あたためて":"please heat it up", "あたためますか":"shall I heat it up?", "あと":"after / later / remaining",
+ "あとで":"later", "ありがとう":"thank you", "ありません":"there isn't / I don't have", "アレルギー":"allergy",
+ "いいえ":"no", "いいね":"nice / good, right?", "いいの":"is it okay?", "いきますか":"shall we go? / are you going?",
+ "いくらですか":"how much is it?", "いこう":"let's go", "いちまい":"one (flat item)", "いっかい":"once / first floor",
+ "いっぱい":"one cup / full", "いまのは":"that just now (+topic)", "いりぐち":"entrance", "いりますか":"do you need it?",
+ "いれて":"please put it in", "うって":"please sell / hit it", "うりきれ":"sold out", "うん":"yeah",
+ "え":"huh? / what?", "えいご":"English (language)", "えき":"station", "えだまめ":"edamame",
+ "エレベーター":"elevator", "おいしいです":"it's delicious (polite)", "おくりたい":"I want to send", "おごるよ":"I'll treat you (my treat)",
+ "おさき":"before you / ahead", "おさけ":"alcohol / sake", "おじかん":"time (polite)", "おしはらい":"payment",
+ "おしぼり":"wet hand towel", "おとうさん":"father", "おなじ":"same", "おはし":"chopsticks",
+ "おひる":"noon / lunch", "おへや":"room (polite)", "おべんとう":"lunch box (bento)", "おまたせしました":"sorry to keep you waiting",
+ "おまち":"please wait (polite)", "おもち":"rice cake (mochi)", "おもちですか":"do you have it?", "おんせん":"hot spring",
+ "かかります":"it takes / costs", "かぎ":"key", "かくにん":"confirmation / check", "かしこまりました":"certainly (understood, polite)",
+ "からあげ":"fried chicken (karaage)", "かんこく":"Korea", "かんぱい":"cheers (toast)", "がんばって":"good luck / do your best",
+ "がんばろう":"let's do our best", "キー":"key", "きかい":"machine / opportunity", "きにしないで":"don't worry about it",
+ "くじ":"nine o'clock", "クラブ":"(golf) club", "こうそく":"expressway / highway", "こおり":"ice",
+ "ここ":"here", "ございません":"there isn't (polite)", "サイン":"signature", "さき":"ahead / before",
+ "ざんていきゅう":"provisional (temporary rest)", "しはらい":"payment", "じゅうしょ":"address", "しょうしょう":"a little / a moment",
+ "すぐ":"right away", "スプーン":"spoon", "ぜいこみ":"tax included", "せん":"thousand / line",
+ "せんえん":"one thousand yen", "ぜんぶ":"all / everything", "たかい":"expensive / tall", "たくはいびん":"home delivery service",
+ "たっきゅうびん":"courier / express delivery", "たべない":"I won't / don't eat", "たべるなら":"if you eat", "ため":"for the sake of",
+ "ちかく":"nearby", "チケット":"ticket", "ちゅうしゃじょう":"parking lot", "ちゅうしょく":"lunch",
+ "ちょっと":"a little", "ちょっとね":"a little, you know", "つかれた":"I'm tired", "つぎ":"next",
+ "ですよ":"you know (polite)", "でも":"but", "てんき":"weather", "でんわ":"phone / phone call",
+ "どうですか":"how about it?", "どうやって":"how / by what means", "どちら":"which one / where (polite)", "となり":"next to / neighbor",
+ "どのくらい":"how much / how long", "ナイスショット":"nice shot", "ないです":"there isn't (polite)", "なので":"so / therefore",
+ "なま":"draft (beer) / raw", "にじゅう":"twenty", "にほんしゅ":"sake (Japanese rice wine)", "にんき":"popularity",
+ "のこり":"the rest / remaining", "のりば":"boarding point / stand", "ハーフ":"half (nine holes)", "はいって":"please come in / it's included",
+ "ハイボール":"highball", "はいりました":"it has entered / gone in", "ばしょ":"place / location", "パスポート":"passport",
+ "はやめ":"a bit early", "はらいますか":"will you pay?", "はらえますか":"can I pay?", "ひやけどめ":"sunscreen",
+ "フォーク":"fork", "ふたり":"two people", "ふたりです":"it's two people (polite)", "ふたりのり":"two riding together",
+ "へ":"[to (direction)]", "へんきゃく":"return / give back", "ぼく":"I / me", "ぼくが":"I (+subject)",
+ "ぼくも":"I too (+also)", "ほけん":"insurance", "ほんじつ":"today", "また":"again / also",
+ "まちますか":"shall I wait? (polite)", "まっすぐ":"straight ahead", "まんせき":"full (no seats)", "みぎ":"right (direction)",
+ "みせ":"shop / store", "みせて":"please show me", "みつかりません":"cannot find", "みんな":"everyone",
+ "めんきょしょう":"driver's license", "もうしわけ":"I'm sorry / apology", "もりあわせ":"assortment / mixed plate", "よく":"well / often",
+ "りょうがえ":"money exchange", "りょうしゅうしょ":"receipt", "レギュラー":"regular (gas)", "ロールケーキ":"roll cake",
+ "ロック":"on the rocks", "ワイファイ":"Wi-Fi", "あいている":"open / vacant", "アイロン":"iron",
+ "あけて":"please open", "あさ":"morning", "あさごはん":"breakfast", "あした":"tomorrow",
+ "あずかって":"hold / keep for me", "あずけたい":"want to check in / deposit", "あたため":"warming up / heating", "あつかん":"hot sake",
+ "あって":"there is and / having", "あっても":"even if there is", "あて":"addressed to", "あなたが":"you (+subject)",
+ "あぶら":"oil / grease", "あめが":"rain (+subject)", "ありませんが":"there isn't, but", "あるいて":"on foot / walking",
+ "あるき":"walking", "あんしょう":"PIN number", "イーティーシー":"ETC (toll card)", "いいと":"if it's good / okay",
+ "いかがですか":"how about it? (polite)", "いかせましょう":"let's send / let it go", "いけ":"go (command stem)", "いじょう":"that's all / and above",
+ "いただきます":"I will receive / thanks for the meal", "いただけます":"may I receive (polite)", "いただけますか":"could you give me? (polite)", "いたみどめ":"painkiller",
+ "いちだばつ":"one-stroke penalty", "いちだめ":"first stroke", "いちど":"once / one time", "いちばんて":"first tee",
+ "いちまんえん":"ten thousand yen", "いつ":"when", "いっしょ":"together", "いって":"go and / say and",
+ "いってくるね":"I'm off, back soon", "いっぱく":"one night's stay", "いっぽん":"one (long item)", "いま":"now",
+ "いれ":"put in", "いれても":"even if I put in", "インターチェンジ":"interchange", "ウーロンハイ":"oolong highball",
+ "ウイスキー":"whiskey", "うけとります":"I will receive / take", "うごかなく":"not moving", "うごきません":"it won't move",
+ "うしろの":"the one behind (+of)", "うちなおしても":"even if I re-hit", "うちましょう":"let's hit", "うちます":"I will hit",
+ "うっておきます":"I'll go ahead and hit", "うめしゅ":"plum wine", "うるさい":"loud / noisy", "うんが":"luck (+subject)",
+ "うんてんしゅ":"driver (chauffeur)", "エアコン":"air conditioner", "えいぎょう":"open (business hours)", "エキストラ":"extra",
+ "エスユーブイ":"SUV", "えんちょう":"extension (of time)", "オートマ":"automatic (transmission)", "オービー":"OB (out of bounds)",
+ "おあずかり":"holding / keeping", "おあずかりします":"I'll hold it for you (polite)", "おいれしますか":"shall I put it in? (polite)", "おおがた":"large size",
+ "おおきめ":"on the larger side", "おおもり":"large portion", "おかえし":"change / return", "おかせて":"please let me borrow",
+ "おかね":"money", "おくまでは":"as far as the back (+topic)", "おくれても":"even if late", "おくれます":"I will be late",
+ "おけば":"if I leave / put it", "おこし":"coming (honorific)", "おこして":"please wake me / raise", "おさしみ":"sashimi",
+ "おしい":"so close / a shame", "おしごと":"work / job (polite)", "おじょうず":"skillful (polite)", "おちゃ":"tea",
+ "おつかれさまでした":"good work / thanks (closing)", "おつぎ":"next one (polite)", "おでん":"oden", "おとおし":"appetizer (izakaya)",
+ "おなまえ":"your name (polite)", "おのせ":"loading / putting on (polite)", "おのみほうだい":"all-you-can-drink", "おのみもの":"drink (polite)",
+ "おはようございます":"good morning", "おひとりさま":"one person / party of one", "おひや":"cold water", "おもいます":"I think",
+ "おゆ":"hot water", "かい":"floor / counter", "かいがい":"overseas", "かいしゃいん":"company employee",
+ "かいじょう":"venue / hall", "かいたい":"want to buy", "かいだん":"stairs", "かいて":"buyer / write (te-form)",
+ "かいますか":"will you buy? (polite)", "かえして":"please return it", "かえしても":"even if I return it", "かえします":"return / give back (polite)",
+ "かえす":"return / give back", "かえせば":"if I return it", "かえて":"please change / swap", "かえます":"change / go home (polite)",
+ "かえり":"return trip", "かえります":"go home / return (polite)", "かさ":"umbrella", "かして":"please lend me",
+ "かぜ":"wind / a cold", "ガソリン":"gasoline", "ガソリンスタンド":"gas station", "かって":"please buy",
+ "かど":"corner", "かばん":"bag", "カミソリ":"razor", "かみなりが":"thunder (+subject)",
+ "カメラ":"camera", "からい":"spicy", "からく":"spicily", "かりたい":"want to rent / borrow",
+ "かわいたので":"because it's dry / thirsty", "かんこうです":"sightseeing (polite)", "かんこくから":"from Korea", "きがえ":"change of clothes",
+ "ききません":"won't ask / won't work (polite)", "きざみます":"cut fine / chip (polite)", "きざみますか":"shall I chip it? (polite)", "きず":"scratch / wound",
+ "きた":"came / north", "きつえん":"smoking", "きつえんじょ":"smoking area", "きって":"stamp / please cut",
+ "きっぷ":"ticket", "きにゅう":"filling in (a form)", "きません":"won't come (polite)", "キャディ":"caddie",
+ "きゅうじゅっぷんせい":"90-minute system", "きゅうホール":"nine holes", "きょうは":"today (+topic)", "きれい":"pretty / clean",
+ "きんえんしゃ":"non-smoking car", "きんこ":"safe / vault", "くみを":"group / party (+object)", "ぐらい":"[about / approximately]",
+ "グリーン":"green", "グリーンの":"of the green (+of)", "けいこく":"warning", "けしき":"scenery",
+ "けっこう":"quite / no thanks", "けど":"[but]", "ケトル":"kettle", "けんばいき":"ticket machine",
+ "コース":"course", "コーヒーマシン":"coffee machine", "コイン":"coin", "こうはんも":"second half too",
+ "こくさい":"international", "ここから":"from here", "ここは":"here (+topic)", "ございました":"there was (polite)",
+ "ごじ":"five o'clock", "こしょう":"breakdown / pepper", "ごちそうさまでした":"thanks for the meal", "ごちゅうもん":"your order (polite)",
+ "こちらです":"it is this way (polite)", "こっち":"this way", "こども":"child", "ごはく":"five nights",
+ "ごはん":"rice / meal", "コピーき":"copier", "ごふん":"five minutes", "こみ":"included",
+ "ごよやく":"your reservation (polite)", "こられたん":"were you able to come", "これは":"this (+topic)", "こわれて":"broken (te-form)",
+ "こんにちは":"hello", "サービス":"service / on the house", "さいご":"last / final", "サイズ":"size",
+ "さきに":"first / ahead", "さしこんで":"please insert", "さんじ":"three o'clock", "さんじゅっぷんまえ":"thirty minutes before",
+ "さんばん":"number three", "し":"[and (listing reasons)]", "ジーピーエス":"GPS", "シェア":"share",
+ "しお":"salt", "じかん":"time / hour", "じこ":"accident", "しずか":"quiet",
+ "した":"did / below", "したい":"want to do", "しない":"won't do / don't do", "しないで":"please don't do",
+ "ジム":"gym", "シムカード":"SIM card", "しゃしん":"photo", "じゅうごばん":"number fifteen",
+ "じゅうじ":"ten o'clock", "じゅうじはん":"ten thirty", "じゅうはちホール":"eighteen holes", "しゅうりょう":"finish / end",
+ "じゅんび":"preparation", "じゅんびちゅう":"getting ready", "しょうち":"understood / agreed", "しょうちゅう":"shochu",
+ "しょっけん":"meal ticket", "しんこく":"declaration (customs)", "しんじゅく":"Shinjuku", "スイカ":"Suica / watermelon",
+ "スイング":"swing", "すき":"like / fond of", "すくなめ":"a bit less", "スタートじかん":"start time / tee time",
+ "ストロー":"straw", "する":"do", "すれば":"if I do", "ぜい":"tax",
+ "せいさん":"settling the bill", "セルフ":"self (self-service)", "セルフプレー":"self-play (no caddie)", "センターまで":"to the center (+until)",
+ "そうです":"that's right (polite)", "そうですか":"is that so? (polite)", "そこ":"there", "そこから":"from there",
+ "そば":"soba / nearby", "ソフトドリンク":"soft drink", "それとも":"or (else)", "そろそろ":"soon / about time",
+ "たいざい":"stay (lodging)", "タイヤ":"tire", "だいよくじょう":"large public bath", "タオル":"towel",
+ "だけ":"[only]", "タッチ":"touch", "タトゥー":"tattoo", "たなか":"Tanaka (name)",
+ "たのしかった":"it was fun", "たのしみ":"looking forward to it", "タバコ":"cigarette", "ダブルボギー":"double bogey",
+ "たべますか":"do you eat? (polite)", "たべられますか":"can you eat? (polite)", "たまご":"egg", "だめ":"no good / not allowed",
+ "タレ":"sauce (dipping)", "だんぼう":"heating", "ちいさい":"small", "ちか":"underground / basement",
+ "ちかい":"near / close", "ちがいます":"that's wrong (polite)", "チップ":"tip (gratuity)", "チャイルドシート":"child seat",
+ "ちゃてん":"tea shop", "ちゅうだん":"interruption / suspension", "ちゅうもん":"order (food)", "ちょうど":"exactly / just right",
+ "ツイン":"twin (room)", "つかえば":"if I use", "つき":"moon / with (attached)", "つきあたり":"end of the corridor",
+ "つぎは":"next (+topic)", "つきました":"arrived", "つきません":"won't turn on / doesn't arrive", "つけて":"turn on / attach (please)",
+ "つけば":"if it arrives / if lit", "つみたいんです":"I want to load / stack", "つめたい":"cold (to touch)", "つめますか":"can you pack it? (polite)",
+ "つよめ":"stronger / firmer", "テーブル":"table", "ティー":"tee", "ていしょく":"set meal",
+ "できた":"it's done / could do", "できません":"cannot do (polite)", "できるだけ":"as much as possible", "でぐち":"exit",
+ "でした":"was (polite past)", "でしたか":"was it? (polite past)", "てつだって":"help (please)", "でて":"come out / leave",
+ "てにもつ":"hand luggage", "てまえまで":"up to just before (+until)", "でません":"won't come out (polite)", "テレビ":"TV",
+ "でんき":"light / electricity", "でんしゃ":"train", "でんち":"battery", "とおい":"far",
+ "どちらから":"from where?", "トッピング":"topping", "とどいて":"arrive / be delivered", "とどきます":"it arrives",
+ "とどきますか":"will it arrive? (polite)", "とどけ":"deliver / report", "どなたの":"whose? (polite) (+of)", "とまります":"I stay / it stops (polite)",
+ "とまれ":"stop! (command)", "とめれば":"if I park / stop", "ドライバー":"driver (golf club)", "とりあえず":"for now / to start",
+ "とりざら":"small serving plate", "トレー":"tray", "ドレスコード":"dress code", "ドロップ":"drop (golf)",
+ "ドンマイ":"don't mind it / no worries", "ない":"there isn't / not", "ナイスアプローチ":"nice approach", "ナイスオン":"nice on (on the green)",
+ "ナイスドライブ":"nice drive", "ナイスバーディー":"nice birdie", "ナイスパット":"nice putt", "なさいますか":"will you do? (polite)",
+ "なっているので":"because it is so (+because)", "ななばんアイアン":"seven iron", "ななひゃく":"seven hundred", "なに":"what",
+ "なまえ":"name", "なりました":"became / turned out (polite past)", "なります":"becomes (polite)", "なんか":"something / somehow",
+ "なんかい":"how many times", "なんこ":"how many (pieces)", "なんにち":"what day / how many days", "なんばん":"which number",
+ "なんばんを":"which number (+object)", "なんぷんまえ":"how many minutes ago", "にかいめ":"second time", "にくまん":"meat bun",
+ "にじゅうよ":"twenty-four", "にせん":"two thousand", "にぜん":"two (portions)", "にひゃく":"two hundred",
+ "にまい":"two (flat things)", "にゅうか":"arrival of stock", "にゅうせいひん":"dairy products", "にゅうりょく":"input / entry",
+ "ぬいて":"pull out / remove (please)", "ぬき":"without (leaving out)", "ねぎ":"green onion", "ねだん":"price",
+ "ねらいますか":"will you aim? (polite)", "ねんの":"just to be sure (+of)", "ので":"[because]", "のどが":"throat (+subject)",
+ "のぼって":"climbing / going up", "のぼり":"uphill / climb", "のみほうだい":"all-you-can-drink", "のみます":"drink",
+ "のみもの":"drink / beverage", "のり":"seaweed (nori)", "のりすて":"one-way drop-off (rental)", "のります":"ride / board",
+ "ノンアルコール":"non-alcoholic", "パー":"par", "はいれます":"can enter / can get in", "はいれますか":"can I enter?",
+ "パスワード":"password", "パターれんしゅうじょう":"putting practice green", "はっかい":"eighth floor / eight times", "パットは":"putt (+topic)",
+ "はっぴゃく":"eight hundred", "はブラシ":"toothbrush", "はやい":"fast / early", "はやく":"quickly / early",
+ "はらいます":"pay", "ばん":"number / turn", "はんい":"range / extent", "バンカー":"bunker",
+ "パンク":"flat tire / puncture", "ハンディは":"handicap (+topic)", "ひきかえしょう":"exchange voucher", "ひだり":"left",
+ "ひとかご":"one basket", "ひとから":"from one person", "ひとはこ":"one box", "ひとふくろ":"one bag",
+ "ひとり":"one person / alone", "ひゃくごじゅうヤード":"150 yards", "ひややっこ":"chilled tofu (hiyayakko)", "ひろいます":"pick up",
+ "ピン":"pin (flagstick)", "ファー":"fore! (golf warning)", "ふくまれて":"included", "ぶたにく":"pork",
+ "ふつうもり":"regular portion", "ふってきました":"it started raining", "フルカバー":"full coverage", "プレー":"play (a round)",
+ "プレーだい":"play fee", "プレーを":"play (+object)", "フロント":"front desk", "ペイペイ":"PayPay (payment app)",
+ "ベジタリアン":"vegetarian", "ベッド":"bed", "べつべつ":"separately", "へん":"area / vicinity",
+ "ヘンリーさま":"Mr. Henry (honorific)", "ホール":"hole", "ほうほう":"method / way", "ボギー":"bogey",
+ "ポケット":"pocket", "ポテトフライ":"french fries", "ほど":"[about / to the extent]", "まがって":"turn",
+ "まがります":"turn", "まくら":"pillow", "まちあわせ":"meeting up / rendezvous", "マップコード":"mapcode (navigation)",
+ "まよいました":"I got lost", "まわります":"go around / play (round)", "みぎに":"to the right", "みずわり":"mizuwari (whisky with water)",
+ "みて":"look / see", "むかいかぜ":"headwind", "むけ":"for / aimed at", "むりせず":"without overdoing it",
+ "むりょう":"free of charge", "めん":"noodles", "めんぜい":"tax-free", "めんせきほしょう":"deductible waiver / exemption coverage",
+ "も":"[too / also]", "もうすこし":"a little more", "もうふ":"blanket", "もくてき":"purpose / destination",
+ "もちかえれますか":"can I take it to go?", "もって":"hold / carry / bring", "もらえます":"can receive / can get", "や":"[and (among others)]",
+ "やいて":"grill / bake (please)", "やきざかな":"grilled fish", "やきとり":"yakitori (grilled chicken skewers)", "やすい":"cheap",
+ "やすみませんか":"shall we rest?", "やって":"do / doing", "ゆうがた":"evening", "ゆっくり":"slowly / leisurely",
+ "ゆび":"finger", "よう":"for / use / business", "ようい":"preparation / ready", "よこ":"side / next to",
+ "よって":"stop by / because of", "よにん":"four people", "よる":"night", "よんで":"call / read (please)",
+ "ラウンド":"round (of golf)", "ラウンドの":"round's / of the round", "ラストオーダー":"last order", "らっかせい":"peanuts",
+ "ランドリー":"laundry", "ランプ":"lamp / warning light", "リムジンバス":"limousine bus (airport shuttle)", "リモコン":"remote control",
+ "りょう":"amount / quantity", "れいしゅ":"cold sake", "れいぞうこ":"refrigerator", "レイト":"late",
+ "レシート":"receipt", "レストラン":"restaurant", "レモンサワー":"lemon sour (shochu highball)", "れんしゅうじょう":"driving range",
+ "れんしゅうボール":"practice balls", "レンタカー":"rental car", "レンタルシューズ":"rental shoes", "ろくじ":"six o'clock",
+ "ワイン":"wine", "わからない":"don't understand", "わかりますか":"do you understand?", "わかりません":"I don't understand",
+ "わけられますか":"can you split it?", "わさび":"wasabi", "わるかった":"was bad / my bad", "ん":"[um / hmm (filler)]"
+};
 
 const PHRASES=[
  {jp:"すみません",kana:"すみません",romaji:"sumimasen",en:"Excuse me / sorry — the all-purpose opener"},
@@ -1244,6 +1463,7 @@ function renderNpc(step){
     <div class="jp-line">${step.jp}</div>
     ${kbHtml(step.kana)}
     <div class="gloss hidden">${step.en}</div>
+    <div class="parts-reveal hidden">${partsHtml(step.kana)}</div>
     <div class="tools">
       <button class="icon-btn" data-say>🔊 Replay</button>
       <button class="icon-btn" data-slow>🐢 Slow</button>
@@ -1258,6 +1478,7 @@ function renderNpc(step){
   reveal.onclick=()=>{
     el.classList.add("revealed");
     el.querySelector(".gloss").classList.remove("hidden");
+    const pr=el.querySelector(".parts-reveal");if(pr)pr.classList.remove("hidden");
     reveal.classList.add("hidden");
     next.classList.remove("hidden");
   };
@@ -1280,6 +1501,7 @@ function renderTurn(step){
     <div class="answer hidden">
       <div class="jp-line" style="font-family:var(--jp);font-size:20px">${step.jp}</div>
       ${kbHtml(step.kana)}
+      ${partsHtml(step.kana)}
       <div class="tools" style="margin-top:8px">
         <button class="icon-btn" data-say>🔊 Listen and repeat</button>
         <button class="icon-btn" data-slow>🐢 Slow</button>
@@ -1531,6 +1753,7 @@ function sentNext(){
   document.getElementById("sent-kb").innerHTML=kbHtml(s.kana);
   document.getElementById("sent-jp").textContent=s.jp;
   document.getElementById("sent-en").textContent=s.en;
+  document.getElementById("sent-parts").innerHTML=partsHtml(s.kana);
   document.getElementById("sent-src").textContent=s.src?("↳ "+s.src):"";
   btn.style.display="";
   btn.textContent=sentDir==="e2j"?"Show Japanese":"Show romaji + meaning";
@@ -1738,6 +1961,7 @@ function renderPhrases(){
         <div class="jp">${p.jp}</div>
         <div class="romaji">${p.romaji}</div>
         <div class="en">${p.en}</div>
+        ${partsHtml(p.kana||p.jp)}
       </div>
       <button class="play" aria-label="Play audio">🔊</button>`;
     el.querySelector(".play").onclick=()=>say(p.kana||p.jp);

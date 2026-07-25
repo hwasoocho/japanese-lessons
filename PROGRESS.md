@@ -51,6 +51,31 @@ Populated from scene misses and kana drill stats after each export.
 
 ## Session log
 
+- **2026-07-25 (session 11, word-by-word breakdown on reveal):** Henry wanted
+  the Phrases and Cards reveals to show the *decomposed* meaning, the way I break
+  a sentence into words when he asks in chat, not just the whole-sentence gloss.
+  Built a shared word-gloss dictionary `GLOSS` (768 entries, one per unique
+  space/punct-separated word across every scene + phrase + sentence card) plus a
+  `decompose(kana)` + `partsHtml(kana)` primitive next to `kbHtml`. Reuses the
+  word boundaries already encoded as spaces in the `kana` strings; particles get
+  their grammatical role in [brackets] (は [topic marker], を [object marker],
+  の [of / 's], と [and / with], etc.), the pattern Henry likes. Wired the same
+  breakdown into three surfaces (he chose "stacked list below the meaning" and
+  "also Talk scenes"): Cards Sentences reveal (`#sent-parts`, cw-back so hidden
+  until flip, works in both j2e and e2j directions), the Phrases kit (under each
+  phrase, blurred with the rest in Hide mode), and Talk reveal cards (NPC bubble
+  `.parts-reveal` unhidden on Reveal, your-turn card inside the already-gated
+  `.answer`). Each word row is tap-to-hear (reuses `say()`). Glossed via 6
+  parallel agents against a pinned convention spec, then merged and verified:
+  all 768 keys present, 0 unglossed chunks across all 588 kana lines, 0
+  em-dashes/middots. Browser-verified at 390px: reveal gating hidden→visible in
+  both card directions, 15 phrases + Talk NPC/turn all render the breakdown, no
+  horizontal overflow, 0 console errors, dark-mode colors resolve. Sample card
+  now reads: ポイントカードはありません。/ "I don't have a point card." /
+  ポイントカード = point card / は = [topic marker] / ありません = there isn't.
+  sw VERSION → gj-v17. Future mined/chat cards auto-decompose; add any new word
+  to `GLOSS` (a missing word just shows blank, never breaks).
+
 - **2026-07-23 (session 10, casual register + Talk reveal cards):** Two changes
   from Henry. (1) He pointed out every scene is a polite service transaction
   (です・ます, you-vs-staff) with zero casual peer register — no plain-form
