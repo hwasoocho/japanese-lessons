@@ -61,6 +61,16 @@ Populated from scene misses and kana drill stats after each export.
 
 ## Session log
 
+- **2026-07-29 (session 13b, no red in the charts):** Henry: "for kana grid I
+  don't want you to show the red bordering, idk what that is for." It was the
+  `weak` marker (missed more than got). The charts now draw only `strong`, via a
+  new `chartCls()` that filters `statClsIn` down to it; `statClsIn` itself stays
+  as the shared status function because the Path chips and the export still count
+  weak and solid. Dropped the now-unused `.kana-cell.weak` CSS and the kana note
+  line that promised red. Verified with seeded stats: a 0-right/3-wrong kana and
+  kanji both render with the normal sage border, a solid one still goes green,
+  Path still reads 1/182 solid, 0 console errors. sw VERSION → gj-v21.
+
 - **2026-07-29 (session 13, kanji romaji + every menu is a link):** Two asks.
   (1) Henry can't pronounce the kanji readings, so both kanji surfaces now print
   romaji under the kana: the 漢字 chart cell gets a `.rm` line and the kanji card's

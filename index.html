@@ -160,7 +160,6 @@
   .kana-cell .dv{font-family:var(--jp);font-size:11px;color:var(--pine-deep);display:block;line-height:1.3}
   .kana-cell .w{font-family:var(--jp);font-size:13px;display:block;margin-top:6px;line-height:1.3}
   .kana-cell .wg{font-size:10px;color:var(--ink-soft);display:block;line-height:1.3}
-  .kana-cell.weak{border-color:var(--vermilion);background:var(--vermilion-tint)}
   .kana-cell.strong .r{color:var(--pine)}
   .kana-cell.blank{visibility:hidden}
   /* kanji chart: same cell, wider grid, readings and meaning need the room */
@@ -372,7 +371,7 @@
         </div>
       </div>
       <p class="section-note hidden" id="kanji-note">The kanji worth knowing, in two groups. <b>Signs:</b> what you have to read off a door, a ticket machine, or a shop window. <b>From your lines:</b> every kanji that shows up 3+ times in your own scenes and cards, so the Japanese in this app stops being a wall of shapes. Each cell shows the <b>ON</b> reading (katakana, borrowed from Chinese, used in compounds like 空港) and the <b>kun</b> reading (hiragana, the native word, used alone like そら), the romaji for both, plus a real word. Tap to hear the word. Drill them in the Cards tab.</p>
-      <p class="section-note" id="kana-note">Tap a cell to hear the character and its example word. Each cell shows a real word you'll actually see — menus, stations, golf. The rows below ん/ン are the <b>voiced variants</b>: the same shapes with dots (゛ turns k→g, s→z, t→d, h→b; ゜ turns h→p) — that's where ご of ごはん lives. The drill is production-first — see the kana, <b>say the reading out loud</b>, then type the romaji. Missed characters turn red and come back more often.</p>
+      <p class="section-note" id="kana-note">Tap a cell to hear the character and its example word. Each cell shows a real word you'll actually see — menus, stations, golf. The rows below ん/ン are the <b>voiced variants</b>: the same shapes with dots (゛ turns k→g, s→z, t→d, h→b; ゜ turns h→p) — that's where ご of ごはん lives. The drill is production-first — see the kana, <b>say the reading out loud</b>, then type the romaji. Missed characters come back more often.</p>
       <div class="kana-controls">
         <button class="pill on" id="pill-kata" onclick="setKanaSet('kata')">Katakana (golf first)</button>
         <button class="pill" id="pill-hira" onclick="setKanaSet('hira')">Hiragana</button>
@@ -1685,16 +1684,19 @@ function setKanaSet(s){
   renderKanaChart();
   syncHash();
 }
-/* red when you miss it more than you get it, green once it's solid.
-   Same rule for the kana chart (kanaStats) and the kanji chart (kanjiStats). */
+/* "weak" once you miss it more than you get it, "strong" once it's solid.
+   Same rule for the kana chart (kanaStats) and the kanji chart (kanjiStats).
+   Path chips and the export read both; the charts only draw strong. */
 function statClsIn(stats,ch){
   const st=stats[ch];if(!st)return"";
   if(st.w>st.r)return"weak";
   if(st.r>=3&&st.r>st.w)return"strong";
   return"";
 }
+/* The chart marks what you own, not what you've missed. */
+function chartCls(stats,ch){return statClsIn(stats,ch)==="strong"?"strong":""}
 function statCls(ch){
-  return statClsIn(kanaStats,ch);
+  return chartCls(kanaStats,ch);
 }
 function wordRomaji(w){return tokenize(w).map(t=>t.gap?" ":t.r).join("")}
 /* A kanji reading is always a word, never a particle, so は reads ha here
@@ -1724,7 +1726,7 @@ function renderKanjiChart(){
     g.appendChild(h);
     for(const kj of KANJI.filter(x=>x.g===key)){
       const b=document.createElement("button");
-      b.className="kana-cell "+statClsIn(kanjiStats,kj.k);
+      b.className="kana-cell "+chartCls(kanjiStats,kj.k);
       const read=(kj.on||"—")+(kj.kun?" / "+kj.kun:"");
       b.innerHTML=`<span class="k">${kj.k}</span>
         <span class="r">${read}</span>
