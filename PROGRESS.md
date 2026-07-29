@@ -61,6 +61,20 @@ Populated from scene misses and kana drill stats after each export.
 
 ## Session log
 
+- **2026-07-29 (session 13c, readings explainer):** Henry asked in chat whether
+  a kanji has one reading and whether the set is infinite like Mandarin, then
+  asked to fold the answer into the app. Extended `#kanji-explainer` (Kana tab,
+  漢字 pill) with three things: why one kanji carries several ON readings (呉音 vs
+  漢音 borrowed centuries apart, 行 = コウ in 銀行 but ギョウ in 行事), the two sound
+  rules that bend readings inside words framed as his dakuten pattern (rendaku
+  手 ＋ 紙 = てがみ, counter gemination 一 ＋ 杯 = いっぱい, 六 ＋ 百 = ろっぴゃく),
+  and the punchline that a reading belongs to the word, not the character. Second
+  new paragraph bounds the set: tens of thousands in Chinese dictionaries vs
+  2,136 常用漢字 plus ~863 name kanji in Japan, a few hundred for signs and menus.
+  New example row 手紙 / 一杯 / 六百. Verified at 390px light and dark: both rows
+  render, the kata pill still swaps back to the kana explainer, no overflow,
+  0 console errors. sw VERSION → gj-v22.
+
 - **2026-07-29 (session 13b, no red in the charts):** Henry: "for kana grid I
   don't want you to show the red bordering, idk what that is for." It was the
   `weak` marker (missed more than got). The charts now draw only `strong`, via a
