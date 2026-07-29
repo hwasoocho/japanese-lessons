@@ -61,6 +61,33 @@ Populated from scene misses and kana drill stats after each export.
 
 ## Session log
 
+- **2026-07-29 (session 13, kanji romaji + every menu is a link):** Two asks.
+  (1) Henry can't pronounce the kanji readings, so both kanji surfaces now print
+  romaji under the kana: the 漢字 chart cell gets a `.rm` line and the kanji card's
+  `#card-roma` shows the kana readings with romaji beneath (入 → ニュウ / はい.る /
+  い.れる → nyuu / hai.ru / i.reru). New `readingRomaji()` next to `wordRomaji`
+  splits a reading on its non-kana separators, romanizes each kana run, and puts
+  the dots and slashes back, so okurigana dots and alternative readings survive;
+  `kanaRomaji()` forces は to ha because a reading is a word, never a particle
+  (張 は.る = ha.ru, which the tokenizer's end-of-word wa rule got wrong). Checked
+  all 182 entries: 0 leaked kana, 0 empty.
+  (2) "Make every menu have links" → hash routing, Henry picked deep-linkable
+  URLs. `routeHash()` builds the hash from state, `applyHash()` applies it, and
+  each menu setter calls `syncHash()` (pushState); a `routing` flag stops the
+  setters pushing while a hash is being applied. Grammar: `#talk/<sceneOrRunId>`,
+  `#kana/<kata|hira|both|kanji>`, `#cards/char/<set>/<dir>`,
+  `#cards/sent/<cat>/<dir>`, `#cards/kanji/<cat>`, `#num/<say|hear>`, `#path`,
+  `#phrase`. `oneOf()` validates every segment against the real pill keys, and a
+  partial or unknown link is rewritten to what's actually shown (#cards →
+  #cards/char/kata/k2r, #bogus → #path). Back/forward walks the menu history
+  instead of dropping out of the app, and a no-hash launch replaceStates to #path
+  so the installed PWA still opens on Path. Drill and 筆順 stay toggles, not routes.
+  Browser-verified at 390px light and dark: deep links into the kanji/sentence/
+  numbers/scene menus restore their pills, pill clicks push, Back restores the
+  previous pill state, forward works, romaji stays hidden until flip, 182 chart
+  cells render with romaji, 0 console errors, no horizontal overflow.
+  sw VERSION → gj-v20.
+
 - **2026-07-29 (session 12b, kanji):** Henry asked for common kanji in the Kana
   section, then "also cards for kanjis". This reverses the old "kanji no" rule
   for *recognition* (he still writes and speaks in kana; kanji is read-only).
