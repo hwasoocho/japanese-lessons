@@ -23,6 +23,11 @@ what to build next. Do not rely on Claude-side memory for lesson state.
 
 - **Conversation-first.** No drill-warmup rounds, no Duolingo-style recognition.
   Sessions start inside a roleplay scene. (2026-07-04)
+- **Talk is the main surface, and every line there is the same reveal card.**
+  No your-turn framing, no grading in Talk: read the kanji out loud, reveal
+  romaji + meaning + breakdown, next. Every sentence card is also playable in
+  Talk as a per-category sentence run. Self-grading and the weighted Review ★
+  deck live in Cards only. (2026-07-29)
 - **HTML app, not terminal.** All drilling happens in `index.html`, served by
   GitHub Pages: **https://hwasoocho.github.io/japanese-lessons/** (repo
   https://github.com/hwasoocho/japanese-lessons — push to main = deploy;
@@ -50,6 +55,32 @@ _(none yet — export after first app session)_
 Populated from scene misses and kana drill stats after each export.
 
 ## Session log
+
+- **2026-07-29 (session 12, Talk becomes the main surface):** Henry: the card
+  system is fine but he wants to live in the Talk tab, with "the same kanji and
+  reveal like the 'them' card throughout everything" and no your-turn framing.
+  Two decisions from him: (a) every sentence card becomes a **sentence run** in
+  Talk, one per category, played in authored order; (b) **no grading anywhere in
+  Talk** ("don't need to record got it or missed for anything").
+  Built: `RUN_META` + `RUNS` (generated from `SENTENCES` by `cat`, plus a
+  `run-phrases` run over `PHRASES`) and `TALK = SCENES.concat(RUNS)`. Talk picker
+  now has two sections, Scenes and Sentence runs, with line counts. 12 runs,
+  508 lines, and a coverage check confirmed 0 sentence cards left out.
+  `renderTurn()` (the red your-turn card with intent, hint, mic and ○/✗ grading)
+  is deleted; one `renderStep()` renders every line as the same reveal bubble:
+  kanji, kana readings with romaji hidden, then Reveal shows meaning, hint (if
+  any), source caption (if any), and the word-by-word breakdown. Scene "you"
+  steps fall back to `intent` for the meaning so nothing was lost. `.turn-card`
+  CSS gone; `.bubble.you` is the same card right-aligned with a vermilion label.
+  Mic survives as a 🎤 tool button on every card. Space/Enter/→ now drives Talk
+  (reveal, then next), same rhythm as Cards. Progress is now "played to the end"
+  (`sceneRun()`, `sceneDone[id]={ok:lines,miss:0}`), so Path levels 3/5/6 read
+  "played" instead of "perfect". Cards keeps its ✗/✓ self-grade and the weighted
+  Review ★ deck: retention lives there, Talk is for reading volume.
+  Browser-verified at 390px in light and dark: reveal gating hidden→visible,
+  npc and you cards identical apart from side/label, run picker, phrases run,
+  end-of-run recap, localStorage write, 0 console errors, no horizontal
+  overflow. sw VERSION → gj-v18.
 
 - **2026-07-25 (session 11, word-by-word breakdown on reveal):** Henry wanted
   the Phrases and Cards reveals to show the *decomposed* meaning, the way I break

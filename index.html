@@ -78,6 +78,10 @@
   .crash .jp-ex{font-family:var(--jp)}
 
   /* ---------- scene picker ---------- */
+  .scene-count{font-family:var(--mono);font-size:12px;color:var(--ink-soft);margin-right:auto}
+  .talk-head{font-size:14px;font-weight:700;margin:26px 0 2px}
+  .talk-head:first-of-type{margin-top:0}
+  .talk-sub{font-size:12.5px;color:var(--ink-soft);margin-bottom:12px}
   .scene-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px}
   .scene-card{background:var(--paper);border:1px solid var(--sage);border-radius:12px;padding:18px;
     text-align:left;display:flex;flex-direction:column;gap:6px;transition:border-color .15s}
@@ -94,8 +98,11 @@
   .linklike{font-size:13px;color:var(--ink-soft);text-decoration:underline;text-underline-offset:3px}
   .linklike:hover{color:var(--ink)}
   .chat{display:flex;flex-direction:column;gap:14px}
-  .bubble{max-width:92%;border-radius:14px;padding:14px 16px;position:relative}
-  .bubble.npc{background:var(--paper);border:1px solid var(--sage);align-self:flex-start;border-bottom-left-radius:4px}
+  .bubble{max-width:92%;border-radius:14px;padding:14px 16px;position:relative;
+          background:var(--paper);border:1px solid var(--sage)}
+  .bubble.npc{align-self:flex-start;border-bottom-left-radius:4px}
+  .bubble.you{align-self:flex-end;border-bottom-right-radius:4px;border-color:#E4C3BB}
+  .bubble.you .who{color:var(--vermilion)}
   .bubble .who{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:6px}
   .bubble .jp-line{font-family:var(--jp);font-size:21px;line-height:1.5}
   .bubble .gloss{font-size:13.5px;color:var(--ink-soft);margin-top:6px;border-top:1px dashed var(--sage);padding-top:6px}
@@ -109,15 +116,11 @@
   .kb .tk{font-family:var(--jp);font-size:17px;display:block;line-height:1.3}
   .kb .tr{font-family:var(--mono);font-size:10px;color:var(--ink-soft);display:block}
   .kb .gap{width:10px}
-  /* Talk scene: NPC lines are reveal cards — no romaji spoiler until revealed */
-  .bubble.npc .kb .tr{visibility:hidden}
-  .bubble.npc.revealed .kb .tr{visibility:visible}
-
-  .turn-card{background:var(--paper);border:1.5px solid var(--vermilion);border-radius:14px;padding:18px;align-self:flex-end;max-width:92%;width:460px}
-  .turn-card .who{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--vermilion);margin-bottom:8px}
-  .turn-card .intent{font-size:16.5px;font-weight:700;margin-bottom:4px}
-  .turn-card .hint{font-size:13px;color:var(--ink-soft);margin-bottom:12px}
-  .turn-card .answer{border-top:1px solid var(--sage);padding-top:12px;margin-top:4px}
+  /* Talk: every line is a reveal card — no romaji spoiler until revealed */
+  .bubble .kb .tr{visibility:hidden}
+  .bubble.revealed .kb .tr{visibility:visible}
+  .bubble .hint{font-size:13px;color:var(--ink-soft);margin-top:6px}
+  .bubble .src{font-size:12px;color:var(--ink-soft);margin-top:6px;font-style:italic}
   .btn{display:inline-flex;align-items:center;gap:6px;padding:9px 16px;border-radius:9px;font-size:14.5px;font-weight:600}
   .btn.primary{background:var(--pine);color:#fff}
   .btn.primary:hover{background:var(--pine-deep)}
@@ -226,7 +229,7 @@
 
   footer{margin-top:56px;font-size:12px;color:var(--ink-soft);border-top:1px solid var(--sage);padding-top:14px}
   @media (prefers-reduced-motion:no-preference){
-    .bubble,.turn-card{animation:rise .25s ease both}
+    .bubble{animation:rise .25s ease both}
     @keyframes rise{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
   }
   @media (max-width:560px){
@@ -236,7 +239,6 @@
   @media (max-width:520px){
     .bubble .jp-line{font-size:18px}
     .drill-card .big{font-size:72px}
-    .turn-card{width:auto}
   }
   /* Dark mode: muted gruvbox, same palette as wallpaper.html.
      Driven by html[data-theme] (set from the 🌙 toggle or the OS setting).
@@ -315,12 +317,17 @@
     <!-- Talk -->
     <section id="view-talk" class="hidden">
       <div id="scene-picker">
-        <p class="section-note">Pick a scene. The other person talks to you in Japanese (🔊 plays automatically), with every character's reading shown underneath — this is where you learn kana in context. When the red card appears it's your turn: <b>say it out loud first</b>, then reveal and grade yourself.</p>
+        <p class="section-note">Every line is a card: the Japanese is read to you (🔊 plays automatically) with every character's reading underneath, which is where you learn kana in context. <b>Read it out loud first</b>, then reveal romaji, meaning, and the word-by-word breakdown. Same card for lines you'd hear and lines you'd say.</p>
+        <h3 class="talk-head">Scenes</h3>
+        <p class="talk-sub">Full conversations, start to finish.</p>
         <div class="scene-grid" id="scene-grid"></div>
+        <h3 class="talk-head">Sentence runs</h3>
+        <p class="talk-sub">Every sentence card, played as cards in order.</p>
+        <div class="scene-grid" id="run-grid"></div>
       </div>
       <div id="scene-player" class="hidden">
         <div class="player-top">
-          <h2 id="scene-title"></h2>
+          <h2 id="scene-title"></h2><span id="scene-count" class="scene-count"></span>
           <button class="linklike" onclick="exitScene()">← All scenes</button>
         </div>
         <div class="chat" id="chat"></div>
@@ -1374,14 +1381,13 @@ function showTab(t){
 
 /* ---------------- path ---------------- */
 function solidCount(set){return set.filter(x=>x[0]&&kanaStats[x[0]]&&kanaStats[x[0]].r>=3&&kanaStats[x[0]].r>kanaStats[x[0]].w).length}
-function scenePerfect(id){const d=sceneDone[id];return d&&d.miss===0&&d.ok>0}
-function sceneTried(id){return !!sceneDone[id]}
+function sceneRun(id){const d=sceneDone[id];return !!(d&&d.ok>0)}   // played to the end
 function chip(html,cls){return `<span class="chip ${cls}">${html}</span>`}
 function renderPath(){
   const kata=solidCount(KATA),hira=solidCount(HIRA);
   const lv3=["konbini","resto"],lv5=["checkin","clubhouse"];
-  const lv3done=lv3.every(scenePerfect),lv3tried=lv3.some(sceneTried);
-  const lv5done=lv5.every(scenePerfect),lv5tried=lv5.some(sceneTried);
+  const lv3done=lv3.every(sceneRun),lv3tried=lv3.some(sceneRun);
+  const lv5done=lv5.every(sceneRun),lv5tried=lv5.some(sceneRun);
   const rows=[
    {n:"0",t:"How Japanese works",d:"One 2-minute read. That's all the grammar theory this course will ever make you do.",
     chip:chip("read below","prog"),extra:`<div class="crash"><details><summary>The 5 facts (tap)</summary><ul>
@@ -1395,14 +1401,14 @@ function renderPath(){
     chip:kata>=40?chip("✓ "+kata+"/46","done"):kata>0?chip(kata+"/46 solid","prog"):chip("start here",""),go:"kana"},
    {n:"2",t:"The 15 survival phrases",d:"Phrases tab: shadow each one 3 times out loud, then turn on Hide mode and produce all 15 from English.",
     chip:chip("self-check",""),go:"phrase"},
-   {n:"3",t:"First conversations",d:"Talk tab: Konbini, then Restaurant. Replay each scene until you get every line right.",
-    chip:lv3done?chip("✓ perfect","done"):lv3tried?chip("in progress","prog"):chip("",""),go:"talk"},
+   {n:"3",t:"First conversations",d:"Talk tab: Konbini, then Restaurant. Read every line out loud before you reveal it, and replay until nothing surprises you.",
+    chip:lv3done?chip("✓ played","done"):lv3tried?chip("in progress","prog"):chip("",""),go:"talk"},
    {n:"4",t:"Hiragana — 46 characters",d:"Same drill, curvy set. After this you can read every reading shown under the conversations.",
     chip:hira>=40?chip("✓ "+hira+"/46","done"):hira>0?chip(hira+"/46 solid","prog"):chip("",""),go:"kana"},
-   {n:"5",t:"Golf day",d:"Talk tab: Check-in, then Clubhouse. Perfect both and you can survive a full Japanese golf morning.",
-    chip:lv5done?chip("✓ perfect","done"):lv5tried?chip("in progress","prog"):chip("",""),go:"talk"},
+   {n:"5",t:"Golf day",d:"Talk tab: Check-in, then Clubhouse, then the ゴルフ場受付 and コース sentence runs. Enough to survive a full Japanese golf morning.",
+    chip:lv5done?chip("✓ played","done"):lv5tried?chip("in progress","prog"):chip("",""),go:"talk"},
    {n:"6",t:"Numbers and money",d:"Numbers tab: ten words + five sound shifts run every price in Japan. Drill both directions until ¥ amounts parse at register speed, then play the Pro shop scene.",
-    chip:numStats.r>=30&&scenePerfect("proshop")?chip("✓ "+numStats.r+" right","done"):(numStats.r>0||sceneTried("proshop"))?chip((numStats.r||0)+" right","prog"):chip("",""),go:"num"},
+    chip:numStats.r>=30&&sceneRun("proshop")?chip("✓ "+numStats.r+" right","done"):(numStats.r>0||sceneRun("proshop"))?chip((numStats.r||0)+" right","prog"):chip("",""),go:"num"},
    {n:"7",t:"On-course talk",d:"Club names, scores, ナイスショット culture, wind and distance. Next build.",lock:true},
    {n:"8",t:"Small talk deep dive",d:"Longer clubhouse conversations: handicap, home course, drinks after. Next build.",lock:true},
    {n:"100",t:"Free conversation",d:"Unscripted roleplay with the mic — order anything, chat with anyone. The target.",lock:true}
@@ -1420,23 +1426,52 @@ function renderPath(){
     </div>`).join("");
 }
 
-/* ---------------- conversation ---------------- */
+/* ---------------- conversation ----------------
+   Sentence runs: every sentence card, playable in the Talk tab as the same
+   reveal card the scenes use. Steps come straight from SENTENCES (same
+   who/jp/kana/en fields as scene steps), in authored order. */
+const RUN_META={
+  airport:{jp:"空港",en:"Airport",desc:"Immigration, baggage, customs, getting out of the terminal"},
+  rental:{jp:"レンタカー",en:"Rental car",desc:"Counter, insurance, ETC, navi, returning the car"},
+  hotel:{jp:"ホテル",en:"Hotel",desc:"Check-in, room, luggage, breakfast, check-out"},
+  course:{jp:"ゴルフ場受付",en:"Course check-in",desc:"Reservation, rentals, lockers, start time, the bath"},
+  golf:{jp:"コース",en:"On course",desc:"Caddie, cart, clubs, distances, scores, ナイスショット"},
+  resto:{jp:"レストラン",en:"Restaurant",desc:"Seating, ordering, recommendations, the bill"},
+  izakaya:{jp:"居酒屋",en:"Izakaya",desc:"Drinks, small plates, refills, splitting the bill"},
+  konbini:{jp:"コンビニ",en:"Konbini",desc:"Items, warming, bags, points cards, paying"},
+  casual:{jp:"タメ口",en:"Casual peer talk",desc:"Plain form with a golf buddy, no keigo (タメ口 = flat speech)"},
+  reply:{jp:"相手の返事",en:"Answers you'll hear",desc:"What comes back at you: directions, yes, no, wait a moment"},
+  video:{jp:"動画から",en:"From videos",desc:"Lines mined from real Japanese video, with the source"}
+};
+const RUNS=[
+  {id:"run-phrases",run:true,jp:"基本フレーズ",en:"Survival phrases",
+   desc:"The 15-phrase kit, as cards",steps:PHRASES.map(p=>({...p,who:"you"}))},
+  ...Object.keys(RUN_META).map(cat=>{
+    const steps=SENTENCES.filter(s=>s.cat===cat);
+    return {id:"run-"+cat,run:true,...RUN_META[cat],steps};
+  })
+].filter(r=>r.steps.length);
+const TALK=SCENES.concat(RUNS);
+
 const sceneGrid=document.getElementById("scene-grid");
-function renderScenePicker(){
-  sceneGrid.innerHTML="";
-  for(const s of SCENES){
-    const d=sceneDone[s.id];
-    const b=document.createElement("button");
-    b.className="scene-card";
-    b.innerHTML=`<span class="jp">${s.jp}</span><span class="en">${s.en}</span>
-      <span class="meta">${s.desc}${d?` <span class="done-mark">✓ ${d.ok}/${d.ok+d.miss}</span>`:""}</span>`;
-    b.onclick=()=>startScene(s);
-    sceneGrid.appendChild(b);
-  }
+const runGrid=document.getElementById("run-grid");
+function talkCard(s){
+  const d=sceneDone[s.id];
+  const b=document.createElement("button");
+  b.className="scene-card";
+  b.innerHTML=`<span class="jp">${s.jp}</span><span class="en">${s.en}</span>
+    <span class="meta">${s.desc} (${s.steps.length} lines)${d?` <span class="done-mark">✓ done</span>`:""}</span>`;
+  b.onclick=()=>startScene(s);
+  return b;
 }
-let cur=null,curStep=0,curResults=[];
+function renderScenePicker(){
+  sceneGrid.innerHTML="";runGrid.innerHTML="";
+  for(const s of SCENES)sceneGrid.appendChild(talkCard(s));
+  for(const r of RUNS)runGrid.appendChild(talkCard(r));
+}
+let cur=null,curStep=0;
 function startScene(s){
-  cur=s;curStep=0;curResults=[];
+  cur=s;curStep=0;
   document.getElementById("scene-picker").classList.add("hidden");
   document.getElementById("scene-player").classList.remove("hidden");
   document.getElementById("scene-title").innerHTML=`${s.en}<span class="jp">${s.jp}</span>`;
@@ -1444,6 +1479,20 @@ function startScene(s){
   document.getElementById("recap").innerHTML="";
   nextStep();
 }
+/* Space / Enter drives the newest card: first press reveals, second moves on.
+   Same one-key rhythm as the Cards deck. */
+document.addEventListener("keydown",e=>{
+  if(!cur)return;
+  if(document.getElementById("view-talk").classList.contains("hidden"))return;
+  if(e.key!==" "&&e.key!=="Enter"&&e.key!=="ArrowRight")return;
+  const chat=document.getElementById("chat"),last=chat.lastElementChild;
+  if(!last)return;
+  e.preventDefault();
+  if(document.activeElement&&document.activeElement.blur)document.activeElement.blur();
+  const reveal=last.querySelector("[data-reveal]"),next=last.querySelector("[data-next]");
+  if(reveal&&!reveal.classList.contains("hidden"))reveal.click();
+  else if(next)next.click();
+});
 function exitScene(){
   cur=null;
   document.getElementById("scene-player").classList.add("hidden");
@@ -1452,22 +1501,30 @@ function exitScene(){
 }
 function nextStep(){
   if(!cur)return;
+  document.getElementById("scene-count").textContent=
+    curStep<cur.steps.length?`${curStep+1} / ${cur.steps.length}`:`${cur.steps.length} / ${cur.steps.length}`;
   if(curStep>=cur.steps.length){finishScene();return}
-  const step=cur.steps[curStep];
-  if(step.who==="npc")renderNpc(step);else renderTurn(step);
+  renderStep(cur.steps[curStep]);
 }
-function renderNpc(step){
+/* One card shape for every line — the one you'd hear and the one you'd say.
+   Kanji + kana readings first, romaji and meaning only after Reveal. */
+function renderStep(step){
   const el=document.createElement("div");
-  el.className="bubble npc";
-  el.innerHTML=`<div class="who">Them — read it, then reveal</div>
+  el.className="bubble "+(step.who==="you"?"you":"npc");
+  const meaning=step.en||step.intent||"";
+  el.innerHTML=`<div class="who">${step.who==="you"?"You say":"Them"} — read it, then reveal</div>
     <div class="jp-line">${step.jp}</div>
     ${kbHtml(step.kana)}
-    <div class="gloss hidden">${step.en}</div>
+    <div class="gloss hidden">${meaning}</div>
+    ${step.hint?`<div class="hint hidden">Hint: ${step.hint}</div>`:""}
+    ${step.src?`<div class="src hidden">↳ ${step.src}</div>`:""}
     <div class="parts-reveal hidden">${partsHtml(step.kana)}</div>
     <div class="tools">
       <button class="icon-btn" data-say>🔊 Replay</button>
       <button class="icon-btn" data-slow>🐢 Slow</button>
+      ${SR?'<button class="icon-btn" data-mic>🎤 Say it</button>':""}
     </div>
+    <div class="mic-out hidden" data-micout></div>
     <div class="btn-row">
       <button class="btn primary" data-reveal>Reveal romaji + meaning</button>
       <button class="btn good hidden" data-next>Next →</button>
@@ -1477,46 +1534,13 @@ function renderNpc(step){
   const reveal=el.querySelector("[data-reveal]"),next=el.querySelector("[data-next]");
   reveal.onclick=()=>{
     el.classList.add("revealed");
-    el.querySelector(".gloss").classList.remove("hidden");
-    const pr=el.querySelector(".parts-reveal");if(pr)pr.classList.remove("hidden");
+    for(const sel of[".gloss",".hint",".src",".parts-reveal"]){
+      const n=el.querySelector(sel);if(n)n.classList.remove("hidden");
+    }
     reveal.classList.add("hidden");
     next.classList.remove("hidden");
   };
   next.onclick=()=>{curStep++;nextStep()};
-  document.getElementById("chat").appendChild(el);
-  el.scrollIntoView({block:"nearest",behavior:"smooth"});
-  say(step.kana);
-}
-function renderTurn(step){
-  const el=document.createElement("div");
-  el.className="turn-card";
-  el.innerHTML=`<div class="who">Your turn — say it out loud</div>
-    <div class="intent">“${step.intent}”</div>
-    ${step.hint?`<div class="hint">Hint: ${step.hint}</div>`:""}
-    <div class="btn-row">
-      ${SR?'<button class="btn ghost" data-mic>🎤 Try saying it</button>':""}
-      <button class="btn primary" data-reveal>Reveal answer</button>
-    </div>
-    <div class="mic-out hidden" data-micout></div>
-    <div class="answer hidden">
-      <div class="jp-line" style="font-family:var(--jp);font-size:20px">${step.jp}</div>
-      ${kbHtml(step.kana)}
-      ${partsHtml(step.kana)}
-      <div class="tools" style="margin-top:8px">
-        <button class="icon-btn" data-say>🔊 Listen and repeat</button>
-        <button class="icon-btn" data-slow>🐢 Slow</button>
-      </div>
-      <div class="btn-row">
-        <button class="btn good" data-grade="1">Got it ○</button>
-        <button class="btn bad" data-grade="0">Missed ✗</button>
-      </div>
-    </div>`;
-  const answer=el.querySelector(".answer");
-  el.querySelector("[data-reveal]").onclick=e=>{
-    answer.classList.remove("hidden");e.target.disabled=true;e.target.style.opacity=.4;say(step.kana);
-  };
-  el.querySelector("[data-say]").onclick=()=>say(step.kana,0.75);
-  el.querySelector("[data-slow]").onclick=()=>say(step.kana,0.55);
   if(SR){
     const micBtn=el.querySelector("[data-mic]"),out=el.querySelector("[data-micout]");
     micBtn.onclick=()=>{
@@ -1530,29 +1554,19 @@ function renderTurn(step){
       rec.start();
     };
   }
-  for(const g of el.querySelectorAll("[data-grade]")){
-    g.onclick=()=>{
-      curResults.push({step,ok:g.dataset.grade==="1"});
-      for(const b of el.querySelectorAll(".answer .btn"))b.disabled=true;
-      g.style.outline="2px solid currentColor";
-      curStep++;nextStep();
-    };
-  }
   document.getElementById("chat").appendChild(el);
   el.scrollIntoView({block:"nearest",behavior:"smooth"});
+  say(step.kana);
 }
 function finishScene(){
-  const ok=curResults.filter(r=>r.ok).length,miss=curResults.length-ok;
-  sceneDone[cur.id]={ok,miss};store.set("sceneDone",sceneDone);
+  const n=cur.steps.length;
+  sceneDone[cur.id]={ok:n,miss:0};store.set("sceneDone",sceneDone);
   const rec=document.getElementById("recap");
-  const missed=curResults.filter(r=>!r.ok);
   rec.innerHTML=`<div class="recap">
-    <h3>Scene complete — ${ok}/${curResults.length} ${miss===0?"🎌 perfect":""}</h3>
-    ${missed.length?`<ul>${missed.map(r=>`<li class="miss">✗ “${r.step.intent}” → <span class="jp">${r.step.jp}</span></li>`).join("")}</ul>
-    <p style="font-size:13px;color:var(--ink-soft);margin-top:10px">Restart the scene to review the lines you missed.</p>`
-    :`<p style="font-size:14px">All correct. On to the next scene.</p>`}
+    <h3>Done: ${n} lines, all revealed 🎌</h3>
+    <p style="font-size:14px">Run it again tomorrow: the lines you still can't read cold are the ones to drill in Cards.</p>
     <div class="btn-row">
-      <button class="btn ghost" onclick="startScene(SCENES.find(s=>s.id==='${cur.id}'))">Retry scene</button>
+      <button class="btn ghost" onclick="startScene(TALK.find(s=>s.id==='${cur.id}'))">Run it again</button>
       <button class="btn primary" onclick="exitScene()">All scenes</button>
     </div></div>`;
   rec.scrollIntoView({block:"nearest",behavior:"smooth"});
@@ -1981,8 +1995,8 @@ function exportProgress(){
   lines.push("","**Scenes:**");
   if(doneIds.length===0)lines.push("- none completed yet");
   for(const id of doneIds){
-    const s=SCENES.find(x=>x.id===id),d=sceneDone[id];
-    if(s)lines.push(`- ${s.en} (${s.jp}): ${d.ok}/${d.ok+d.miss}`);
+    const s=TALK.find(x=>x.id===id),d=sceneDone[id];
+    if(s)lines.push(`- ${s.en} (${s.jp}): ran ${d.ok} lines`);
   }
   const chars=Object.keys(kanaStats);
   const weak=chars.filter(c=>kanaStats[c].w>kanaStats[c].r);
