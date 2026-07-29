@@ -32,6 +32,11 @@ what to build next. Do not rely on Claude-side memory for lesson state.
   GitHub Pages: **https://hwasoocho.github.io/japanese-lessons/** (repo
   https://github.com/hwasoocho/japanese-lessons — push to main = deploy;
   no claude.ai artifact). Terminal is only for updating this repo. (2026-07-04)
+- **Kanji is recognition-only** (2026-07-29, amends the rule below). Henry asked
+  for kanji in the Kana section and Cards, so `kanji-data.js` holds 182 kanji
+  (signage + everything with 3+ uses in the app's own lines) with ON/kun readings
+  and a real word. He reads them; he still produces everything in kana. Lesson
+  and scene text stays kana-first, and the wallpapers stay kana-only.
 - **Kana yes, kanji no.** Henry chose to learn hiragana + katakana properly
   (hangul glosses distort the sounds). Katakana is priority — golf/food vocab
   is katakana loanwords. (2026-07-04)
@@ -55,6 +60,34 @@ _(none yet — export after first app session)_
 Populated from scene misses and kana drill stats after each export.
 
 ## Session log
+
+- **2026-07-29 (session 12b, kanji):** Henry asked for common kanji in the Kana
+  section, then "also cards for kanjis". This reverses the old "kanji no" rule
+  for *recognition* (he still writes and speaks in kana; kanji is read-only).
+  He picked the set: signage kanji + every kanji appearing 3+ times in the app's
+  own lines. New `kanji-data.js`: 182 entries, `{g,k,on,kun,en,w,wk,wg}`, where
+  g is "sign" (53: doors, stations, ticket machines, clinics, calendar) or "app"
+  (129, and a script confirmed all 132 kanji with 3+ uses are covered).
+  Kana tab: a 漢字 pill renders a wider grid grouped by those two headings, with
+  ON reading (katakana) / kun reading (hiragana, dot before okurigana) / meaning
+  / a real word, tap to hear the word. Kanji mode hides the 筆順 pill (the stroke
+  font is kana-only, verified against its cmap) and the drill pill (the drill
+  types romaji), and swaps in a kanji explainer: ON vs kun, why 空港 is kuukou but
+  空 alone is sora, and that kana came from worn-down kanji (安→あ, 宇→ウ).
+  Cards tab: a third mode 漢字 with pills All / Review ★ / Signs / From your
+  lines. Front is the kanji alone, flip shows both readings, meaning, and the
+  word, then ✗/✓ self-grade into `kanjiStats` (localStorage `gj_kanjiStats`),
+  which also colors the chart red/green. Refactors instead of copies: extracted
+  `weightedDeck(items,keyOf,stats)` (sentence deck and kanji deck share it) and
+  `statClsIn(stats,ch)` (kana chart and kanji chart share it); the kanji card
+  reuses the character-card DOM slots and the sentence grade row via
+  `gradeCard()`. Path gains level 5 "Kanji, the 182 you'll actually meet"
+  (old 5-8 shifted to 6-9), and the export now reports kanji practiced/solid/weak.
+  Browser-verified at 390px light and dark: 182 cells, group headings, pill
+  toggles restore the kana chart and drill, flip gating, grade writes to
+  localStorage, Review deck picks up the missed kanji, chart marks it weak,
+  char and sentence modes still work, 0 console errors, no overflow.
+  sw VERSION → gj-v19, kanji-data.js added to the cache list.
 
 - **2026-07-29 (session 12, Talk becomes the main surface):** Henry: the card
   system is fine but he wants to live in the Talk tab, with "the same kanji and
