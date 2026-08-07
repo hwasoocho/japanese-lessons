@@ -12,7 +12,7 @@ what to build next. Do not rely on Claude-side memory for lesson state.
 | 1 — Survival core | app 표현 tab (15 phrases), scenes | 🔄 in progress via scenes |
 | 2 — Numbers, money, shopping | Numbers tab (patterns + 2-way price drill), proshop scene | 🔄 built — needs Henry to drill + play the scene |
 | 3 — Restaurant and bar | restaurant scene (partial), resto + izakaya sentence cards | 🔜 needs izakaya/allergy/split scenes |
-| 4 — Getting around | taxi scene, airport + rental car + hotel sentence cards | 🔄 taxi scene built 2026-08-07 — still needs airport / rental car / hotel scenes |
+| 4 — Getting around | taxi scene + Taxi cards, airport + rental car + hotel sentence cards | 🔄 taxi built end to end 2026-08-07 (scene + 52 cards + run) — still needs airport / rental car / hotel scenes |
 | 5 — Golf logistics | check-in scene (partial), course sentence cards | 🔜 needs caddie/cart/onsen/lunch scenes |
 | 6 — On-course talk | on-course sentence cards, ナイスショット in phrase kit | 🔜 needs a scene |
 | 7 — Small talk | clubhouse scene (partial) | 🔜 needs deeper branches (handicap, LINE exchange) |
@@ -85,8 +85,35 @@ Populated from scene misses and kana drill stats after each export.
   breakdown rows render on every card, 0 console errors, no horizontal overflow.
   sw VERSION → gj-v23. Caught one self-inflicted rule break mid-session: the
   door line's teaching note used an em-dash, rewritten before shipping.
-  **Next up:** airport / rental car / hotel scenes to finish Unit 4, and a
-  decision on whether taxi should also get its own sentence-card pill.
+  Follow-up same session ("phrases in cards too"): the taxi lines are now a
+  sentence-card category as well, so they enter the weighted Review ★ deck
+  instead of living only inside the scene. New **Taxi** pill in `SENT_CATS`
+  (placed after Airport, the trip order) with **52 cards**, bringing the deck to
+  545, plus a `RUN_META.taxi` entry so it is also playable in Talk as the
+  `run-taxi` sentence run. Coverage beyond the scene: catching one (空車ですか,
+  タクシーを一台お願いします), five destination frames on the same 〜までお願いします
+  pattern, luggage (ゴルフバッグは入りますか), riding (シートベルト, 窓を開けてもいいですか,
+  エアコンを弱くしてください), time and traffic (何分ぐらいかかりますか, 道が混んでいます,
+  九時までに着きますか teaching までに as a deadline vs まで as until), route
+  (高速代は別です, 下道でお願いします), directions (まっすぐ, 次の信号を右, 左に曲がって),
+  four ways to stop the car, waiting (ここで待っていてください, 十分で戻ります), and
+  paying (現金で払います, おつりはいいです, 助かりました). Added 32 more words to
+  `GLOSS` (780 → 810). Three of my drafted lines collided with existing cards
+  (タクシー乗り場はどこですか was already in Airport, ありがとうございました and
+  どのくらいかかりますか in Konbini); per the session-9 dedupe rule I kept the first
+  occurrences and replaced mine with taxi-specific lines, so the deck still has
+  0 exact-jp duplicates. Also caught myself writing してください as one chunk when
+  the corpus splits it as して ください in all 10 other places, fixed to match so
+  it reuses the existing glosses. Verified: 52 cards tokenize clean, 0 unglossed
+  chunks, 0 duplicate gloss keys, 0 em-dashes or middots in the new copy.
+  Browser-verified at 390px: the Taxi pill renders and filters, deep link
+  `#cards/sent/taxi/j2e` selects it, flip reveals the written form, meaning and
+  word breakdown, ✗ Missed writes to `gj_sentStats` and the card then shows up
+  under Review ★, and `#talk/run-taxi` plays it as a 52-line run. The deck
+  counter reading "Card 1 of 104" for 52 cards is the existing `weightedDeck`
+  behavior (unseen cards get weight 2), matching airport 54 → 108 and izakaya
+  50 → 100, not a regression. sw VERSION → gj-v24.
+  **Next up:** airport / rental car / hotel scenes to finish Unit 4.
 
 - **2026-07-29 (session 13c, readings explainer):** Henry asked in chat whether
   a kanji has one reading and whether the set is infinite like Mandarin, then

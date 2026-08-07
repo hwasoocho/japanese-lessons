@@ -873,7 +873,18 @@ const GLOSS={
  "あたり":"the area around / vicinity", "いれますね":"I'll put it in", "さわらないで":"don't touch (please)",
  "さんじゅっぷん":"thirty minutes", "じどう":"automatic", "その":"that (+noun)", "つかいますか":"will you use?",
  "とめて":"stop / park (please)", "トランク":"trunk (of a car)", "ドア":"door", "ほう":"side / direction / option",
- "わかりました":"understood / got it"
+ "わかりました":"understood / got it",
+ // taxi cards
+ "あけます":"I'll open it", "あけても":"even if I open / may I open", "いそいで":"hurrying / in a hurry",
+ "いちじかん":"one hour", "いちだい":"one (vehicle / machine)", "いて":"be / stay (continuing)",
+ "おつり":"change (money back)", "くうこう":"airport", "くうしゃ":"vacant taxi (lit. empty car)",
+ "こうそくだい":"expressway toll", "こんで":"crowded / congested", "シートベルト":"seatbelt",
+ "したみち":"surface roads (not the expressway)", "しんごう":"traffic light", "じゅっぷん":"ten minutes",
+ "タクシーだい":"taxi fare", "たすかりました":"that was a big help", "ちず":"map", "つかって":"use (please)",
+ "つきますか":"will we arrive?", "なんぷん":"how many minutes", "はいりますか":"will it fit / go in?",
+ "はらえますか":"can I pay?", "はらいます":"I'll pay", "まえ":"front / before", "までに":"[by (a deadline)]",
+ "まって":"wait (please)", "まど":"window", "みせます":"I'll show you", "もどります":"I'll come back",
+ "よわく":"weakly / turn it down", "わかります":"I know / I understand"
 };
 
 const PHRASES=[
@@ -898,7 +909,7 @@ const PHRASES=[
    Same field meanings as SCENES steps (jp natural / kana spaced / en).
    who: "you" = a line you produce, "npc" = a line you must understand. */
 const SENT_CATS=[["all","All"],["review","Review ★"],["video","From videos"],["reply","Answers"],["casual","Casual"],
-  ["airport","Airport"],["rental","Rental car"],["hotel","Hotel"],
+  ["airport","Airport"],["taxi","Taxi"],["rental","Rental car"],["hotel","Hotel"],
   ["course","Course check-in"],["golf","On course"],["resto","Restaurant"],["izakaya","Izakaya"],["konbini","Konbini"]];
 const SENTENCES=[
  // casual — plain-form peer banter (a golf buddy, no keigo)
@@ -971,6 +982,59 @@ const SENTENCES=[
  {cat:"airport",who:"you",jp:"タクシーでいくらぐらいかかりますか？",kana:"タクシー で いくら ぐらい かかりますか？",en:"About how much does it cost by taxi?"},
  {cat:"airport",who:"you",jp:"荷物を預けたいです。",kana:"にもつ を あずけたい です。",en:"I'd like to store my luggage. (baggage locker)"},
  {cat:"airport",who:"you",jp:"駅までどうやって行きますか？",kana:"えき まで どうやって いきますか？",en:"How do I get to the station?"},
+ // taxi: catching one, the destination, luggage, route, stopping, paying
+ {cat:"taxi",who:"you",jp:"タクシーを一台お願いします。",kana:"タクシー を いちだい おねがいします。",en:"One taxi, please. (台 is the counter for vehicles and machines)"},
+ {cat:"taxi",who:"you",jp:"タクシーを呼んでもらえますか？",kana:"タクシー を よんで もらえますか？",en:"Could you call a taxi for me?"},
+ {cat:"taxi",who:"you",jp:"空車ですか？",kana:"くうしゃ ですか？",en:"Are you free? (空車 = empty car, the red sign in the windshield)"},
+ {cat:"taxi",who:"npc",jp:"どちらまでですか？",kana:"どちら まで ですか？",en:"Where to? (dochira = polite which way / where)"},
+ {cat:"taxi",who:"you",jp:"この住所までお願いします。",kana:"この じゅうしょ まで おねがいします。",en:"To this address, please."},
+ {cat:"taxi",who:"you",jp:"駅までお願いします。",kana:"えき まで おねがいします。",en:"To the station, please."},
+ {cat:"taxi",who:"you",jp:"ゴルフ場までお願いします。",kana:"ゴルフじょう まで おねがいします。",en:"To the golf course, please."},
+ {cat:"taxi",who:"you",jp:"ホテルまでお願いします。",kana:"ホテル まで おねがいします。",en:"To the hotel, please."},
+ {cat:"taxi",who:"you",jp:"空港までお願いします。",kana:"くうこう まで おねがいします。",en:"To the airport, please."},
+ {cat:"taxi",who:"you",jp:"ここへ行ってください。",kana:"ここ へ いって ください。",en:"Please go here. (pointing at a map or screen; へ reads e)"},
+ {cat:"taxi",who:"you",jp:"地図を見せます。",kana:"ちず を みせます。",en:"I'll show you the map."},
+ {cat:"taxi",who:"you",jp:"場所は分かりますか？",kana:"ばしょ は わかりますか？",en:"Do you know the place?"},
+ {cat:"taxi",who:"npc",jp:"場所は分かります。",kana:"ばしょ は わかります。",en:"I know the place."},
+ {cat:"taxi",who:"npc",jp:"少し遠いですよ。",kana:"すこし とおい ですよ。",en:"It's a bit far, you know."},
+ {cat:"taxi",who:"you",jp:"荷物をトランクに入れてもいいですか？",kana:"にもつ を トランク に いれても いいですか？",en:"May I put my luggage in the trunk? (〜てもいいですか = may I ~)"},
+ {cat:"taxi",who:"you",jp:"荷物が二つあります。",kana:"にもつ が ふたつ あります。",en:"I have two bags."},
+ {cat:"taxi",who:"you",jp:"ゴルフバッグは入りますか？",kana:"ゴルフバッグ は はいりますか？",en:"Will the golf bag fit? (入る = go in / fit)"},
+ {cat:"taxi",who:"npc",jp:"トランクを開けます。",kana:"トランク を あけます。",en:"I'll open the trunk."},
+ {cat:"taxi",who:"npc",jp:"ドアは自動です。",kana:"ドア は じどう です。",en:"The door is automatic. (it opens and closes by itself, don't touch it)"},
+ {cat:"taxi",who:"npc",jp:"触らないでください。",kana:"さわらないで ください。",en:"Please don't touch it. (negative て-form ＋ ください = please don't ~)"},
+ {cat:"taxi",who:"npc",jp:"シートベルトをお願いします。",kana:"シートベルト を おねがいします。",en:"Seatbelt, please."},
+ {cat:"taxi",who:"you",jp:"窓を開けてもいいですか？",kana:"まど を あけても いいですか？",en:"May I open the window?"},
+ {cat:"taxi",who:"you",jp:"エアコンを弱くしてください。",kana:"エアコン を よわく して ください。",en:"Please turn the air conditioning down. (弱く = weakly)"},
+ {cat:"taxi",who:"you",jp:"何分ぐらいかかりますか？",kana:"なんぷん ぐらい かかりますか？",en:"About how many minutes does it take? (何分 = how many minutes, ふん shifts to ぷん after ん)"},
+ {cat:"taxi",who:"npc",jp:"三十分ぐらいです。",kana:"さんじゅっぷん ぐらい です。",en:"About thirty minutes."},
+ {cat:"taxi",who:"npc",jp:"一時間ぐらいかかります。",kana:"いちじかん ぐらい かかります。",en:"It takes about an hour."},
+ {cat:"taxi",who:"npc",jp:"道が混んでいます。",kana:"みち が こんで います。",en:"The roads are crowded. (混む = get crowded, the traffic word)"},
+ {cat:"taxi",who:"you",jp:"急いでいます。",kana:"いそいで います。",en:"I'm in a hurry."},
+ {cat:"taxi",who:"you",jp:"九時までに着きますか？",kana:"くじ までに つきますか？",en:"Will we arrive by nine? (までに = by a deadline, vs まで = until)"},
+ {cat:"taxi",who:"you",jp:"高速を使ってください。",kana:"こうそく を つかって ください。",en:"Please take the expressway."},
+ {cat:"taxi",who:"you",jp:"高速はいくらですか？",kana:"こうそく は いくら ですか？",en:"How much is the expressway?"},
+ {cat:"taxi",who:"npc",jp:"高速代は別です。",kana:"こうそくだい は べつ です。",en:"The toll is separate. (代 = the fee for, 別 = separate)"},
+ {cat:"taxi",who:"you",jp:"下道でお願いします。",kana:"したみち で おねがいします。",en:"Surface roads, please. (下道 = the ordinary road, not the expressway)"},
+ {cat:"taxi",who:"npc",jp:"その方が早いですよ。",kana:"その ほう が はやい ですよ。",en:"That way is faster. (その方が = that option is more ~)"},
+ {cat:"taxi",who:"you",jp:"まっすぐ行ってください。",kana:"まっすぐ いって ください。",en:"Please go straight."},
+ {cat:"taxi",who:"you",jp:"次の信号を右です。",kana:"つぎ の しんごう を みぎ です。",en:"Right at the next light."},
+ {cat:"taxi",who:"you",jp:"左に曲がってください。",kana:"ひだり に まがって ください。",en:"Please turn left."},
+ {cat:"taxi",who:"you",jp:"もう少し先です。",kana:"もう すこし さき です。",en:"A little further ahead."},
+ {cat:"taxi",who:"npc",jp:"このあたりでいいですか？",kana:"この あたり で いいですか？",en:"Is around here okay?"},
+ {cat:"taxi",who:"you",jp:"ここで止めてください。",kana:"ここ で とめて ください。",en:"Please stop here."},
+ {cat:"taxi",who:"you",jp:"そこの角で止めてください。",kana:"そこ の かど で とめて ください。",en:"Please stop at that corner."},
+ {cat:"taxi",who:"you",jp:"信号の前で止めてください。",kana:"しんごう の まえ で とめて ください。",en:"Please stop before the light."},
+ {cat:"taxi",who:"you",jp:"ここで待っていてください。",kana:"ここ で まって いて ください。",en:"Please wait here."},
+ {cat:"taxi",who:"you",jp:"十分で戻ります。",kana:"じゅっぷん で もどります。",en:"I'll be back in ten minutes."},
+ {cat:"taxi",who:"npc",jp:"着きました。",kana:"つきました。",en:"We've arrived."},
+ {cat:"taxi",who:"you",jp:"タクシー代はいくらぐらいですか？",kana:"タクシーだい は いくら ぐらい ですか？",en:"About how much is the taxi fare?"},
+ {cat:"taxi",who:"you",jp:"カードで払えますか？",kana:"カード で はらえますか？",en:"Can I pay by card?"},
+ {cat:"taxi",who:"you",jp:"現金で払います。",kana:"げんきん で はらいます。",en:"I'll pay in cash."},
+ {cat:"taxi",who:"you",jp:"領収書をお願いします。",kana:"りょうしゅうしょ を おねがいします。",en:"A receipt, please. (領収書 = the formal receipt, not the register slip)"},
+ {cat:"taxi",who:"npc",jp:"おつりです。",kana:"おつり です。",en:"Here's your change."},
+ {cat:"taxi",who:"you",jp:"おつりはいいです。",kana:"おつり は いい です。",en:"Keep the change. (lit. the change is fine)"},
+ {cat:"taxi",who:"you",jp:"助かりました。",kana:"たすかりました。",en:"That was a big help. (助かる = to be saved / helped, the warm thank-you after someone goes out of their way)"},
  // car rental — pickup, options, insurance, tolls, driving, return, trouble
  {cat:"rental",who:"you",jp:"予約しています。ヘンリーです。",kana:"よやく しています。ヘンリー です。",en:"I have a reservation. I'm Henry."},
  {cat:"rental",who:"you",jp:"国際免許証です。",kana:"こくさい めんきょしょう です。",en:"Here's my international driving permit."},
@@ -1558,6 +1622,7 @@ function renderPath(){
    who/jp/kana/en fields as scene steps), in authored order. */
 const RUN_META={
   airport:{jp:"空港",en:"Airport",desc:"Immigration, baggage, customs, getting out of the terminal"},
+  taxi:{jp:"タクシー",en:"Taxi",desc:"Catching one, the destination, luggage, route, stopping, paying"},
   rental:{jp:"レンタカー",en:"Rental car",desc:"Counter, insurance, ETC, navi, returning the car"},
   hotel:{jp:"ホテル",en:"Hotel",desc:"Check-in, room, luggage, breakfast, check-out"},
   course:{jp:"ゴルフ場受付",en:"Course check-in",desc:"Reservation, rentals, lockers, start time, the bath"},
