@@ -648,6 +648,27 @@ const SCENES=[
    {who:"npc",jp:"はい、大丈夫です。",kana:"はい、だいじょうぶです。",en:"Yes, no problem."},
    {who:"you",intent:"By card then, please",hint:"the konbini classic",jp:"カードでお願いします。",kana:"カード で おねがいします。"},
    {who:"npc",jp:"レシートです。ありがとうございました！",kana:"レシート です。ありがとうございました！",en:"Your receipt. Thank you!"}
+  ]},
+ {id:"taxi",jp:"タクシー",en:"Taking a taxi to the course",desc:"Destination, luggage, automatic doors, how long, stopping, receipt",
+  steps:[
+   {who:"npc",jp:"どちらまでですか？",kana:"どちら まで ですか？",en:"Where to? (dochira = polite 'which way / where')"},
+   {who:"you",intent:"To this address, please",hint:"kono juusho (this address) + made (up to) + onegaishimasu",jp:"この住所までお願いします。",kana:"この じゅうしょ まで おねがいします。"},
+   {who:"npc",jp:"はい。荷物はトランクに入れますね。",kana:"はい。にもつ は トランク に いれますね。",en:"Sure. I'll put your luggage in the trunk."},
+   {who:"you",intent:"Yes, please",hint:"onegaishimasu again, it covers every 'yes please'",jp:"お願いします。",kana:"おねがいします。"},
+   {who:"npc",jp:"ドアは自動です。触らないでください。",kana:"ドア は じどう です。さわらないで ください。",en:"The door is automatic. Please don't touch it. (Japanese taxi doors open by themselves. 触らないで ＋ ください is the standard 'please don't ~' pattern)"},
+   {who:"you",intent:"Got it",hint:"wakarimashita: past tense, 'I have understood'",jp:"分かりました。",kana:"わかりました。"},
+   {who:"you",intent:"How long does it take?",hint:"dono kurai (how much / how long) + kakarimasu ka (does it take)",jp:"どのくらいかかりますか？",kana:"どのくらい かかりますか？"},
+   {who:"npc",jp:"三十分ぐらいです。",kana:"さんじゅっぷん ぐらい です。",en:"About thirty minutes. (gurai = about, the softener for any quantity)"},
+   {who:"you",intent:"Will you take the expressway?",hint:"kousoku (expressway) + wo + tsukaimasu ka (will you use)",jp:"高速を使いますか？",kana:"こうそく を つかいますか？"},
+   {who:"npc",jp:"はい、その方が早いですよ。",kana:"はい、その ほう が はやい ですよ。",en:"Yes, that way is faster. (sono hou ga = 'that side/option is more ~', the standard comparison frame)"},
+   {who:"you",intent:"Then please do",hint:"jaa (well then) + onegaishimasu",jp:"じゃあ、お願いします。",kana:"じゃあ、おねがいします。"},
+   {who:"npc",jp:"このあたりですか？",kana:"この あたり ですか？",en:"Around here? (atari = the area around a spot)"},
+   {who:"you",intent:"Yes, please stop there",hint:"soko (there) + de (at) + tomete kudasai (please stop)",jp:"はい、そこで止めてください。",kana:"はい、そこ で とめて ください。"},
+   {who:"npc",jp:"3,200円です。",kana:"さんぜん にひゃく えん です。",en:"3,200 yen."},
+   {who:"you",intent:"Can I use a card?",hint:"the pro shop line, word for word",jp:"カードは使えますか？",kana:"カード は つかえますか？"},
+   {who:"npc",jp:"はい、大丈夫です。",kana:"はい、だいじょうぶです。",en:"Yes, that's fine."},
+   {who:"you",intent:"A receipt, please",hint:"ryoushuusho (formal receipt, the one you expense) + wo + onegaishimasu",jp:"領収書をお願いします。",kana:"りょうしゅうしょ を おねがいします。"},
+   {who:"npc",jp:"どうぞ。ありがとうございました。",kana:"どうぞ。ありがとうございました。",en:"Here you go. Thank you."}
   ]}
 ];
 
@@ -847,7 +868,12 @@ const GLOSS={
  "レシート":"receipt", "レストラン":"restaurant", "レモンサワー":"lemon sour (shochu highball)", "れんしゅうじょう":"driving range",
  "れんしゅうボール":"practice balls", "レンタカー":"rental car", "レンタルシューズ":"rental shoes", "ろくじ":"six o'clock",
  "ワイン":"wine", "わからない":"don't understand", "わかりますか":"do you understand?", "わかりません":"I don't understand",
- "わけられますか":"can you split it?", "わさび":"wasabi", "わるかった":"was bad / my bad", "ん":"[um / hmm (filler)]"
+ "わけられますか":"can you split it?", "わさび":"wasabi", "わるかった":"was bad / my bad", "ん":"[um / hmm (filler)]",
+ // taxi scene
+ "あたり":"the area around / vicinity", "いれますね":"I'll put it in", "さわらないで":"don't touch (please)",
+ "さんじゅっぷん":"thirty minutes", "じどう":"automatic", "その":"that (+noun)", "つかいますか":"will you use?",
+ "とめて":"stop / park (please)", "トランク":"trunk (of a car)", "ドア":"door", "ほう":"side / direction / option",
+ "わかりました":"understood / got it"
 };
 
 const PHRASES=[

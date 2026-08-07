@@ -12,7 +12,7 @@ what to build next. Do not rely on Claude-side memory for lesson state.
 | 1 — Survival core | app 표현 tab (15 phrases), scenes | 🔄 in progress via scenes |
 | 2 — Numbers, money, shopping | Numbers tab (patterns + 2-way price drill), proshop scene | 🔄 built — needs Henry to drill + play the scene |
 | 3 — Restaurant and bar | restaurant scene (partial), resto + izakaya sentence cards | 🔜 needs izakaya/allergy/split scenes |
-| 4 — Getting around | airport + rental car + hotel sentence cards | 🔜 needs scenes |
+| 4 — Getting around | taxi scene, airport + rental car + hotel sentence cards | 🔄 taxi scene built 2026-08-07 — still needs airport / rental car / hotel scenes |
 | 5 — Golf logistics | check-in scene (partial), course sentence cards | 🔜 needs caddie/cart/onsen/lunch scenes |
 | 6 — On-course talk | on-course sentence cards, ナイスショット in phrase kit | 🔜 needs a scene |
 | 7 — Small talk | clubhouse scene (partial) | 🔜 needs deeper branches (handicap, LINE exchange) |
@@ -60,6 +60,33 @@ _(none yet — export after first app session)_
 Populated from scene misses and kana drill stats after each export.
 
 ## Session log
+
+- **2026-08-07 (session 14, taxi scene):** Henry asked for a taxi scene, the
+  first Unit 4 conversation entry point (airport / rental car / hotel still have
+  cards but no scene). New Talk scene **タクシー** (18 steps, です・ます, driver as
+  npc), covering the whole ride start to finish: どちらまでですか (dochira, the
+  polite "where to"), この住所までお願いします, luggage into the トランク, the
+  automatic-door warning ドアは自動です。触らないでください (the pattern payoff of the
+  scene: 触らないで ＋ ください as the standard "please don't ~", and the fact that
+  Japanese taxi doors really do open by themselves), どのくらいかかりますか →
+  三十分ぐらいです, 高速を使いますか → その方が早いですよ (sono hou ga as the comparison
+  frame), このあたりですか → そこで止めてください, the fare さんぜん にひゃく えん,
+  カードは使えますか, and 領収書をお願いします (the formal receipt, not レシート).
+  Added the 12 new words the reveal breakdown needed to `GLOSS` (768 → 780):
+  トランク, ドア, じどう, さわらないで, わかりました, さんじゅっぷん, つかいますか,
+  その, ほう, あたり, とめて, いれますね.
+  Verified: all 18 lines tokenize clean against the real `tokenize()` (0 leaked
+  kanji/Latin, 0 missing romaji; は reads wa as a particle and ha inside はい,
+  さんじゅっぷん → sanjuppun, りょうしゅうしょ → ryoushuusho), 0 unglossed chunks,
+  no duplicate scene ids or gloss keys. Browser-verified at 390px light and dark:
+  `#talk/taxi` deep link opens the scene, the picker shows タクシー, reveal gating
+  goes hidden → visible on Space (matched against proshop as the control), played
+  through to 18/18 which wrote `gj_sceneDone {"taxi":{"ok":18,"miss":0}}`,
+  breakdown rows render on every card, 0 console errors, no horizontal overflow.
+  sw VERSION → gj-v23. Caught one self-inflicted rule break mid-session: the
+  door line's teaching note used an em-dash, rewritten before shipping.
+  **Next up:** airport / rental car / hotel scenes to finish Unit 4, and a
+  decision on whether taxi should also get its own sentence-card pill.
 
 - **2026-07-29 (session 13c, readings explainer):** Henry asked in chat whether
   a kanji has one reading and whether the set is infinite like Mandarin, then
