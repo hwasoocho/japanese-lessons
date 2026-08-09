@@ -152,6 +152,8 @@
   .kana-controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:18px}
   .pill{padding:7px 14px;border-radius:999px;border:1px solid var(--sage);background:var(--paper);font-size:13.5px;font-weight:600;color:var(--ink-soft)}
   .pill.on{background:var(--pine);border-color:var(--pine);color:#fff}
+  /* bulk actions next to the theme checkboxes: they act, they don't hold state */
+  .pill.ghost-pill{border-style:dashed;font-weight:500}
   .kana-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;max-width:640px}
   .kana-cell{background:var(--paper);border:1px solid var(--sage);border-radius:10px;padding:10px 4px 8px;text-align:center;transition:border-color .12s}
   .kana-cell:hover{border-color:var(--pine)}
@@ -407,7 +409,7 @@
 
     <!-- Cards -->
     <section id="view-cards" class="hidden">
-      <p class="section-note">Flashcards, romaji hidden until you flip. <b>Characters:</b> one kana per card with real words that contain it. Read them out loud, then flip to check. <b>Sentences:</b> real trip sentences, airport to izakaya. Read the sentence out loud and guess the meaning, then flip for romaji + meaning. <b>Kanji:</b> one kanji per card, say what it means and how it reads, then flip for both readings with romaji and a real word. The deck is shuffled, and missed cards come back more often.</p>
+      <p class="section-note">Flashcards, shuffled, with missed cards coming back sooner. <b>Characters:</b> one kana per card with real words that contain it. Read them out loud, then flip to check. <b>Sentences:</b> one merged list of every trip sentence, shuffled fresh each time. Tick the themes you want in the list, and leave <i>Romaji + meaning always on</i> checked to read without flipping. <b>Kanji:</b> one kanji per card, say what it means and how it reads, then flip for both readings with romaji and a real word. The deck is shuffled, and missed cards come back more often.</p>
       <div class="kana-controls">
         <button class="pill on" id="pill-cmode-char" onclick="setCardMode('char')">Characters</button>
         <button class="pill" id="pill-cmode-sent" onclick="setCardMode('sent')">Sentences (trip)</button>
@@ -428,8 +430,14 @@
       </div>
       </div>
       <div id="card-sent-wrap" class="hidden">
-        <div class="kana-controls" id="card-sent-controls"></div>
+        <div class="kana-controls" id="card-sent-themes"></div>
         <div class="kana-controls">
+          <button class="pill ghost-pill" onclick="setAllThemes(true)">Check all</button>
+          <button class="pill ghost-pill" onclick="setAllThemes(false)">Uncheck all</button>
+          <button class="pill" id="pill-sent-review" onclick="toggleSentReview()">Review ★ only</button>
+        </div>
+        <div class="kana-controls">
+          <button class="pill on" id="pill-sent-show" onclick="toggleSentShow()">Romaji + meaning always on</button>
           <button class="pill on" id="pill-sdir-j2e" onclick="setSentDir('j2e')">Japanese → meaning</button>
           <button class="pill" id="pill-sdir-e2j" onclick="setSentDir('e2j')">English → Japanese</button>
         </div>
@@ -884,7 +892,9 @@ const GLOSS={
  "つきますか":"will we arrive?", "なんぷん":"how many minutes", "はいりますか":"will it fit / go in?",
  "はらえますか":"can I pay?", "はらいます":"I'll pay", "まえ":"front / before", "までに":"[by (a deadline)]",
  "まって":"wait (please)", "まど":"window", "みせます":"I'll show you", "もどります":"I'll come back",
- "よわく":"weakly / turn it down", "わかります":"I know / I understand"
+ "よわく":"weakly / turn it down", "わかります":"I know / I understand",
+ "ちゅうい":"caution / a word of warning", "なんぼん":"how many (long thin things)", "セット":"set",
+ "キャディさん":"caddie (さん makes it a person you address)"
 };
 
 const PHRASES=[
@@ -908,9 +918,11 @@ const PHRASES=[
 /* Sentence cards: the whole trip in sentences, airport to izakaya.
    Same field meanings as SCENES steps (jp natural / kana spaced / en).
    who: "you" = a line you produce, "npc" = a line you must understand. */
-const SENT_CATS=[["all","All"],["review","Review ★"],["video","From videos"],["reply","Answers"],["casual","Casual"],
-  ["airport","Airport"],["taxi","Taxi"],["rental","Rental car"],["hotel","Hotel"],
-  ["course","Course check-in"],["golf","On course"],["resto","Restaurant"],["izakaya","Izakaya"],["konbini","Konbini"]];
+/* Themes are checkboxes, not an exclusive pill row: the deck is ONE merged list
+   and each theme just adds or removes its sentences from it. All on by default. */
+const SENT_THEMES=[["airport","Airport"],["taxi","Taxi"],["rental","Rental car"],["hotel","Hotel"],
+  ["course","Course check-in"],["golf","On course"],["resto","Restaurant"],["izakaya","Izakaya"],
+  ["konbini","Konbini"],["reply","Answers"],["casual","Casual"],["video","From videos"]];
 const SENTENCES=[
  // casual — plain-form peer banter (a golf buddy, no keigo)
  {cat:"casual",who:"npc",jp:"疲れた？",kana:"つかれた？",en:"Tired? (plain form)"},
@@ -1075,14 +1087,13 @@ const SENTENCES=[
  {cat:"rental",who:"you",jp:"一番近いインターチェンジはどこですか？",kana:"いちばん ちかい インターチェンジ は どこ ですか？",en:"Where is the nearest interchange?"},
  {cat:"rental",who:"you",jp:"ガソリンはレギュラーでいいですか？",kana:"ガソリン は レギュラー で いいですか？",en:"Is regular gas okay for this car?"},
  {cat:"rental",who:"you",jp:"レギュラー、満タンでお願いします。",kana:"レギュラー、 まんタン で おねがい します。",en:"Regular, fill it up please."},
- {cat:"rental",who:"npc",jp:"支払いは現金ですか、カードですか？",kana:"しはらい は げんきん ですか、 カード ですか？",en:"Cash or card? (gas station staff)"},
  {cat:"rental",who:"you",jp:"ここはセルフですか？",kana:"ここ は セルフ ですか？",en:"Is this self-service?"},
  {cat:"rental",who:"you",jp:"使い方が分からないので手伝ってください。",kana:"つかいかた が わからない ので てつだって ください。",en:"I don't know how to use it, please help."},
  {cat:"rental",who:"you",jp:"タイヤがパンクしました。",kana:"タイヤ が パンク しました。",en:"I have a flat tire."},
  {cat:"rental",who:"you",jp:"警告ランプが点きました。",kana:"けいこく ランプ が つきました。",en:"A warning light came on."},
  {cat:"rental",who:"you",jp:"車が動かなくなりました。",kana:"くるま が うごかなく なりました。",en:"The car won't move."},
  {cat:"rental",who:"you",jp:"故障したときはどこに電話しますか？",kana:"こしょう した とき は どこ に でんわ しますか？",en:"Who do I call if it breaks down?"},
- {cat:"rental",who:"you",jp:"駐車場はどこに停めればいいですか？",kana:"ちゅうしゃじょう は どこ に とめれば いいですか？",en:"Where should I park?"},
+ {cat:"rental",who:"you",jp:"車はどこに停めればいいですか？",kana:"くるま は どこ に とめれば いいですか？",en:"Where should I park the car? (〜ばいいですか = what is the right way to ~)"},
  {cat:"rental",who:"you",jp:"別の店で返してもいいですか？",kana:"べつ の みせ で かえしても いいですか？",en:"Can I return it at a different location (one-way)?"},
  {cat:"rental",who:"you",jp:"乗り捨て料金はかかりますか？",kana:"のりすて りょうきん は かかりますか？",en:"Is there a one-way drop-off fee?"},
  {cat:"rental",who:"you",jp:"返却の場所を教えてください。",kana:"へんきゃく の ばしょ を おしえて ください。",en:"Please tell me the return location."},
@@ -1135,14 +1146,14 @@ const SENTENCES=[
  {cat:"hotel",who:"you",jp:"暖房がつきません。",kana:"だんぼう が つきません。",en:"The heating won't turn on."},
  {cat:"hotel",who:"you",jp:"テレビのリモコンが動きません。",kana:"テレビ の リモコン が うごきません。",en:"The TV remote isn't working."},
  {cat:"hotel",who:"you",jp:"隣の部屋がうるさいです。",kana:"となり の へや が うるさい です。",en:"The next room is noisy."},
- {cat:"hotel",who:"you",jp:"夜は静かにしてもらえますか？",kana:"よる は しずか に して もらえますか？",en:"Could you keep it quiet at night, please?"},
+ {cat:"hotel",who:"you",jp:"隣の部屋に注意してもらえますか？",kana:"となり の へや に ちゅうい して もらえますか？",en:"Could you have a word with the room next door? (注意する = to caution someone, what you ask the front desk to do)"},
  {cat:"hotel",who:"you",jp:"朝早くゴルフ場までタクシーをお願いします。",kana:"あさ はやく ゴルフじょう まで タクシー を おねがい します。",en:"Please arrange a taxi to the golf course early in the morning."},
  {cat:"hotel",who:"you",jp:"朝食を早めに食べられますか？",kana:"ちょうしょく を はやめ に たべられますか？",en:"Can I eat breakfast earlier (before tee time)?"},
  {cat:"hotel",who:"you",jp:"お弁当の朝食は用意できますか？",kana:"おべんとう の ちょうしょく は ようい できますか？",en:"Can you prepare a packed (boxed) breakfast?"},
  {cat:"hotel",who:"you",jp:"駐車場はありますか？",kana:"ちゅうしゃじょう は ありますか？",en:"Is there parking?"},
  {cat:"hotel",who:"you",jp:"私宛に荷物は届いていますか？",kana:"わたし あて に にもつ は とどいて いますか？",en:"Has a package arrived for me?"},
  // golf course check-in — reception, pro shop, locker, cart, payment
- {cat:"course",who:"you",jp:"今日はよろしくお願いします。",kana:"きょう は よろしく おねがいします。",en:"Looking forward to today. (the polite opener)"},
+ {cat:"course",who:"you",jp:"今日はよろしくお願いします。",kana:"きょう は よろしく おねがいします。",en:"Looking forward to today. (say this to your playing partners on the first tee)"},
  {cat:"course",who:"you",jp:"4人です。",kana:"よにん です。",en:"Four people."},
  {cat:"course",who:"you",jp:"スタートは何時ですか？",kana:"スタート は なんじ ですか？",en:"What time do I start?"},
  {cat:"course",who:"you",jp:"プレー代はいくらですか？",kana:"プレーだい は いくら ですか？",en:"How much is the green fee?"},
@@ -1158,7 +1169,7 @@ const SENTENCES=[
  {cat:"course",who:"npc",jp:"お風呂は2階にあります。",kana:"おふろ は にかい に あります。",en:"The bath is on the 2nd floor."},
  {cat:"course",who:"you",jp:"このグローブはいくらですか？",kana:"この グローブ は いくら ですか？",en:"How much is this glove?"},
  {cat:"course",who:"you",jp:"カードは使えますか？",kana:"カード は つかえますか？",en:"Do you take cards?"},
- {cat:"course",who:"you",jp:"本日はよろしくお願いします。",kana:"ほんじつ は よろしく おねがい します。",en:"Please look after us today (opener at the desk)."},
+ {cat:"course",who:"you",jp:"本日はよろしくお願いします。",kana:"ほんじつ は よろしく おねがい します。",en:"Please look after us today. (本日 is the formal 今日, the register the front desk uses)"},
  {cat:"course",who:"npc",jp:"お名前を教えていただけますか？",kana:"おなまえ を おしえて いただけます か？",en:"May I have your name? (reception asks)."},
  {cat:"course",who:"you",jp:"10時のスタートで予約しています。",kana:"じゅうじ の スタート で よやく して います。",en:"I have a reservation for a 10 o'clock start."},
  {cat:"course",who:"npc",jp:"ご予約は何名様ですか？",kana:"ごよやく は なんめいさま です か？",en:"How many people is the reservation for? (staff)."},
@@ -1192,7 +1203,7 @@ const SENTENCES=[
  {cat:"course",who:"you",jp:"精算をお願いします。",kana:"せいさん を おねがい します。",en:"I'd like to settle the bill, please."},
  {cat:"course",who:"npc",jp:"お支払いは現金ですか、カードですか？",kana:"おしはらい は げんきん です か、カード です か？",en:"Cash or card? (staff at checkout)."},
  {cat:"course",who:"you",jp:"領収書をください。",kana:"りょうしゅうしょ を ください。",en:"Could I have a receipt?"},
- {cat:"course",who:"you",jp:"レンタルクラブは何番までありますか？",kana:"レンタルクラブ は なんばん まで あります か？",en:"Up to which club number do the rentals go (full set)?"},
+ {cat:"course",who:"you",jp:"レンタルクラブは何本セットですか？",kana:"レンタルクラブ は なんぼん セット ですか？",en:"How many clubs are in the rental set? (本 is the counter for long thin things, so clubs)"},
  // on course — shot calls, caddie, banter, trouble, scoring
  {cat:"golf",who:"you",jp:"ナイスショット！",kana:"ナイスショット！",en:"Nice shot! (mandatory on course)"},
  {cat:"golf",who:"you",jp:"ナイスオン！",kana:"ナイスオン！",en:"Nice on! (green in regulation)"},
@@ -1218,7 +1229,7 @@ const SENTENCES=[
  {cat:"golf",who:"you",jp:"ナイスドライブ！",kana:"ナイスドライブ！",en:"Nice drive! (praising a partner's tee shot)"},
  {cat:"golf",who:"you",jp:"ナイスアプローチですね。",kana:"ナイスアプローチ ですね。",en:"Nice approach (praising a chip/pitch near the pin)"},
  {cat:"golf",who:"npc",jp:"今のは運が悪かったですね。",kana:"いまのは うんが わるかった ですね。",en:"That was unlucky (caddie/partner sympathizing)"},
- {cat:"golf",who:"you",jp:"これは乗りますね。",kana:"これは のります ね。",en:"That'll play, that one will reach (watching a shot fly)"},
+ {cat:"golf",who:"you",jp:"これは乗りますね。",kana:"これ は のります ね。",en:"That one's getting on the green. (乗る = to ride, and on a course it means the ball lands ON the green)"},
  {cat:"golf",who:"you",jp:"ファー！",kana:"ファー！",en:"Fore! (shouting a warning after a wayward shot)"},
  {cat:"golf",who:"you",jp:"入れ！",kana:"いれ！",en:"In the hole! Get in! (cheering a putt or chip)"},
  {cat:"golf",who:"you",jp:"止まれ！",kana:"とまれ！",en:"Sit! Stop! (yelling at a ball to stop)"},
@@ -1255,7 +1266,7 @@ const SENTENCES=[
  {cat:"golf",who:"you",jp:"今のはパーです。",kana:"いまのは パー です。",en:"That was a par"},
  {cat:"golf",who:"you",jp:"ダブルボギーですね。",kana:"ダブルボギー ですね。",en:"That's a double bogey"},
  {cat:"golf",who:"you",jp:"もう拾います。",kana:"もう ひろいます。",en:"I'll just pick up (giving up on the hole)"},
- {cat:"golf",who:"you",jp:"今日はありがとうございました、これチップです。",kana:"きょうは ありがとう ございました、これ チップ です。",en:"Thank you for today, here's a tip (thanking the caddie at the end)"},
+ {cat:"golf",who:"you",jp:"キャディさん、今日はありがとうございました。",kana:"キャディさん、 きょう は ありがとう ございました。",en:"Thank you for today, caddie. (Japan has no tipping. The caddie fee is already on your bill, so words are the tip)"},
  {cat:"golf",who:"you",jp:"ラウンドの後、ビールでもどうですか？",kana:"ラウンドの あと、ビール でも どうですか？",en:"How about a beer after the round? (inviting partners)"},
  // restaurant — seating, ordering, allergies, requests, the check
  {cat:"resto",who:"npc",jp:"何名様ですか？",kana:"なんめいさま ですか？",en:"How many people? (host)"},
@@ -1312,7 +1323,7 @@ const SENTENCES=[
  {cat:"resto",who:"you",jp:"ベジタリアン向けのものはありますか？",kana:"ベジタリアン むけ の もの は ありますか？",en:"Do you have a vegetarian option?"},
  {cat:"resto",who:"you",jp:"これはどうやって食べますか？",kana:"これ は どう やって たべますか？",en:"How do I eat this dish?"},
  {cat:"resto",who:"you",jp:"これは生ですか？",kana:"これ は なま ですか？",en:"Is this raw?"},
- {cat:"resto",who:"you",jp:"カードは使えますか？領収書はください。",kana:"カード は つかえますか？りょうしゅうしょ は ください。",en:"Can I use a card? And keep the receipt please."},
+ {cat:"resto",who:"you",jp:"カードは使えますか？領収書もお願いします。",kana:"カード は つかえますか？ りょうしゅうしょ も おねがいします。",en:"Can I use a card? And the receipt too, please. (も = too. Never 領収書は ください: は marks a topic, not what you are asking for)"},
  // izakaya — drinks, small plates, toasting, refills, the tab
  {cat:"izakaya",who:"you",jp:"二人です。カウンターでいいです。",kana:"ふたり です。カウンター で いい です。",en:"Two of us. The counter is fine."},
  {cat:"izakaya",who:"you",jp:"とりあえずビールで！",kana:"とりあえず ビール で！",en:"To start, beer! (the classic izakaya opener)"},
@@ -1333,7 +1344,7 @@ const SENTENCES=[
  {cat:"izakaya",who:"you",jp:"楽しかったです！",kana:"たのしかった です！",en:"That was fun!"},
  {cat:"izakaya",who:"you",jp:"テーブル席はありますか？",kana:"テーブル せき は あります か？",en:"Do you have a table seat? (asking for a table)"},
  {cat:"izakaya",who:"npc",jp:"ただいま満席です。少々お待ちください。",kana:"ただいま まんせき です。しょうしょう おまち ください。",en:"We're full right now, please wait a moment. (staff)"},
- {cat:"izakaya",who:"npc",jp:"お飲み放題は九十分制です。",kana:"おのみほうだい は きゅうじゅっぷんせい です。",en:"All-you-can-drink is a 90-minute limit. (staff)"},
+ {cat:"izakaya",who:"npc",jp:"飲み放題は九十分制です。",kana:"のみほうだい は きゅうじゅっぷんせい です。",en:"All-you-can-drink is a 90-minute limit. (staff)"},
  {cat:"izakaya",who:"you",jp:"飲み放題を二人お願いします。",kana:"のみほうだい を ふたり おねがい します。",en:"Nomihoudai for two, please."},
  {cat:"izakaya",who:"npc",jp:"ラストオーダーは十時半です。",kana:"ラストオーダー は じゅうじはん です。",en:"Last order is at ten thirty. (staff)"},
  {cat:"izakaya",who:"you",jp:"ハイボールをください。",kana:"ハイボール を ください。",en:"A highball, please."},
@@ -1367,7 +1378,7 @@ const SENTENCES=[
  // konbini — register, warming, payment, ATM, services
  {cat:"konbini",who:"npc",jp:"いらっしゃいませ。",kana:"いらっしゃいませ。",en:"Welcome. (said to every customer)"},
  {cat:"konbini",who:"you",jp:"ビールふたつとおにぎりひとつください。",kana:"ビール ふたつ と おにぎり ひとつ ください。",en:"Two beers and one onigiri, please."},
- {cat:"konbini",who:"you",jp:"これください。",kana:"これ ください。",en:"This, please. (putting it on the counter)"},
+ {cat:"konbini",who:"you",jp:"これください。",kana:"これ ください。",en:"This, please. (putting it on the counter. The を of これをください just gets dropped when it is obvious)"},
  {cat:"konbini",who:"npc",jp:"温めますか？",kana:"あたためますか？",en:"Shall I warm it up?"},
  {cat:"konbini",who:"you",jp:"温めてください。",kana:"あたためて ください。",en:"Please warm it up."},
  {cat:"konbini",who:"you",jp:"だいじょうぶです。",kana:"だいじょうぶです。",en:"I'm fine / no thanks."},
@@ -1523,7 +1534,7 @@ let routing=false;             // true while applyHash drives the setters, so th
 function routeHash(){
   if(tab==="talk")return cur?`#talk/${cur.id}`:"#talk";
   if(tab==="kana")return `#kana/${kanaSet}`;
-  if(tab==="cards")return cardMode==="sent"?`#cards/sent/${sentCat}/${sentDir}`
+  if(tab==="cards")return cardMode==="sent"?`#cards/sent/${sentSlug()}/${sentDir}`
                         :cardMode==="kanji"?`#cards/kanji/${kanjiCat}`
                         :`#cards/char/${cardSet}/${cardDir}`;
   if(tab==="num")return `#num/${numMode}`;
@@ -1553,7 +1564,7 @@ function applyHash(){
       setCardSet(oneOf(p[2],["kata","hira","both"],cardSet));
       setCardDir(oneOf(p[3],["k2r","r2k"],cardDir));
     }else if(m==="sent"){
-      sentCat=oneOf(p[2],SENT_CATS.map(c=>c[0]),sentCat);
+      applySentSlug(p[2]);
       setSentDir(oneOf(p[3],["j2e","e2j"],sentDir));
     }else kanjiCat=oneOf(p[2],KANJI_CATS.map(c=>c[0]),kanjiCat);
     setCardMode(m);
@@ -1936,7 +1947,14 @@ document.getElementById("drill-input").addEventListener("keydown",e=>{
    Space / tap = flip, space / tap again = next. Deck = the whole set, shuffled.
    Own set state (cardSet) so switching sets here doesn't touch the Kana tab. */
 let cardSet="kata",cardDeck=[],cardIdx=0,cardRevealed=false,cardDir="k2r",cardCur=null;
-let cardMode="char",sentCat="all",sentDeck=[],sentIdx=0,sentCur=null,sentDir="j2e";
+let cardMode="char",sentDeck=[],sentIdx=0,sentCur=null,sentDir="j2e";
+/* Sentence mode is one merged list. Themes are checkboxes (all on by default),
+   Review ★ is a separate filter on top, and sentShow decides whether romaji and
+   the meaning are already on the card or wait for a flip. All three persist. */
+const ALL_THEMES=SENT_THEMES.map(t=>t[0]);
+let sentThemes=store.get("sentThemes",ALL_THEMES).filter(k=>ALL_THEMES.includes(k));
+let sentReview=store.get("sentReview",false);
+let sentShow=store.get("sentShow",true);
 let kanjiCat="all",kanjiDeck=[],kanjiIdx=0,kanjiCur=null;
 function cardsData(){return cardSet==="kata"?KATA:cardSet==="hira"?HIRA:KATA.concat(HIRA)}
 function setCardMode(m){
@@ -1957,6 +1975,7 @@ function setCardMode(m){
   syncHash();
 }
 function sentHint(){
+  if(sentShow)return "Read it out loud with the romaji, then tap or press space to keep going. Missed cards come back more often, so grade yourself honestly.";
   return sentDir==="e2j"
     ?"Say it in Japanese out loud, then tap or press space to check. Space again for the next card."
     :"Read the sentence out loud and guess the meaning, then tap or press space to reveal romaji + meaning. Space again for the next card.";
@@ -1970,24 +1989,74 @@ function setSentDir(d){
   syncHash();
 }
 function renderSentPills(){
-  document.getElementById("card-sent-controls").innerHTML=SENT_CATS.map(([k,label])=>
-    `<button class="pill${k===sentCat?" on":""}" onclick="setSentCat('${k}')">${label}</button>`).join("");
+  const counts={};for(const s of SENTENCES)counts[s.cat]=(counts[s.cat]||0)+1;
+  document.getElementById("card-sent-themes").innerHTML=SENT_THEMES.map(([k,label])=>{
+    const on=sentThemes.includes(k);
+    return `<button class="pill${on?" on":""}" onclick="toggleSentTheme('${k}')">${on?"☑":"☐"} ${label} ${counts[k]||0}</button>`;
+  }).join("");
+  document.getElementById("pill-sent-review").classList.toggle("on",sentReview);
+  document.getElementById("pill-sent-show").classList.toggle("on",sentShow);
 }
-function setSentCat(c){sentCat=c;renderSentPills();sentShuffle();sentNext();syncHash()}
+function sentRebuild(){renderSentPills();sentShuffle();sentNext();syncHash()}
+/* The checked themes ride in the hash the way the old single category did:
+   "all", a comma list of theme keys, "none", plus "review" as an extra token. */
+function sentSlug(){
+  const themes=sentThemes.length===ALL_THEMES.length?["all"]:sentThemes.length?sentThemes:["none"];
+  return (sentReview?["review"]:[]).concat(themes).join(",");
+}
+function applySentSlug(v){
+  if(!v)return;                               // "#cards/sent" — keep what's already checked
+  const t=v.split(",");
+  sentReview=t.includes("review");
+  if(t.includes("all"))sentThemes=ALL_THEMES.slice();
+  else if(t.includes("none"))sentThemes=[];
+  else{
+    const picked=t.filter(k=>ALL_THEMES.includes(k));
+    if(picked.length)sentThemes=picked;       // an all-garbage link keeps the current boxes
+  }
+}
+function toggleSentTheme(k){
+  sentThemes=sentThemes.includes(k)?sentThemes.filter(x=>x!==k):sentThemes.concat(k);
+  store.set("sentThemes",sentThemes);sentRebuild();
+}
+function setAllThemes(on){
+  sentThemes=on?ALL_THEMES.slice():[];
+  store.set("sentThemes",sentThemes);sentRebuild();
+}
+function toggleSentReview(){sentReview=!sentReview;store.set("sentReview",sentReview);sentRebuild()}
+function toggleSentShow(){
+  sentShow=!sentShow;store.set("sentShow",sentShow);
+  document.getElementById("card-hint").textContent=sentHint();
+  sentRebuild();
+}
 function sentWeak(s){const st=sentStats[s.jp];return st&&st.w>st.r}   // net-missed = due for review
 function sentData(){
-  if(sentCat==="review")return SENTENCES.filter(sentWeak);
-  return sentCat==="all"?SENTENCES:SENTENCES.filter(s=>s.cat===sentCat);
+  const picked=SENTENCES.filter(s=>sentThemes.includes(s.cat));
+  return sentReview?picked.filter(sentWeak):picked;
 }
-/* Weighted deck: missed cards (and new ones) resurface more often, mirroring the
-   kana drill. Shared by the sentence deck and the kanji deck. */
+/* How hard a card is: missed cards and unseen ones weigh more. One formula,
+   two ways of spending it — copies (kanji) or position (sentences). */
+function cardWeight(st){
+  if(st.r===0&&st.w===0)return 2;
+  return Math.max(1,1+st.w*2-Math.min(st.r,2));
+}
+/* Sentence deck: every sentence exactly ONCE per pass, so the list never repeats
+   itself and "Card 12 of 545" means what it says. Weight buys position instead
+   of copies (Efraimidis-Spirakis weighted sampling), so missed cards drift to the
+   front of the shuffle rather than appearing twice. Reshuffles at the end. */
+function orderedDeck(items,keyOf,stats){
+  return items
+    .map(it=>({it,k:Math.pow(Math.random(),1/cardWeight(stats[keyOf(it)]||{r:0,w:0}))}))
+    .sort((a,b)=>b.k-a.k)
+    .map(x=>x.it);
+}
+/* Weighted deck: missed cards (and new ones) resurface more often within a pass,
+   mirroring the kana drill. Used by the kanji deck. */
 function weightedDeck(items,keyOf,stats){
   const deck=[];
   for(const it of items){
-    const st=stats[keyOf(it)]||{r:0,w:0};
-    let w=1+st.w*2-Math.min(st.r,2);
-    if(st.r===0&&st.w===0)w=2;
-    for(let i=0;i<Math.max(1,w);i++)deck.push(it);
+    const w=cardWeight(stats[keyOf(it)]||{r:0,w:0});
+    for(let i=0;i<w;i++)deck.push(it);
   }
   for(let i=deck.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[deck[i],deck[j]]=[deck[j],deck[i]]}
   for(let i=1;i<deck.length;i++){             // de-adjacent duplicates
@@ -1998,21 +2067,24 @@ function weightedDeck(items,keyOf,stats){
   return deck;
 }
 function sentShuffle(){
-  sentDeck=weightedDeck(sentData(),s=>s.jp,sentStats);sentIdx=0;
+  sentDeck=orderedDeck(sentData(),s=>s.jp,sentStats);sentIdx=0;
 }
 function sentNext(){
   const grade=document.getElementById("sent-grade"),btn=document.getElementById("card-btn");
   document.getElementById("card-sent").classList.toggle("e2j",sentDir==="e2j");
   document.getElementById("card-el").classList.remove("revealed");
   grade.style.display="none";
-  if(sentDeck.length===0){        // e.g. Review deck with nothing due yet
-    sentCur=null;
+  if(sentDeck.length===0){        // no themes checked, or a Review deck with nothing due
+    sentCur=null;cardRevealed=false;
     document.getElementById("sent-who").textContent="";
     document.getElementById("sent-kb").innerHTML="";
     document.getElementById("sent-jp").textContent="";
     document.getElementById("sent-src").textContent="";
-    document.getElementById("sent-en").textContent=sentCat==="review"
-      ?"Nothing to review yet — miss a few cards in the other decks and they'll show up here.":"No cards here.";
+    document.getElementById("sent-parts").innerHTML="";
+    document.getElementById("sent-en").textContent=
+      sentThemes.length===0?"No themes checked. Tick a theme above to build the list."
+      :sentReview?"Nothing to review yet. Miss a few cards and they'll show up here."
+      :"No cards here.";
     document.getElementById("card-el").classList.add("revealed");
     btn.style.display="none";
     document.getElementById("card-stats").textContent="";
@@ -2032,6 +2104,7 @@ function sentNext(){
   const memo=st?` · ✓${st.r} ✗${st.w}`:" · new";
   document.getElementById("card-stats").textContent=`Card ${sentIdx+1} of ${sentDeck.length}${memo}`;
   sentIdx++;
+  if(sentShow)revealCard();   // romaji + meaning already on the card, grade straight away
 }
 /* ---------------- kanji cards ----------------
    Front: the kanji alone. Say the meaning and a reading out loud, flip for both
@@ -2166,22 +2239,30 @@ function cardNext(){
 }
 function graded(){return cardMode==="sent"||cardMode==="kanji"}
 function gradeCard(ok){cardMode==="kanji"?gradeKanji(ok):gradeSent(ok)}
+/* Flipping a card, without the audio: sentNext() also calls this to render a
+   sentence card already open when "Romaji + meaning always on" is checked. */
+function revealCard(){
+  cardRevealed=true;
+  if(cardMode==="char"&&cardDir==="r2k"){ // swap the big slot from romaji to the character
+    document.getElementById("card-kana").textContent=cardCur;
+    document.getElementById("card-kana").classList.remove("roma-front");
+  }
+  document.getElementById("card-el").classList.add("revealed");
+  if(graded()){                            // reveal → self-grade
+    document.getElementById("card-btn").style.display="none";
+    document.getElementById("sent-grade").style.display="flex";
+  }else document.getElementById("card-btn").textContent="Next →";
+}
 function cardAdvance(){
   if(!cardRevealed){
     if(cardMode==="sent"&&!sentCur)return;   // empty Review deck — nothing to flip
     if(cardMode==="kanji"&&!kanjiCur)return;
-    cardRevealed=true;
-    if(cardMode==="char"&&cardDir==="r2k"){ // swap the big slot from romaji to the character
-      document.getElementById("card-kana").textContent=cardCur;
-      document.getElementById("card-kana").classList.remove("roma-front");
-    }
-    document.getElementById("card-el").classList.add("revealed");
-    if(graded()){                            // reveal → self-grade
-      document.getElementById("card-btn").style.display="none";
-      document.getElementById("sent-grade").style.display="flex";
-    }else document.getElementById("card-btn").textContent="Next →";
+    revealCard();
     cardHear();
-  }else if(graded())gradeCard(true); // tap/space after reveal = Got it (Missed is a deliberate click)
+  }else if(graded()){
+    if(cardMode==="sent"&&!sentCur)return;   // empty deck: nothing to grade
+    gradeCard(true); // tap/space after reveal = Got it (Missed is a deliberate click)
+  }
   else cardNext();
 }
 function cardHear(){

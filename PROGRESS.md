@@ -61,6 +61,60 @@ Populated from scene misses and kana drill stats after each export.
 
 ## Session log
 
+- **2026-08-09 (session 15, sentences become one list):** Henry finished the kana
+  cards ("worked really well, I got to learn them really fast") and wants to move
+  to grammar through sentences, cards only. His complaint about the old format:
+  too many category entries, and he had to click to see romaji + meaning. He chose
+  the one-at-a-time deck over a scrolling feed, then asked for **checkboxes on the
+  themes, all checked by default**.
+  Built in Cards → Sentences: the exclusive category pill row is gone, replaced by
+  `SENT_THEMES` rendered as **12 checkbox pills** (☑/☐ + count) that union into ONE
+  merged list, plus Check all / Uncheck all, **Review ★ only** as an independent
+  filter on top (no longer a category that hides the others), and **Romaji +
+  meaning always on** (default checked) which renders each card already revealed so
+  the kanji, kana with romaji, written form, meaning and word breakdown are all
+  there without a tap, with the ✗/✓ grade row live immediately. Uncheck it and the
+  old flip behaviour is back. All three persist to localStorage (`gj_sentThemes`,
+  `gj_sentReview`, `gj_sentShow`) so the browser remembers the setup, and the hash
+  carries them too (`#cards/sent/airport,taxi,golf/j2e`, `all`, `none`, `review`).
+  **Real duplicate fix.** He insisted on no duplicate sentences. Exact `jp`,
+  punctuation-normalized `jp` and `en` were all already 0, but the deck itself
+  repeated sentences: `weightedDeck` pushes 2 copies of every unseen card, so a
+  545-card list played as "Card 1 of 1090" with literal repeats inside one pass.
+  New `orderedDeck()` spends weight on **position instead of copies**
+  (Efraimidis-Spirakis: sort by `random()^(1/w)`), so each pass is every sentence
+  **exactly once**, missed cards drift to the front, and the end of the list
+  reshuffles. Extracted `cardWeight(st)` as the shared weight formula; the kanji
+  deck keeps `weightedDeck`. Also extracted `revealCard()` out of `cardAdvance()`
+  so sentNext() can open a card without firing the audio.
+  **Quality pass on the 544 sentences** (his goals: next golf trip first, living in
+  Japan second). Fixed 7 real defects: 「これチップです」taught tipping a caddie,
+  which Japan does not do and the caddie fee is already on the bill (→
+  キャディさん、今日はありがとうございました。);「領収書はください」is ungrammatical, は
+  cannot mark what you are requesting (→ 領収書もお願いします);「駐車場はどこに停めれば」
+  parks the car park (→ 車はどこに停めれば);「夜は静かにしてもらえますか」tells the
+  front desk clerk to pipe down (→ 隣の部屋に注意してもらえますか);「お飲み放題」takes an
+  honorific it never takes (→ 飲み放題);「これは乗りますね」was glossed "that'll play"
+  when 乗る means landing ON the green; 「レンタルクラブは何番まで」counts rentals by
+  club number instead of 何本セット. Deleted rental's
+  「支払いは現金ですか、カードですか？」, a 0.96-similarity twin of course's
+  「お支払いは…」 (545 → 544). Kept the pattern families (〜をください, 〜までお願いします)
+  and the 今日/本日 and これをください/これください pairs, but rewrote their glosses so
+  they read as register and particle-drop lessons rather than repeats.
+  Added 4 `GLOSS` words (ちゅうい, なんぼん, セット, キャディさん).
+  Verified in browser at 390px light and dark: 544 cards, deck length 544 with 544
+  unique, 40 cards walked with 0 repeats, 0 unglossed chunks, 0 duplicate jp/en/
+  gloss keys, 0 kana leaks, 0 em-dashes or middots, theme checkboxes filter and
+  persist across reload, Uncheck all shows its own empty message and tapping it is
+  a no-op, Review ★ composes with the checkboxes, deep links restore state, all 13
+  Talk runs still cover every card, kanji and character decks untouched, 0 console
+  errors, no horizontal overflow. sw VERSION → gj-v25.
+  **Open, needs Henry's call:** the content gaps found in the same pass. Golf is
+  missing the Japan-specific course furniture (2グリーン, スループレー vs 昼食休憩,
+  乗り入れ, プレイング4/前進4打, OK/コンシード, 組み合わせ), and the living-in-Japan goal
+  has almost nothing behind it: Casual is only 14 cards and there is no 役所 /
+  住まい / 銀行・携帯 / 病院 / ゴミ出し / 職場 material at all.
+
 - **2026-08-07 (session 14, taxi scene):** Henry asked for a taxi scene, the
   first Unit 4 conversation entry point (airport / rental car / hotel still have
   cards but no scene). New Talk scene **タクシー** (18 steps, です・ます, driver as
