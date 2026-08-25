@@ -154,6 +154,14 @@
   .pill.on{background:var(--pine);border-color:var(--pine);color:#fff}
   /* bulk actions next to the theme checkboxes: they act, they don't hold state */
   .pill.ghost-pill{border-style:dashed;font-weight:500}
+  /* deck filters stay folded so the card itself is the first thing on screen */
+  .deck-opts{margin-bottom:16px}
+  .deck-opts>summary{cursor:pointer;list-style:none;display:inline-flex;align-items:center;gap:6px;
+    padding:6px 12px;border-radius:999px;border:1px solid var(--sage);background:var(--paper);
+    font-size:12.5px;font-weight:600;color:var(--ink-soft);margin-bottom:14px}
+  .deck-opts>summary::-webkit-details-marker{display:none}
+  .deck-opts>summary::before{content:"▸";font-size:11px}
+  .deck-opts[open]>summary::before{content:"▾"}
   .kana-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;max-width:640px}
   .kana-cell{background:var(--paper);border:1px solid var(--sage);border-radius:10px;padding:10px 4px 8px;text-align:center;transition:border-color .12s}
   .kana-cell:hover{border-color:var(--pine)}
@@ -246,8 +254,13 @@
     @keyframes rise{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
   }
   @media (max-width:560px){
-    nav{flex-wrap:wrap}
+    nav{flex-wrap:wrap;margin-top:14px}
     nav button{padding:8px 10px 10px;font-size:14px}
+    /* keep the title on one line so the first card sits higher on a phone */
+    header{padding-top:calc(18px + env(safe-area-inset-top))}
+    .brand h1{font-size:17px}
+    .brand .sub{font-size:12px}
+    .seal{width:38px;height:38px;font-size:20px}
   }
   @media (max-width:520px){
     .bubble .jp-line{font-size:18px}
@@ -305,18 +318,15 @@
     <div class="brand">
       <div class="seal" aria-hidden="true">語</div>
       <div>
-        <h1>ゴルフ日本語 — Golf Japanese</h1>
-        <div class="sub">Conversation-first trainer. Say it out loud, then check.</div>
+        <h1>ゴルフ日本語</h1>
+        <div class="sub">Golf Japanese</div>
       </div>
       <button class="theme-switch" id="theme-btn" role="switch" aria-checked="false" onclick="toggleTheme()" aria-label="Dark mode"><span class="knob"></span></button>
     </div>
     <nav>
-      <button id="tab-path" class="on" onclick="showTab('path')">Path<span class="jp-label">道</span></button>
-      <button id="tab-talk" onclick="showTab('talk')">Talk<span class="jp-label">会話</span></button>
-      <button id="tab-kana" onclick="showTab('kana')">Kana<span class="jp-label">かな</span></button>
-      <button id="tab-cards" onclick="showTab('cards')">Cards<span class="jp-label">カード</span></button>
-      <button id="tab-num" onclick="showTab('num')">Numbers<span class="jp-label">数</span></button>
-      <button id="tab-phrase" onclick="showTab('phrase')">Phrases<span class="jp-label">表現</span></button>
+      <button id="nav-sent" class="on" onclick="navTab('sent')">Phrases<span class="jp-label">表現</span></button>
+      <button id="nav-words" onclick="navTab('words')">Words<span class="jp-label">単語</span></button>
+      <button id="nav-num" onclick="navTab('num')">Numbers<span class="jp-label">数</span></button>
     </nav>
   </header>
 
@@ -409,39 +419,40 @@
 
     <!-- Cards -->
     <section id="view-cards" class="hidden">
-      <p class="section-note">Flashcards, shuffled, with missed cards coming back sooner. <b>Characters:</b> one kana per card with real words that contain it. Read them out loud, then flip to check. <b>Sentences:</b> one merged list of every trip sentence, shuffled fresh each time. Tick the themes you want in the list, and leave <i>Romaji + meaning always on</i> checked to read without flipping. <b>Kanji:</b> one kanji per card, say what it means and how it reads, then flip for both readings with romaji and a real word. The deck is shuffled, and missed cards come back more often.</p>
-      <div class="kana-controls">
-        <button class="pill on" id="pill-cmode-char" onclick="setCardMode('char')">Characters</button>
-        <button class="pill" id="pill-cmode-sent" onclick="setCardMode('sent')">Sentences (trip)</button>
-        <button class="pill" id="pill-cmode-kanji" onclick="setCardMode('kanji')">漢字 Kanji</button>
+      <div class="kana-controls hidden" id="card-mode-words">
+        <button class="pill on" id="pill-cmode-kanji" onclick="setCardMode('kanji')">漢字 Kanji</button>
+        <button class="pill" id="pill-cmode-char" onclick="setCardMode('char')">Kana characters</button>
       </div>
-      <div id="card-kanji-wrap" class="hidden">
-        <div class="kana-controls" id="card-kanji-controls"></div>
-      </div>
-      <div id="card-char-controls">
-      <div class="kana-controls">
-        <button class="pill on" id="pill-cards-kata" onclick="setCardSet('kata')">Katakana (golf first)</button>
-        <button class="pill" id="pill-cards-hira" onclick="setCardSet('hira')">Hiragana</button>
-        <button class="pill" id="pill-cards-both" onclick="setCardSet('both')">Both</button>
-      </div>
-      <div class="kana-controls">
-        <button class="pill on" id="pill-dir-k2r" onclick="setCardDir('k2r')">Kana → romaji</button>
-        <button class="pill" id="pill-dir-r2k" onclick="setCardDir('r2k')">Romaji → kana</button>
-      </div>
-      </div>
-      <div id="card-sent-wrap" class="hidden">
-        <div class="kana-controls" id="card-sent-themes"></div>
+      <details class="deck-opts" id="deck-opts">
+        <summary id="deck-opts-summary">Deck settings</summary>
+        <div id="card-kanji-wrap" class="hidden">
+          <div class="kana-controls" id="card-kanji-controls"></div>
+        </div>
+        <div id="card-char-controls">
         <div class="kana-controls">
-          <button class="pill ghost-pill" onclick="setAllThemes(true)">Check all</button>
-          <button class="pill ghost-pill" onclick="setAllThemes(false)">Uncheck all</button>
-          <button class="pill" id="pill-sent-review" onclick="toggleSentReview()">Review ★ only</button>
+          <button class="pill on" id="pill-cards-kata" onclick="setCardSet('kata')">Katakana (golf first)</button>
+          <button class="pill" id="pill-cards-hira" onclick="setCardSet('hira')">Hiragana</button>
+          <button class="pill" id="pill-cards-both" onclick="setCardSet('both')">Both</button>
         </div>
         <div class="kana-controls">
-          <button class="pill on" id="pill-sent-show" onclick="toggleSentShow()">Romaji + meaning always on</button>
-          <button class="pill on" id="pill-sdir-j2e" onclick="setSentDir('j2e')">Japanese → meaning</button>
-          <button class="pill" id="pill-sdir-e2j" onclick="setSentDir('e2j')">English → Japanese</button>
+          <button class="pill on" id="pill-dir-k2r" onclick="setCardDir('k2r')">Kana → romaji</button>
+          <button class="pill" id="pill-dir-r2k" onclick="setCardDir('r2k')">Romaji → kana</button>
         </div>
-      </div>
+        </div>
+        <div id="card-sent-wrap" class="hidden">
+          <div class="kana-controls" id="card-sent-themes"></div>
+          <div class="kana-controls">
+            <button class="pill ghost-pill" onclick="setAllThemes(true)">Check all</button>
+            <button class="pill ghost-pill" onclick="setAllThemes(false)">Uncheck all</button>
+            <button class="pill" id="pill-sent-review" onclick="toggleSentReview()">Review ★ only</button>
+          </div>
+          <div class="kana-controls">
+            <button class="pill on" id="pill-sent-show" onclick="toggleSentShow()">Romaji + meaning always on</button>
+            <button class="pill on" id="pill-sdir-j2e" onclick="setSentDir('j2e')">Japanese → meaning</button>
+            <button class="pill" id="pill-sdir-e2j" onclick="setSentDir('e2j')">English → Japanese</button>
+          </div>
+        </div>
+      </details>
       <div class="drill-card" id="card-el" onclick="cardAdvance()">
         <div class="big" id="card-kana"></div>
         <div class="cw-back" id="card-roma"></div>
@@ -1510,18 +1521,35 @@ function say(text,rate){
 const SR=window.SpeechRecognition||window.webkitSpeechRecognition||null;
 
 /* ---------------- tabs ---------------- */
+/* Views that still exist in the DOM. Only the three Henry uses are routable
+   or reachable from the nav: phrase cards, word cards, numbers. */
 const TABS=["path","talk","kana","cards","num","phrase"];
-let tab="path";
+const ROUTE_TABS=["cards","num"];
+let tab="cards";
 function showTab(t){
   tab=t;
-  for(const id of TABS){
+  for(const id of TABS)
     document.getElementById("view-"+id).classList.toggle("hidden",id!==t);
-    document.getElementById("tab-"+id).classList.toggle("on",id===t);
-  }
   if(t==="path")renderPath();
   if(t==="cards"&&!cardDeck.length){cardShuffle();cardNext();}
   if(t==="num"&&!numCur)numNext();
+  renderNav();
   syncHash();
+}
+/* The nav is deck-shaped, not view-shaped: Phrases and Words are both the
+   Cards view with a different mode, so the nav highlight follows cardMode. */
+function navTab(n){
+  if(n==="num"){showTab("num");return}
+  showTab("cards");
+  if(n==="sent")setCardMode("sent");
+  else if(cardMode==="sent")setCardMode("kanji");
+  else setCardMode(cardMode);
+}
+function navFor(){return tab==="num"?"num":cardMode==="sent"?"sent":"words"}
+function renderNav(){
+  const on=navFor();
+  for(const n of["sent","words","num"])
+    document.getElementById("nav-"+n).classList.toggle("on",n===on);
 }
 
 /* ---------------- routing ----------------
@@ -1551,7 +1579,7 @@ function oneOf(v,allowed,fallback){return allowed.includes(v)?v:fallback}
 function applyHash(){
   const p=location.hash.replace(/^#/,"").split("/").filter(Boolean);
   routing=true;
-  showTab(oneOf(p[0],TABS,"path"));
+  showTab(oneOf(p[0],ROUTE_TABS,"cards"));
   if(tab==="talk"){
     const s=p[1]&&TALK.find(x=>x.id===p[1]);
     if(s)startScene(s);
@@ -1559,7 +1587,7 @@ function applyHash(){
   }
   if(tab==="kana")setKanaSet(oneOf(p[1],["kata","hira","both","kanji"],kanaSet));
   if(tab==="cards"){
-    const m=oneOf(p[1],["char","sent","kanji"],"char");
+    const m=oneOf(p[1],["char","sent","kanji"],"sent");
     if(m==="char"){
       setCardSet(oneOf(p[2],["kata","hira","both"],cardSet));
       setCardDir(oneOf(p[3],["k2r","r2k"],cardDir));
@@ -1959,8 +1987,11 @@ let kanjiCat="all",kanjiDeck=[],kanjiIdx=0,kanjiCur=null;
 function cardsData(){return cardSet==="kata"?KATA:cardSet==="hira"?HIRA:KATA.concat(HIRA)}
 function setCardMode(m){
   cardMode=m;
-  for(const[id,mode]of[["pill-cmode-char","char"],["pill-cmode-sent","sent"],["pill-cmode-kanji","kanji"]])
+  for(const[id,mode]of[["pill-cmode-char","char"],["pill-cmode-kanji","kanji"]])
     document.getElementById(id).classList.toggle("on",m===mode);
+  document.getElementById("card-mode-words").classList.toggle("hidden",m==="sent");
+  document.getElementById("deck-opts-summary").textContent=
+    m==="sent"?"Themes and reveal settings":m==="kanji"?"Kanji groups":"Kana set and direction";
   document.getElementById("card-char-controls").classList.toggle("hidden",m!=="char");
   document.getElementById("card-sent-wrap").classList.toggle("hidden",m!=="sent");
   document.getElementById("card-kanji-wrap").classList.toggle("hidden",m!=="kanji");
@@ -1972,6 +2003,7 @@ function setCardMode(m){
   if(m==="sent"){renderSentPills();sentShuffle();sentNext();}
   else if(m==="kanji"){renderKanjiPills();kanjiShuffle();kanjiNext();}
   else{cardShuffle();cardNext();}
+  renderNav();
   syncHash();
 }
 function sentHint(){
@@ -2499,8 +2531,10 @@ updateThemeBtn();
 /* Back / forward (and a hand-typed hash) replay the menu state. pushState
    doesn't fire hashchange, so this only runs for real navigation. */
 addEventListener("hashchange",applyHash);
+/* No hash, or a hash from the old six-tab layout, opens the phrase cards:
+   that deck is the app now. applyHash rewrites the URL to match. */
 if(location.hash)applyHash();
-else history.replaceState(null,"","#path");
+else{routing=true;showTab("cards");setCardMode("sent");routing=false;history.replaceState(null,"",routeHash());}
 </script>
 </body>
 </html>

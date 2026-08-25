@@ -21,6 +21,15 @@ what to build next. Do not rely on Claude-side memory for lesson state.
 
 ## Decisions (binding for future sessions)
 
+- **The app is three decks, nothing else.** (2026-08-25, supersedes the
+  conversation-first entry point below for the *app's navigation*.) Henry only
+  uses phrase cards, word cards and numbers, so the nav is Phrases / Words /
+  Numbers and the app opens straight into the phrase deck. Path, Talk, Kana
+  chart and the Phrases kit still exist in `index.html` but are off the nav and
+  off the router. Do not add a fourth tab without asking; new content goes into
+  an existing deck (a `SENT_THEMES` theme for phrases, `kanji-data.js` for
+  words).
+
 - **Conversation-first.** No drill-warmup rounds, no Duolingo-style recognition.
   Sessions start inside a roleplay scene. (2026-07-04)
 - **Talk is the main surface, and every line there is the same reveal card.**
@@ -60,6 +69,44 @@ _(none yet — export after first app session)_
 Populated from scene misses and kana drill stats after each export.
 
 ## Session log
+
+- **2026-08-25 (session 16, cards-only app):** Henry: "fix the page so i get
+  immediately greeted with the phrases cards, it's the only thing i care about
+  now, no useless tabs. only phrases cards, word cards and numbers."
+  The six-tab nav (Path / Talk / Kana / Cards / Numbers / Phrases) is replaced by
+  **three deck-shaped tabs**: **Phrases 表現** (the 544 sentence cards),
+  **Words 単語** (漢字 Kanji cards, with a Kana characters sub-pill for the old
+  character deck), **Numbers 数**. The nav is now deck-shaped rather than
+  view-shaped: Phrases and Words are the same Cards view with a different
+  `cardMode`, so `navFor()` / `renderNav()` derive the highlight from
+  `tab` + `cardMode`, and `navTab()` maps a nav press to showTab + setCardMode.
+  Words remembers whichever sub-deck was last open.
+  **Landing.** A launch with no hash now opens the phrase cards directly
+  (`replaceState` to `#cards/sent/all/j2e`, no extra history entry) instead of
+  Path. `ROUTE_TABS` is `["cards","num"]`, so every stale link from the old
+  layout (`#path`, `#talk/taxi`, `#kana/kata`, `#phrase`, `#bogus`, bare
+  `#cards`) resolves to the phrase deck and the URL is rewritten to match, which
+  matters because the installed PWA reopens on whatever hash it was left at.
+  `#cards/sent/...`, `#cards/char/...`, `#cards/kanji/...` and `#num/...` deep
+  links all still work.
+  **Chrome trimmed so the card is the first thing on screen.** The long Cards
+  section note is gone (the per-mode card hint already says it), the deck filters
+  (themes, Check all / Uncheck all, Review ★, Romaji + meaning always on,
+  direction, kana set, kanji groups) fold into one closed `<details>` whose
+  summary relabels per mode, and the header is smaller on phones with the title
+  cut to ゴルフ日本語 / Golf Japanese. First card top: **205px** at 390px wide,
+  down from ~380px on the old Path landing.
+  The Path / Talk / Kana / Phrases views and all their code stay in the file,
+  just unreachable from the nav and from routing; the footer Export button is
+  untouched, so pasting progress here still works.
+  Verified in a real browser at 390 / 375 / 1200px, light and dark: lands on
+  `#cards/sent/all/j2e` with card 1 of 544, all 9 stale and deep-link hashes
+  resolve as listed above, nav highlight follows the deck through
+  Phrases → Words → Kanji/Kana sub-pill → Numbers → Phrases, 5 space-key cards
+  with 0 repeats, ✗ Missed writes `gj_sentStats` and the card is the one the
+  Review ★ filter then shows, unchecking a theme drops the deck 544 → 490 and
+  survives a reload, numbers drill still deals a price, 0 console or page
+  errors, 0 horizontal overflow. sw VERSION → gj-v26.
 
 - **2026-08-09 (session 15, sentences become one list):** Henry finished the kana
   cards ("worked really well, I got to learn them really fast") and wants to move
