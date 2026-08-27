@@ -70,6 +70,31 @@ Populated from scene misses and kana drill stats after each export.
 
 ## Session log
 
+- **2026-08-27 (session 17, Endings theme):** Henry: the ending phrases (imasuka,
+  moraemasuka, iidesuka, desu, masu, imasu) are the high-leverage thing to learn;
+  he wants a section for them, same card format, and mid-session added "refer to
+  existing phrases for more end phrases." New **Endings** theme in the phrase deck
+  (`ending` in SENT_THEMES, placed first), **37 cards, one per ending pattern**,
+  each a real sentence with the pattern explained in the en gloss: です / ですか /
+  は何ですか / はどこですか / はいくらですか / ます / ますか / ません / ませんか /
+  ました / でした / ましょう / ましょうか / ますね / います / いますか / あります /
+  ありますか / ございます / ませ (くださいませ) / をください / をお願いします /
+  でお願いします / てください / ないでください / てもいいですか / てもらえますか /
+  いただけますか / できますか / いいですか / でいいです / ですね / ですよ / そうです /
+  んです / たいです / ています. The corpus mining (per his mid-session ask) is what
+  added はどこですか (23 uses in the deck), でお願いします (15), staff-speak
+  ございます/ませ, ましょうか, ますね, んです. Sentences are all fresh (script-checked
+  0 exact-jp dups against the 544; three drafts collided — 辛くしないでください,
+  これは何ですか, あちらにございます — and were replaced). kana chunked to corpus
+  conventions to reuse existing glosses; 35 new GLOSS entries (814 → 849). Also a
+  `RUN_META.ending` entry (文末表現) so the run coverage invariant holds. Deck
+  581 total. Verified by script (0 dups, 0 kana leaks, 0 unglossed chunks, 0
+  middots/em-dashes) and in a real browser at 390px: Endings pill renders,
+  `#cards/sent/ending/j2e` deep link shows Card 1 of 37, 5 space-cards advance
+  with grades written to `gj_sentStats`, all-themes deck reads 581, breakdown
+  rows gloss every word, 0 console errors, no horizontal overflow.
+  sw VERSION → gj-v27.
+
 - **2026-08-25 (session 16, cards-only app):** Henry: "fix the page so i get
   immediately greeted with the phrases cards, it's the only thing i care about
   now, no useless tabs. only phrases cards, word cards and numbers."

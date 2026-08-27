@@ -905,7 +905,17 @@ const GLOSS={
  "まって":"wait (please)", "まど":"window", "みせます":"I'll show you", "もどります":"I'll come back",
  "よわく":"weakly / turn it down", "わかります":"I know / I understand",
  "ちゅうい":"caution / a word of warning", "なんぼん":"how many (long thin things)", "セット":"set",
- "キャディさん":"caddie (さん makes it a person you address)"
+ "キャディさん":"caddie (さん makes it a person you address)",
+ "それ":"that (near you)", "ほんとう":"really / true", "あれ":"that over there", "バスてい":"bus stop",
+ "レンタル":"rental", "まいしゅう":"every week", "のみますか":"do you drink? (polite)", "かんじ":"kanji (Chinese characters)",
+ "よめません":"can't read (polite negative)", "こんど":"next time / sometime", "いっしょに":"together",
+ "しませんか":"won't you do ~? (invitation)", "きのう":"yesterday", "いきましょう":"let's go",
+ "とりましょうか":"shall I take (a photo)?", "おきますね":"I'll set it down (soft ね)", "ともだち":"friend",
+ "できる":"can do / able to", "ひと":"person", "まだ":"still / yet", "くださいませ":"please do (super-polite staff form)",
+ "ホット":"hot (drink)", "はなして":"speak (please)", "いれないで":"don't put in", "すわっても":"even if I sit",
+ "とって":"take (a photo)", "しちゃく":"trying on (clothes)", "いいです":"it's fine / that works",
+ "うどん":"udon noodles", "おいしい":"tasty / delicious", "たぶん":"probably", "なんです":"it is (explanatory tone)",
+ "きたいです":"want to come", "とうきょう":"Tokyo", "すんでいます":"I live (ongoing state)"
 };
 
 const PHRASES=[
@@ -931,10 +941,48 @@ const PHRASES=[
    who: "you" = a line you produce, "npc" = a line you must understand. */
 /* Themes are checkboxes, not an exclusive pill row: the deck is ONE merged list
    and each theme just adds or removes its sentences from it. All on by default. */
-const SENT_THEMES=[["airport","Airport"],["taxi","Taxi"],["rental","Rental car"],["hotel","Hotel"],
+const SENT_THEMES=[["ending","Endings"],["airport","Airport"],["taxi","Taxi"],["rental","Rental car"],["hotel","Hotel"],
   ["course","Course check-in"],["golf","On course"],["resto","Restaurant"],["izakaya","Izakaya"],
   ["konbini","Konbini"],["reply","Answers"],["casual","Casual"],["video","From videos"]];
 const SENTENCES=[
+ // ending — the sentence endings that close every polite sentence, one card per pattern
+ {cat:"ending",who:"you",jp:"私はヘンリーです。",kana:"わたし は ヘンリー です。",en:"I'm Henry. (です = polite 'am/is', the ending that closes almost every polite statement)"},
+ {cat:"ending",who:"you",jp:"それは本当ですか？",kana:"それ は ほんとう ですか？",en:"Is that true? (ですか = です + か; か is the spoken question mark)"},
+ {cat:"ending",who:"you",jp:"あれは何ですか？",kana:"あれ は なんですか？",en:"What's that over there? (は何ですか = what is ~?)"},
+ {cat:"ending",who:"you",jp:"バス停はどこですか？",kana:"バスてい は どこ ですか？",en:"Where is the bus stop? (はどこですか = where is ~? your most-used question)"},
+ {cat:"ending",who:"you",jp:"レンタルはいくらですか？",kana:"レンタル は いくら ですか？",en:"How much is the rental? (はいくらですか = how much is ~?)"},
+ {cat:"ending",who:"you",jp:"毎週ゴルフをします。",kana:"まいしゅう ゴルフ を します。",en:"I play golf every week. (ます = polite verb ending, covers present and future)"},
+ {cat:"ending",who:"you",jp:"お酒を飲みますか？",kana:"おさけ を のみますか？",en:"Do you drink? (ますか = polite verb question)"},
+ {cat:"ending",who:"you",jp:"漢字は読めません。",kana:"かんじ は よめません。",en:"I can't read kanji. (ません = polite negative, the flip side of ます)"},
+ {cat:"ending",who:"you",jp:"今度一緒にゴルフしませんか？",kana:"こんど いっしょに ゴルフ しませんか？",en:"Want to golf together sometime? (ませんか = won't you ~? the standard warm invitation)"},
+ {cat:"ending",who:"you",jp:"昨日日本に着きました。",kana:"きのう にほん に つきました。",en:"I arrived in Japan yesterday. (ました = polite past of ます)"},
+ {cat:"ending",who:"you",jp:"いいゴルフでした。",kana:"いい ゴルフ でした。",en:"That was a good round. (でした = polite past of です)"},
+ {cat:"ending",who:"you",jp:"そろそろ行きましょう。",kana:"そろそろ いきましょう。",en:"Let's get going. (ましょう = let's ~)"},
+ {cat:"ending",who:"you",jp:"写真を撮りましょうか？",kana:"しゃしん を とりましょうか？",en:"Shall I take a photo for you? (ましょうか = shall I ~? offering to do something)"},
+ {cat:"ending",who:"npc",jp:"こちらに置きますね。",kana:"こちら に おきますね。",en:"I'll set it down here, okay. (ますね = soft heads-up of what the speaker is about to do)"},
+ {cat:"ending",who:"you",jp:"日本に友達がいます。",kana:"にほん に ともだち が います。",en:"I have a friend in Japan. (います = exists, for people and animals; things use あります)"},
+ {cat:"ending",who:"you",jp:"英語ができる人はいますか？",kana:"えいご が できる ひと は いますか？",en:"Is there someone who speaks English? (いますか = is there ~? for people)"},
+ {cat:"ending",who:"you",jp:"時間はまだあります。",kana:"じかん は まだ あります。",en:"There's still time. (あります = exists, for things; people use います)"},
+ {cat:"ending",who:"you",jp:"タオルはありますか？",kana:"タオル は ありますか？",en:"Do you have towels? (ありますか = is there ~? / do you have ~? for things)"},
+ {cat:"ending",who:"npc",jp:"トイレは二階にございます。",kana:"トイレ は にかい に ございます。",en:"The toilet is on the second floor. (ございます = ultra-polite あります, staff-speak)"},
+ {cat:"ending",who:"npc",jp:"またお越しくださいませ。",kana:"また おこし くださいませ。",en:"Please come again. (ませ = super-polite ending staff attach to requests, as in いらっしゃいませ)"},
+ {cat:"ending",who:"you",jp:"お茶をください。",kana:"おちゃ を ください。",en:"Tea, please. (をください = please give me ~, for handing you a thing)"},
+ {cat:"ending",who:"you",jp:"予約をお願いします。",kana:"よやく を おねがいします。",en:"A reservation, please. (をお願いします = please, for requests and services; softer and broader than ください)"},
+ {cat:"ending",who:"you",jp:"ホットでお願いします。",kana:"ホット で おねがいします。",en:"Hot, please. (でお願いします = I'll go with ~, picking an option)"},
+ {cat:"ending",who:"you",jp:"ゆっくり話してください。",kana:"ゆっくり はなして ください。",en:"Please speak slowly. (て form ＋ ください = please do ~)"},
+ {cat:"ending",who:"you",jp:"氷は入れないでください。",kana:"こおり は いれないで ください。",en:"No ice, please. (ないで ＋ ください = please don't ~)"},
+ {cat:"ending",who:"you",jp:"ここに座ってもいいですか？",kana:"ここ に すわっても いいですか？",en:"May I sit here? (てもいいですか = is it okay if I ~?)"},
+ {cat:"ending",who:"you",jp:"写真を撮ってもらえますか？",kana:"しゃしん を とって もらえますか？",en:"Could you take a photo for me? (てもらえますか = could you do ~ for my benefit?)"},
+ {cat:"ending",who:"you",jp:"少し待っていただけますか？",kana:"すこし まって いただけますか？",en:"Could you wait a moment? (いただけますか = extra-polite もらえますか, for staff and strangers)"},
+ {cat:"ending",who:"you",jp:"試着できますか？",kana:"しちゃく できますか？",en:"Can I try it on? (できますか = can I / is it possible?)"},
+ {cat:"ending",who:"you",jp:"ここ、いいですか？",kana:"ここ、いいですか？",en:"Is here okay? / May I? (いいですか = the all-purpose permission check)"},
+ {cat:"ending",who:"you",jp:"これでいいです。",kana:"これ で いいです。",en:"This will do. (でいいです = settling for ~; で marks 'with this')"},
+ {cat:"ending",who:"you",jp:"このコース、きれいですね。",kana:"この コース、きれい ですね。",en:"This course is beautiful, isn't it. (ね = seeking agreement, the friendly tag)"},
+ {cat:"ending",who:"npc",jp:"ここのうどん、おいしいですよ。",kana:"ここ の うどん、おいしい ですよ。",en:"The udon here is good, you know. (よ = telling you something new, gentle emphasis)"},
+ {cat:"ending",who:"you",jp:"たぶんそうです。",kana:"たぶん そうです。",en:"Probably so. (そうです = that's right; そうですか = oh really?)"},
+ {cat:"ending",who:"you",jp:"日本は初めてなんです。",kana:"にほん は はじめて なんです。",en:"It's my first time in Japan, you see. (んです = explanatory ending, adds a because-you-asked feel)"},
+ {cat:"ending",who:"you",jp:"また日本に来たいです。",kana:"また にほん に きたいです。",en:"I want to come to Japan again. (たいです = want to ~)"},
+ {cat:"ending",who:"you",jp:"東京に住んでいます。",kana:"とうきょう に すんでいます。",en:"I live in Tokyo. (ています = ongoing state or action in progress)"},
  // casual — plain-form peer banter (a golf buddy, no keigo)
  {cat:"casual",who:"npc",jp:"疲れた？",kana:"つかれた？",en:"Tired? (plain form)"},
  {cat:"casual",who:"you",jp:"ちょっとね。",kana:"ちょっとね。",en:"A little, yeah. (ne softener, no desu)"},
@@ -1660,6 +1708,7 @@ function renderPath(){
    reveal card the scenes use. Steps come straight from SENTENCES (same
    who/jp/kana/en fields as scene steps), in authored order. */
 const RUN_META={
+  ending:{jp:"文末表現",en:"Endings",desc:"です, ます, ください, もらえますか: the endings that close every sentence"},
   airport:{jp:"空港",en:"Airport",desc:"Immigration, baggage, customs, getting out of the terminal"},
   taxi:{jp:"タクシー",en:"Taxi",desc:"Catching one, the destination, luggage, route, stopping, paying"},
   rental:{jp:"レンタカー",en:"Rental car",desc:"Counter, insurance, ETC, navi, returning the car"},
