@@ -70,6 +70,18 @@ Populated from scene misses and kana drill stats after each export.
 
 ## Session log
 
+- **2026-08-27 (session 17b, Endings nav tab):** Henry wanted the Endings cards
+  surfaced as their own tab, not buried as a Phrases checkbox ("it's important i
+  learn those with priority"). New **Endings 文末** nav button, placed FIRST in
+  the nav. It's the sentence deck pinned to the `ending` theme: `navTab('ending')`
+  stashes the current Phrases checkboxes (`sentThemesPrev` in localStorage), sets
+  themes to `["ending"]`, and the nav highlight derives from state
+  (`endingOnly()` in `navFor()`), so the `#cards/sent/ending/j2e` deep link also
+  lights the tab. Clicking Phrases restores the stashed checkboxes. Browser-
+  verified at 390px: tab click → 37-card all-ending deck + correct hash, Phrases
+  restores all themes, deep link highlights Endings, no nav/body overflow, 0
+  console errors. sw v28.
+
 - **2026-08-27 (session 17, Endings theme):** Henry: the ending phrases (imasuka,
   moraemasuka, iidesuka, desu, masu, imasu) are the high-leverage thing to learn;
   he wants a section for them, same card format, and mid-session added "refer to

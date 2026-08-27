@@ -324,6 +324,7 @@
       <button class="theme-switch" id="theme-btn" role="switch" aria-checked="false" onclick="toggleTheme()" aria-label="Dark mode"><span class="knob"></span></button>
     </div>
     <nav>
+      <button id="nav-ending" onclick="navTab('ending')">Endings<span class="jp-label">文末</span></button>
       <button id="nav-sent" class="on" onclick="navTab('sent')">Phrases<span class="jp-label">表現</span></button>
       <button id="nav-words" onclick="navTab('words')">Words<span class="jp-label">単語</span></button>
       <button id="nav-num" onclick="navTab('num')">Numbers<span class="jp-label">数</span></button>
@@ -1586,17 +1587,34 @@ function showTab(t){
 }
 /* The nav is deck-shaped, not view-shaped: Phrases and Words are both the
    Cards view with a different mode, so the nav highlight follows cardMode. */
+function endingOnly(){return sentThemes.length===1&&sentThemes[0]==="ending"}
 function navTab(n){
   if(n==="num"){showTab("num");return}
+  /* Endings is the sentence deck pinned to the ending theme. Entering it stashes
+     the Phrases checkboxes; going back to Phrases restores them. */
+  if(n==="ending"){
+    if(!endingOnly()){
+      store.set("sentThemesPrev",sentThemes);
+      sentThemes=["ending"];store.set("sentThemes",sentThemes);
+    }
+    showTab("cards");setCardMode("sent");return;
+  }
   showTab("cards");
-  if(n==="sent")setCardMode("sent");
+  if(n==="sent"){
+    if(endingOnly()){
+      const prev=store.get("sentThemesPrev",ALL_THEMES).filter(k=>ALL_THEMES.includes(k));
+      sentThemes=prev.length?prev:ALL_THEMES.slice();
+      store.set("sentThemes",sentThemes);
+    }
+    setCardMode("sent");
+  }
   else if(cardMode==="sent")setCardMode("kanji");
   else setCardMode(cardMode);
 }
-function navFor(){return tab==="num"?"num":cardMode==="sent"?"sent":"words"}
+function navFor(){return tab==="num"?"num":cardMode==="sent"?(endingOnly()?"ending":"sent"):"words"}
 function renderNav(){
   const on=navFor();
-  for(const n of["sent","words","num"])
+  for(const n of["ending","sent","words","num"])
     document.getElementById("nav-"+n).classList.toggle("on",n===on);
 }
 
